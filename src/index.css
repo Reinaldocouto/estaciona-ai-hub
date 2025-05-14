@@ -7,83 +7,83 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 20%;
+    --background: 0 0% 5%; /* Grafite profundo - close to black but not absolute black */
+    --foreground: 0 0% 100%; /* White text on dark background */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 20%;
+    --card: 0 0% 10%; /* Dark card background - Cinza carvão */
+    --card-foreground: 0 0% 100%; /* White text on cards */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 20%;
+    --popover: 0 0% 10%; /* Dark popover background - Cinza carvão */
+    --popover-foreground: 0 0% 100%; /* White text on popovers */
 
-    --primary: 0 100% 42%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 340 100% 50%; /* FIAP Magenta */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
 
-    --secondary: 0 0% 20%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 0 0% 10%; /* Cinza carvão */
+    --secondary-foreground: 0 0% 100%; /* White text on secondary */
 
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --muted: 0 0% 15%; /* Slightly lighter than background */
+    --muted-foreground: 0 0% 70%; /* Muted text color */
 
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 20%;
+    --accent: 186 100% 50%; /* FIAP Cyan */
+    --accent-foreground: 0 0% 0%; /* Black text on accent */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 100% 50%; /* Red - keeping similar tone with FIAP colors */
+    --destructive-foreground: 0 0% 100%; /* White text on destructive */
 
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 20%;
+    --border: 0 0% 20%; /* Darker border color for contrast */
+    --input: 0 0% 20%; /* Input background color */
+    --ring: 340 100% 50%; /* FIAP Magenta for focus rings */
 
-    --radius: 0.5rem;
+    --radius: 0.5rem; /* Keeping the original radius value */
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 5%; /* Dark sidebar */
+    --sidebar-foreground: 0 0% 100%; /* White text on sidebar */
+    --sidebar-primary: 340 100% 50%; /* FIAP Magenta for sidebar highlights */
+    --sidebar-primary-foreground: 0 0% 100%; /* White text on sidebar primary */
+    --sidebar-accent: 0 0% 15%; /* Slightly lighter sidebar accent */
+    --sidebar-accent-foreground: 340 100% 50%; /* FIAP Magenta text on sidebar accent */
+    --sidebar-border: 0 0% 15%; /* Dark borders in sidebar */
+    --sidebar-ring: 340 100% 50%; /* FIAP Magenta rings in sidebar */
   }
 
   .dark {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 98%;
+    --background: 0 0% 3%; /* Even darker background for dark mode */
+    --foreground: 0 0% 98%; /* Slightly off-white text for dark mode */
 
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 6%; /* Darker cards for dark mode */
+    --card-foreground: 0 0% 98%; /* Slightly off-white text for dark mode */
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 6%; /* Darker popovers for dark mode */
+    --popover-foreground: 0 0% 98%; /* Slightly off-white text for dark mode */
 
-    --primary: 0 100% 42%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 340 100% 50%; /* FIAP Magenta */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
 
-    --secondary: 0 0% 20%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 6%; /* Darker secondary for dark mode */
+    --secondary-foreground: 0 0% 98%; /* Slightly off-white text for dark mode */
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 63.9%;
+    --muted: 0 0% 12%; /* Darker muted background for dark mode */
+    --muted-foreground: 0 0% 63.9%; /* Dimmer text for muted elements */
 
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 186 100% 50%; /* FIAP Cyan */
+    --accent-foreground: 0 0% 0%; /* Black text on accent */
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 100% 40%; /* Darker red for dark mode */
+    --destructive-foreground: 0 0% 98%; /* Slightly off-white text for dark mode */
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 83.9%;
+    --border: 0 0% 15%; /* Darker borders for dark mode */
+    --input: 0 0% 15%; /* Darker inputs for dark mode */
+    --ring: 340 100% 50%; /* FIAP Magenta for focus rings */
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 3%; /* Darker sidebar for dark mode */
+    --sidebar-foreground: 0 0% 98%; /* Slightly off-white text for dark mode */
+    --sidebar-primary: 340 100% 50%; /* FIAP Magenta for sidebar highlights */
+    --sidebar-primary-foreground: 0 0% 100%; /* White text on sidebar primary */
+    --sidebar-accent: 0 0% 10%; /* Darker sidebar accent for dark mode */
+    --sidebar-accent-foreground: 340 100% 50%; /* FIAP Magenta text on sidebar accent */
+    --sidebar-border: 0 0% 15%; /* Dark borders in sidebar for dark mode */
+    --sidebar-ring: 340 100% 50%; /* FIAP Magenta rings in sidebar */
   }
 }
 
@@ -112,6 +112,14 @@
   
   .container-padding {
     @apply px-4 sm:px-6 md:px-8;
+  }
+  
+  .fiap-glow {
+    @apply shadow-[0_0_10px_rgba(255,0,87,0.5)];
+  }
+  
+  .fiap-hover-glow:hover {
+    @apply shadow-[0_0_15px_rgba(255,59,128,0.7)] transition-shadow duration-300;
   }
 }
 
