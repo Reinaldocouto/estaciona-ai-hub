@@ -17,7 +17,7 @@ interface FilterBarProps {
 
 interface FilterState {
   search: string;
-  priceRange: [number, number];
+  priceRange: number; // Alterado de [number, number] para number para simplificar
   features: string[];
   availability: boolean;
 }
@@ -25,7 +25,7 @@ interface FilterState {
 const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
   const [filters, setFilters] = useState<FilterState>({
     search: '',
-    priceRange: [0, 100],
+    priceRange: 100, // Valor máximo inicial
     features: [],
     availability: true,
   });
@@ -101,18 +101,18 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
                         min={0}
                         max={100}
                         step={5}
-                        value={filters.priceRange[1]}
+                        value={filters.priceRange}
                         onChange={(e) => {
                           const newFilters = {
                             ...filters,
-                            priceRange: [0, parseInt(e.target.value)],
+                            priceRange: parseInt(e.target.value),
                           };
                           setFilters(newFilters);
                           onFilterChange(newFilters);
                         }}
                         className="flex-grow"
                       />
-                      <span className="text-sm">R${filters.priceRange[1]}</span>
+                      <span className="text-sm">R${filters.priceRange}</span>
                     </div>
                   </div>
                   
