@@ -7,24 +7,14 @@ import {
   Paper, 
   Grid, 
   Button, 
-  Tabs, 
-  Tab,
-  Stepper, 
-  Step, 
-  StepLabel, 
-  StepContent 
 } from '@mui/material';
-import { Helmet } from 'react-helmet';
-import { CarFront, Garage, CheckCircle, ExpandMore } from 'lucide-react';
+import { Car, Home, CheckCircle, ChevronDown } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Logo from '@/components/ui-custom/Logo';
 
 const HowItWorks: React.FC = () => {
-  const [perfilTab, setPerfilTab] = useState<number>(0);
-
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setPerfilTab(newValue);
-  };
+  const [perfilTab, setPerfilTab] = useState<string>("locatario");
 
   // Stepper steps for Locatário (Tenant)
   const locatarioSteps = [
@@ -68,10 +58,10 @@ const HowItWorks: React.FC = () => {
 
   return (
     <>
-      <Helmet>
+      <head>
         <title>Como Funciona | Estaciona Aí</title>
         <meta name="description" content="Entenda como o Estaciona Aí funciona para motoristas e proprietários de vagas. Reserve ou alugue vagas de estacionamento em apenas 3 etapas simples." />
-      </Helmet>
+      </head>
 
       <Container maxWidth="lg" className="py-8">
         {/* Hero Section */}
@@ -116,7 +106,7 @@ const HowItWorks: React.FC = () => {
               className="p-6 rounded-xl"
             >
               <Box className="flex items-center gap-3 mb-4">
-                <CarFront size={32} className="text-primary" />
+                <Car size={32} className="text-primary" />
                 <Typography variant="h5" component="h3" className="font-bold">
                   Locatário (Motorista)
                 </Typography>
@@ -151,7 +141,7 @@ const HowItWorks: React.FC = () => {
               className="p-6 rounded-xl"
             >
               <Box className="flex items-center gap-3 mb-4">
-                <Garage size={32} className="text-secondary" />
+                <Home size={32} className="text-secondary" />
                 <Typography variant="h5" component="h3" className="font-bold">
                   Locador (Proprietário)
                 </Typography>
@@ -176,167 +166,142 @@ const HowItWorks: React.FC = () => {
 
         {/* Tabs Section */}
         <Box className="mb-10">
-          <Tabs
-            value={perfilTab}
-            onChange={handleTabChange}
-            aria-label="Tabs de perfil de usuário"
-            variant="fullWidth"
-            className="mb-6"
-            sx={{
-              '& .MuiTabs-indicator': {
-                backgroundColor: 'primary.main',
-              },
-              '& .Mui-selected': {
-                color: 'primary.main',
-                fontWeight: 'bold',
-              },
-            }}
-          >
-            <Tab label="Sou Motorista (Locatário)" id="tab-0" aria-controls="tabpanel-0" />
-            <Tab label="Sou Proprietário (Locador)" id="tab-1" aria-controls="tabpanel-1" />
+          <Tabs defaultValue="locatario" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger 
+                value="locatario" 
+                onClick={() => setPerfilTab("locatario")}
+              >
+                Sou Motorista (Locatário)
+              </TabsTrigger>
+              <TabsTrigger 
+                value="locador" 
+                onClick={() => setPerfilTab("locador")}
+              >
+                Sou Proprietário (Locador)
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Tab Content for Locatário */}
+            <TabsContent value="locatario" className="bg-card rounded-xl p-6">
+              <Typography variant="h6" className="mb-6">Passo a passo para Motoristas</Typography>
+              <div className="space-y-4">
+                {locatarioSteps.map((step, index) => (
+                  <div key={index} className="border-l-2 border-primary pl-4 ml-4 pb-6 relative">
+                    <div className="absolute -left-2 top-0 bg-background p-1">
+                      <CheckCircle size={16} className="text-primary" />
+                    </div>
+                    <h4 className="font-bold mb-1">{step.label}</h4>
+                    <p className="text-muted-foreground">{step.description}</p>
+                  </div>
+                ))}
+              </div>
+
+              <Box className="mt-8 space-y-4">
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="taxas">
+                    <AccordionTrigger className="text-lg font-medium">
+                      Saiba mais sobre taxas
+                      <ChevronDown className="h-5 w-5" />
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="list-disc pl-5 space-y-2">
+                        <li>O preço mostrado já inclui 15% de taxa do Estaciona Aí</li>
+                        <li>Cancelamentos com menos de 1 hora de antecedência podem ter taxa de 30%</li>
+                        <li>Atrasos são cobrados proporcionalmente ao tempo excedente</li>
+                        <li>Pagamentos são processados automaticamente ao final do período</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="direitos">
+                    <AccordionTrigger className="text-lg font-medium">
+                      Direitos e Responsabilidades
+                      <ChevronDown className="h-5 w-5" />
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <Typography variant="subtitle1" className="font-medium mb-2">Seus direitos:</Typography>
+                      <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li>Suporte disponível 24h por dia</li>
+                        <li>Seguro contra danos ao veículo durante a estadia</li>
+                        <li>Reembolso integral em caso de vaga indisponível</li>
+                      </ul>
+
+                      <Typography variant="subtitle1" className="font-medium mb-2">Suas responsabilidades:</Typography>
+                      <ul className="list-disc pl-5 space-y-2">
+                        <li>Respeitar os horários reservados</li>
+                        <li>Seguir as regras do condomínio ou estabelecimento</li>
+                        <li>Multas por ultrapassar o tempo são cobradas automaticamente</li>
+                        <li>Danos ao espaço serão cobrados via caução pré-autorizado</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </Box>
+            </TabsContent>
+
+            {/* Tab Content for Locador */}
+            <TabsContent value="locador" className="bg-card rounded-xl p-6">
+              <Typography variant="h6" className="mb-6">Passo a passo para Proprietários</Typography>
+              <div className="space-y-4">
+                {locadorSteps.map((step, index) => (
+                  <div key={index} className="border-l-2 border-primary pl-4 ml-4 pb-6 relative">
+                    <div className="absolute -left-2 top-0 bg-background p-1">
+                      <CheckCircle size={16} className="text-primary" />
+                    </div>
+                    <h4 className="font-bold mb-1">{step.label}</h4>
+                    <p className="text-muted-foreground">{step.description}</p>
+                  </div>
+                ))}
+              </div>
+
+              <Box className="mt-8 space-y-4">
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="pagamentos">
+                    <AccordionTrigger className="text-lg font-medium">
+                      Detalhes de pagamentos
+                      <ChevronDown className="h-5 w-5" />
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="list-disc pl-5 space-y-2">
+                        <li>Repasse feito via PIX em D+1 (dia útil seguinte)</li>
+                        <li>A taxa do Estaciona Aí é de 15% sobre o valor da reserva</li>
+                        <li>Impostos são calculados automaticamente conforme seu regime tributário</li>
+                        <li>Relatório fiscal mensal disponível para download</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="responsabilidades">
+                    <AccordionTrigger className="text-lg font-medium">
+                      Direitos e Responsabilidades
+                      <ChevronDown className="h-5 w-5" />
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <Typography variant="subtitle1" className="font-medium mb-2">Seus direitos:</Typography>
+                      <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li>Chat de suporte 24h</li>
+                        <li>Seguro opcional contra danos à propriedade</li>
+                        <li>Direito a solicitar ID do motorista</li>
+                      </ul>
+
+                      <Typography variant="subtitle1" className="font-medium mb-2">Suas responsabilidades:</Typography>
+                      <ul className="list-disc pl-5 space-y-2">
+                        <li>A vaga deve estar livre e acessível no horário reservado</li>
+                        <li>Manter fotos e descrição da vaga atualizadas</li>
+                        <li>Preços sempre visíveis e corretos</li>
+                        <li>Disponibilizar método de acesso (controle, chave, etc)</li>
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </Box>
+            </TabsContent>
           </Tabs>
-
-          {/* Tab Panel for Locatário */}
-          <div
-            role="tabpanel"
-            hidden={perfilTab !== 0}
-            id="tabpanel-0"
-            aria-labelledby="tab-0"
-            className="bg-card rounded-xl p-6"
-          >
-            {perfilTab === 0 && (
-              <>
-                <Typography variant="h6" className="mb-6">Passo a passo para Motoristas</Typography>
-                <Stepper orientation="vertical">
-                  {locatarioSteps.map((step, index) => (
-                    <Step key={step.label} active completed>
-                      <StepLabel StepIconComponent={CheckCircle}>
-                        <span className="font-bold">{step.label}</span>
-                      </StepLabel>
-                      <StepContent>
-                        <Typography className="mb-4 text-muted-foreground">{step.description}</Typography>
-                      </StepContent>
-                    </Step>
-                  ))}
-                </Stepper>
-
-                <Box className="mt-8 space-y-4">
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="taxas">
-                      <AccordionTrigger className="text-lg font-medium">
-                        Saiba mais sobre taxas
-                        <ExpandMore className="h-5 w-5" />
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <ul className="list-disc pl-5 space-y-2">
-                          <li>O preço mostrado já inclui 15% de taxa do Estaciona Aí</li>
-                          <li>Cancelamentos com menos de 1 hora de antecedência podem ter taxa de 30%</li>
-                          <li>Atrasos são cobrados proporcionalmente ao tempo excedente</li>
-                          <li>Pagamentos são processados automaticamente ao final do período</li>
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="direitos">
-                      <AccordionTrigger className="text-lg font-medium">
-                        Direitos e Responsabilidades
-                        <ExpandMore className="h-5 w-5" />
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <Typography variant="subtitle1" className="font-medium mb-2">Seus direitos:</Typography>
-                        <ul className="list-disc pl-5 space-y-2 mb-4">
-                          <li>Suporte disponível 24h por dia</li>
-                          <li>Seguro contra danos ao veículo durante a estadia</li>
-                          <li>Reembolso integral em caso de vaga indisponível</li>
-                        </ul>
-
-                        <Typography variant="subtitle1" className="font-medium mb-2">Suas responsabilidades:</Typography>
-                        <ul className="list-disc pl-5 space-y-2">
-                          <li>Respeitar os horários reservados</li>
-                          <li>Seguir as regras do condomínio ou estabelecimento</li>
-                          <li>Multas por ultrapassar o tempo são cobradas automaticamente</li>
-                          <li>Danos ao espaço serão cobrados via caução pré-autorizado</li>
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </Box>
-              </>
-            )}
-          </div>
-
-          {/* Tab Panel for Locador */}
-          <div
-            role="tabpanel"
-            hidden={perfilTab !== 1}
-            id="tabpanel-1"
-            aria-labelledby="tab-1"
-            className="bg-card rounded-xl p-6"
-          >
-            {perfilTab === 1 && (
-              <>
-                <Typography variant="h6" className="mb-6">Passo a passo para Proprietários</Typography>
-                <Stepper orientation="vertical">
-                  {locadorSteps.map((step, index) => (
-                    <Step key={step.label} active completed>
-                      <StepLabel StepIconComponent={CheckCircle}>
-                        <span className="font-bold">{step.label}</span>
-                      </StepLabel>
-                      <StepContent>
-                        <Typography className="mb-4 text-muted-foreground">{step.description}</Typography>
-                      </StepContent>
-                    </Step>
-                  ))}
-                </Stepper>
-
-                <Box className="mt-8 space-y-4">
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="pagamentos">
-                      <AccordionTrigger className="text-lg font-medium">
-                        Detalhes de pagamentos
-                        <ExpandMore className="h-5 w-5" />
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <ul className="list-disc pl-5 space-y-2">
-                          <li>Repasse feito via PIX em D+1 (dia útil seguinte)</li>
-                          <li>A taxa do Estaciona Aí é de 15% sobre o valor da reserva</li>
-                          <li>Impostos são calculados automaticamente conforme seu regime tributário</li>
-                          <li>Relatório fiscal mensal disponível para download</li>
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="responsabilidades">
-                      <AccordionTrigger className="text-lg font-medium">
-                        Direitos e Responsabilidades
-                        <ExpandMore className="h-5 w-5" />
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <Typography variant="subtitle1" className="font-medium mb-2">Seus direitos:</Typography>
-                        <ul className="list-disc pl-5 space-y-2 mb-4">
-                          <li>Chat de suporte 24h</li>
-                          <li>Seguro opcional contra danos à propriedade</li>
-                          <li>Direito a solicitar ID do motorista</li>
-                        </ul>
-
-                        <Typography variant="subtitle1" className="font-medium mb-2">Suas responsabilidades:</Typography>
-                        <ul className="list-disc pl-5 space-y-2">
-                          <li>A vaga deve estar livre e acessível no horário reservado</li>
-                          <li>Manter fotos e descrição da vaga atualizadas</li>
-                          <li>Preços sempre visíveis e corretos</li>
-                          <li>Disponibilizar método de acesso (controle, chave, etc)</li>
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </Box>
-              </>
-            )}
-          </div>
         </Box>
 
         {/* CTA Section */}
@@ -346,8 +311,7 @@ const HowItWorks: React.FC = () => {
               variant="contained" 
               color="primary" 
               size="large"
-              className="w-full sm:w-auto"
-              sx={{ py: 1.5, px: 4 }}
+              className="w-full sm:w-auto btn-primary py-1.5 px-4"
             >
               Baixar o app
             </Button>
@@ -356,8 +320,7 @@ const HowItWorks: React.FC = () => {
             <Button 
               variant="outlined" 
               size="large"
-              className="w-full sm:w-auto"
-              sx={{ py: 1.5, px: 4 }}
+              className="w-full sm:w-auto py-1.5 px-4"
             >
               Começar a anunciar vaga
             </Button>
