@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Box, Typography } from '@mui/material';
 import StepperSection from './StepperSection';
 import AccordionSection from './AccordionSection';
 
@@ -14,10 +13,10 @@ interface TabContentProps {
 
 const TabContent: React.FC<TabContentProps> = ({ persona, steps }) => {
   return (
-    <div className="bg-card rounded-xl p-6">
-      <Typography variant="h6" className="mb-6">
+    <div className="bg-gray-50 rounded-xl p-6">
+      <h2 className="text-xl font-semibold mb-6">
         {persona === 'locatario' ? 'Passo a passo para Motoristas' : 'Passo a passo para Proprietários'}
-      </Typography>
+      </h2>
       
       <StepperSection steps={steps} />
       <AccordionSection persona={persona} />

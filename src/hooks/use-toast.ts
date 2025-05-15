@@ -1,5 +1,5 @@
 
-// Reexport useToast from Radix UI
+// Reexport useToast from sonner
 import { toast as sonnerToast } from 'sonner';
 
 // This type is based on the options available in the Sonner toast
@@ -11,7 +11,7 @@ type ToastProps = {
   duration?: number;
 };
 
-// We're creating a wrapper for the Radix toast API to make it compatible with how it's used in the app
+// We're creating a wrapper for the Sonner toast API
 export const toast = ({ title, description, action, ...props }: ToastProps) => {
   return sonnerToast(title, {
     description,
@@ -20,10 +20,11 @@ export const toast = ({ title, description, action, ...props }: ToastProps) => {
   });
 };
 
-// For TypeScript
+// For TypeScript compatibility with existing components
 export function useToast() {
   return {
     toast,
+    // This is an empty array since Sonner manages toast state internally
     toasts: [] as any[],
   };
 }

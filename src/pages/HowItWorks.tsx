@@ -1,102 +1,108 @@
 
 import React, { useState } from 'react';
-import { Container } from '@mui/material';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  HeroSection, 
-  QuickSummaryGrid, 
-  TabContent, 
-  CTASection 
+import { Helmet } from 'react-helmet';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
+import {
+  HeroSection,
+  QuickSummaryGrid,
+  StepperSection,
+  AccordionSection,
+  TabContent,
+  CTASection
 } from '@/components/how-it-works';
 
-const HowItWorks: React.FC = () => {
-  const [perfilTab, setPerfilTab] = useState<string>("locatario");
+// Dados para os passos do Locatário
+const locatarioSteps = [
+  {
+    label: "Busca inteligente",
+    description: "Digite endereço ou use GPS; algoritmo SmartMatch ordena por distância/preço."
+  },
+  {
+    label: "Reserva instantânea",
+    description: "Confirme horário; vaga fica bloqueada 15 min aguardando chegada."
+  },
+  {
+    label: "Check-in/out",
+    description: "Leia QR code do totem ou foto da placa."
+  },
+  {
+    label: "Pagamento",
+    description: "PIX ou cartão via Pagar.me; recibo em PDF."
+  }
+];
 
-  // Stepper steps for Locatário (Tenant)
-  const locatarioSteps = [
-    {
-      label: 'Busca & Filtros',
-      description: 'Digite um endereço ou use seu GPS. Nosso algoritmo SmartMatch™ ordena as vagas por distância e preço, apresentando as melhores opções para você.',
-    },
-    {
-      label: 'Reserva Instantânea',
-      description: 'Selecione o horário desejado e confirme sua reserva. A vaga ficará bloqueada por 15 minutos aguardando sua chegada.',
-    },
-    {
-      label: 'Check-in via QR',
-      description: 'Ao chegar, escaneie o QR code do totem ou tire uma foto da placa para iniciar o período de estacionamento.',
-    },
-    {
-      label: 'Pagamento PIX/cartão',
-      description: 'Realize o pagamento via PIX ou cartão de crédito através do Pagar.me. Um recibo em PDF será enviado para seu e-mail.',
-    },
-  ];
+// Dados para os passos do Locador
+const locadorSteps = [
+  {
+    label: "Cadastro de vaga",
+    description: "Fotos, dimensões, preço/hora, disponibilidade."
+  },
+  {
+    label: "Aprovação rápida",
+    description: "Sistema verifica CPF/CNPJ e documentação do imóvel."
+  },
+  {
+    label: "Gestão de reservas",
+    description: "Painel web ou app; pode recusar até 2h antes sem multa."
+  },
+  {
+    label: "Pagamentos",
+    description: "Repasse D+1 via PIX; taxa Estaciona Aí 15%."
+  }
+];
 
-  // Stepper steps for Locador (Owner)
-  const locadorSteps = [
-    {
-      label: 'Cadastro de vaga',
-      description: 'Adicione fotos, dimensões, preço por hora e disponibilidade da sua vaga. Quanto mais detalhes, mais atrativa será para os motoristas.',
-    },
-    {
-      label: 'Aprovação rápida',
-      description: 'Nosso sistema verifica seu CPF/CNPJ e a documentação do imóvel para garantir segurança a todos os usuários.',
-    },
-    {
-      label: 'Gestão de reservas',
-      description: 'Use nosso painel web ou aplicativo para gerenciar suas reservas. Cancele com até 2 horas de antecedência sem penalidades.',
-    },
-    {
-      label: 'Receba pagamentos',
-      description: 'Receba seus pagamentos via PIX em até um dia útil após o uso da vaga. A taxa do Estaciona Aí é de apenas 15%.',
-    },
-  ];
+const HowItWorks = () => {
+  const [activeTab, setActiveTab] = useState('locatario');
 
   return (
     <>
-      <head>
-        <title>Como Funciona | Estaciona Aí</title>
-        <meta name="description" content="Entenda como o Estaciona Aí funciona para motoristas e proprietários de vagas. Reserve ou alugue vagas de estacionamento em apenas 3 etapas simples." />
-      </head>
-
-      <Container maxWidth="lg" className="py-8">
-        {/* Hero Section */}
-        <HeroSection />
-
-        {/* Quick Summary Grid */}
+      <Navbar />
+      
+      <main className="min-h-screen">
+        <HeroSection 
+          title="Como o Estaciona Aí funciona?"
+          subtitle="Reserve ou alugue vagas em 3 etapas simples."
+        />
+        
         <QuickSummaryGrid />
-
-        {/* Tabs Section */}
-        <Tabs defaultValue="locatario" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger 
-              value="locatario" 
-              onClick={() => setPerfilTab("locatario")}
+        
+        <section className="py-12 bg-white">
+          <div className="container mx-auto px-4">
+            <Tabs 
+              defaultValue="locatario" 
+              value={activeTab} 
+              onValueChange={setActiveTab}
+              className="w-full"
             >
-              Sou Motorista (Locatário)
-            </TabsTrigger>
-            <TabsTrigger 
-              value="locador" 
-              onClick={() => setPerfilTab("locador")}
-            >
-              Sou Proprietário (Locador)
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Tab Content for Locatário */}
-          <TabsContent value="locatario">
-            <TabContent persona="locatario" steps={locatarioSteps} />
-          </TabsContent>
-
-          {/* Tab Content for Locador */}
-          <TabsContent value="locador">
-            <TabContent persona="locador" steps={locadorSteps} />
-          </TabsContent>
-        </Tabs>
-
-        {/* CTA Section */}
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="locatario">Sou Motorista (Locatário)</TabsTrigger>
+                <TabsTrigger value="locador">Sou Proprietário (Locador)</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="locatario" className="mt-6">
+                <TabContent 
+                  persona="locatario"
+                  steps={locatarioSteps}
+                />
+              </TabsContent>
+              
+              <TabsContent value="locador" className="mt-6">
+                <TabContent 
+                  persona="locador"
+                  steps={locadorSteps}
+                />
+              </TabsContent>
+            </Tabs>
+          </div>
+        </section>
+        
         <CTASection />
-      </Container>
+      </main>
+      
+      <Footer />
     </>
   );
 };

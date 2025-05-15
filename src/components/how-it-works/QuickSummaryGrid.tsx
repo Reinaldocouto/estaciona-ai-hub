@@ -1,33 +1,33 @@
 
 import React from 'react';
-import { Grid } from '@mui/material';
+import { Car, Garage } from 'lucide-react';
 import SummaryCard from './SummaryCard';
-import { Car, Home } from 'lucide-react';
 
-const QuickSummaryGrid: React.FC = () => {
-  const locatarioSteps = ["Encontre vaga", "Reserve", "Estacione & pague"];
-  const locadorSteps = ["Cadastre vaga", "Aprove vendas", "Receba pagamento"];
+const QuickSummaryGrid = () => {
+  // Dados para as cards de resumo
+  const locatarioSteps = ['Encontre vaga', 'Reserve', 'Estacione & pague'];
+  const locadorSteps = ['Cadastre vaga', 'Aprove reservas', 'Receba pagamento'];
 
   return (
-    <Grid container spacing={4} className="mb-12">
-      <Grid item xs={12} md={6}>
-        <SummaryCard 
-          icon={Car}
-          title="Locatário (Motorista)"
-          borderColor="primary.main"
-          steps={locatarioSteps}
-        />
-      </Grid>
-      
-      <Grid item xs={12} md={6}>
-        <SummaryCard 
-          icon={Home}
-          title="Locador (Proprietário)"
-          borderColor="secondary.main"
-          steps={locadorSteps}
-        />
-      </Grid>
-    </Grid>
+    <section className="py-12 bg-gray-50">
+      <div className="container mx-auto px-4">
+        <div className="grid md:grid-cols-2 gap-6">
+          <SummaryCard 
+            icon={Car}
+            title="Para Motoristas (Locatários)" 
+            borderColor="text-primary" 
+            steps={locatarioSteps}
+          />
+          
+          <SummaryCard 
+            icon={Garage}
+            title="Para Proprietários (Locadores)" 
+            borderColor="text-secondary" 
+            steps={locadorSteps}
+          />
+        </div>
+      </div>
+    </section>
   );
 };
 
