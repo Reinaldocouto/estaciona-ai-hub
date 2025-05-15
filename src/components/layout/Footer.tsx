@@ -55,11 +55,11 @@ const Footer = () => {
             <div className="space-y-3">
               <p className="flex items-center text-gray-300">
                 <Mail size={18} className="mr-2 text-primary" />
-                contato@estacionaai.com.br
+                rm94330@fiap.com.br
               </p>
               <p className="flex items-center text-gray-300">
                 <PhoneCall size={18} className="mr-2 text-primary" />
-                (11) 99999-9999
+                (11) 99538-4270
               </p>
             </div>
           </div>
