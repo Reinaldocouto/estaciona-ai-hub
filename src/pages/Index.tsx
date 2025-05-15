@@ -84,7 +84,7 @@ const Index = () => {
                 <Input
                   type="text"
                   placeholder="Digite um endereço ou local"
-                  className="pl-12 pr-24 py-6 rounded-full text-gray-800"
+                  className="pl-12 pr-24 py-6 rounded-full text-gray-200"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
