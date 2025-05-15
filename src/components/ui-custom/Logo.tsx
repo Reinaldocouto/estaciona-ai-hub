@@ -17,7 +17,7 @@ const Logo: React.FC<LogoProps> = ({ className = '', size = 'md' }) => {
   return (
     <Link to="/" className={`font-bold ${sizeClasses[size]} ${className}`}>
       <span className="text-primary">Estaciona</span>
-      <span className="text-secondary">Aí</span>
+      <span className="text-secondary">AI</span>
     </Link>
   );
 };
