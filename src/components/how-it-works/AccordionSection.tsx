@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Box, Typography } from '@mui/material';
 import { ChevronDown } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
@@ -10,7 +9,7 @@ interface AccordionSectionProps {
 
 const AccordionSection: React.FC<AccordionSectionProps> = ({ persona }) => {
   return (
-    <Box className="mt-8 space-y-4">
+    <div className="mt-8 space-y-4">
       {persona === 'locatario' ? (
         <>
           <Accordion type="single" collapsible className="w-full">
@@ -37,14 +36,14 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ persona }) => {
                 <ChevronDown className="h-5 w-5" />
               </AccordionTrigger>
               <AccordionContent>
-                <Typography variant="subtitle1" className="font-medium mb-2">Seus direitos:</Typography>
+                <h5 className="font-medium mb-2">Seus direitos:</h5>
                 <ul className="list-disc pl-5 space-y-2 mb-4">
                   <li>Suporte disponível 24h por dia</li>
                   <li>Seguro contra danos ao veículo durante a estadia</li>
                   <li>Reembolso integral em caso de vaga indisponível</li>
                 </ul>
 
-                <Typography variant="subtitle1" className="font-medium mb-2">Suas responsabilidades:</Typography>
+                <h5 className="font-medium mb-2">Suas responsabilidades:</h5>
                 <ul className="list-disc pl-5 space-y-2">
                   <li>Respeitar os horários reservados</li>
                   <li>Seguir as regras do condomínio ou estabelecimento</li>
@@ -81,14 +80,14 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ persona }) => {
                 <ChevronDown className="h-5 w-5" />
               </AccordionTrigger>
               <AccordionContent>
-                <Typography variant="subtitle1" className="font-medium mb-2">Seus direitos:</Typography>
+                <h5 className="font-medium mb-2">Seus direitos:</h5>
                 <ul className="list-disc pl-5 space-y-2 mb-4">
                   <li>Chat de suporte 24h</li>
                   <li>Seguro opcional contra danos à propriedade</li>
                   <li>Direito a solicitar ID do motorista</li>
                 </ul>
 
-                <Typography variant="subtitle1" className="font-medium mb-2">Suas responsabilidades:</Typography>
+                <h5 className="font-medium mb-2">Suas responsabilidades:</h5>
                 <ul className="list-disc pl-5 space-y-2">
                   <li>A vaga deve estar livre e acessível no horário reservado</li>
                   <li>Manter fotos e descrição da vaga atualizadas</li>
@@ -100,7 +99,7 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ persona }) => {
           </Accordion>
         </>
       )}
-    </Box>
+    </div>
   );
 };
 

@@ -1,34 +1,28 @@
 
 import React from 'react';
-import { Box, Typography } from '@mui/material';
 
-const HeroSection: React.FC = () => {
+interface HeroSectionProps {
+  title: string;
+  subtitle: string;
+}
+
+const HeroSection: React.FC<HeroSectionProps> = ({ title, subtitle }) => {
   return (
-    <Box 
-      className="py-16 px-4 rounded-xl mb-12"
-      sx={{
+    <div 
+      className="py-16 px-4 rounded-xl mb-12 bg-gradient-to-tr from-primary/10 to-transparent"
+      style={{
         backgroundColor: 'rgba(255, 0, 87, 0.15)',
         backgroundImage: 'radial-gradient(at top right, rgba(255, 0, 87, 0.2), transparent)',
         backdropFilter: 'blur(20px)',
       }}
     >
-      <Typography 
-        variant="h2" 
-        component="h1" 
-        align="center" 
-        gutterBottom
-        className="text-4xl md:text-5xl font-bold"
-      >
-        Como o Estaciona Aí funciona?
-      </Typography>
-      <Typography 
-        variant="h5" 
-        align="center" 
-        className="text-muted-foreground max-w-2xl mx-auto"
-      >
-        Reserve ou alugue vagas em 3 etapas simples.
-      </Typography>
-    </Box>
+      <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">
+        {title}
+      </h1>
+      <p className="text-muted-foreground max-w-2xl mx-auto text-center text-lg">
+        {subtitle}
+      </p>
+    </div>
   );
 };
 

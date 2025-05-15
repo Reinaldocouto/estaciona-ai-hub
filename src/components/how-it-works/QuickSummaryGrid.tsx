@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Car, Garage } from 'lucide-react';
+import { Car, Home } from 'lucide-react';
 import SummaryCard from './SummaryCard';
 
 const QuickSummaryGrid = () => {
@@ -20,7 +20,7 @@ const QuickSummaryGrid = () => {
           />
           
           <SummaryCard 
-            icon={Garage}
+            icon={Home}
             title="Para Proprietários (Locadores)" 
             borderColor="text-secondary" 
             steps={locadorSteps}

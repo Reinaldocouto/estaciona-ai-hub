@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Typography } from '@mui/material';
 import { CheckCircle } from 'lucide-react';
 
 interface StepperProps {

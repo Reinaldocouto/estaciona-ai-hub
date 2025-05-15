@@ -1,30 +1,33 @@
 
 import React from 'react';
-import { Button, Grid } from '@mui/material';
+import { Button } from "@/components/ui/button";
 
 const CTASection: React.FC = () => {
   return (
-    <Grid container spacing={3} className="mt-10">
-      <Grid item xs={12} sm={6} className="flex justify-center">
-        <Button 
-          variant="contained" 
-          color="primary" 
-          size="large"
-          className="w-full sm:w-auto btn-primary py-1.5 px-4"
-        >
-          Baixar o app
-        </Button>
-      </Grid>
-      <Grid item xs={12} sm={6} className="flex justify-center">
-        <Button 
-          variant="outlined" 
-          size="large"
-          className="w-full sm:w-auto py-1.5 px-4"
-        >
-          Começar a anunciar vaga
-        </Button>
-      </Grid>
-    </Grid>
+    <section className="py-12 bg-primary/10">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="flex justify-center">
+            <Button 
+              variant="default" 
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              Baixar o app
+            </Button>
+          </div>
+          <div className="flex justify-center">
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              Começar a anunciar vaga
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 
