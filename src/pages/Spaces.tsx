@@ -12,7 +12,7 @@ const Spaces = () => {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [loading, setLoading] = useState(false);
 
-  // Dados fictícios para as vagas
+  // Dados fictícios para as vagas com coordenadas
   const [spaces, setSpaces] = useState<SpaceProps[]>([
     {
       id: '1',
@@ -25,6 +25,9 @@ const Spaces = () => {
       distance: '300m',
       features: ['Coberto', 'Segurança 24h', 'Carregador EV'],
       available: true,
+      lat: -23.5613, 
+      lng: -46.6558,
+      type: 'Médio',
     },
     {
       id: '2',
@@ -37,6 +40,9 @@ const Spaces = () => {
       distance: '1.2km',
       features: ['Privativo', 'Coberto'],
       available: true,
+      lat: -23.5651, 
+      lng: -46.6911,
+      type: 'Pequeno',
     },
     {
       id: '3',
@@ -49,6 +55,9 @@ const Spaces = () => {
       distance: '2.5km',
       features: ['24h', 'Segurança'],
       available: true,
+      lat: -23.5469, 
+      lng: -46.6389,
+      type: 'Médio',
     },
     {
       id: '4',
@@ -61,6 +70,9 @@ const Spaces = () => {
       distance: '3.1km',
       features: ['Coberto', 'Privativo'],
       available: true,
+      lat: -23.5557,
+      lng: -46.6859,
+      type: 'SUV',
     },
     {
       id: '5',
@@ -73,6 +85,9 @@ const Spaces = () => {
       distance: '5.7km',
       features: ['Coberto', 'Shopping', 'Segurança'],
       available: true,
+      lat: -23.5413,
+      lng: -46.5692,
+      type: 'Médio',
     },
     {
       id: '6',
@@ -85,6 +100,9 @@ const Spaces = () => {
       distance: '1.8km',
       features: ['Condomínio', 'Segurança 24h', 'Coberto'],
       available: true,
+      lat: -23.5580,
+      lng: -46.6720,
+      type: 'SUV',
     },
   ]);
 
@@ -99,6 +117,12 @@ const Spaces = () => {
 
   const toggleViewMode = () => {
     setViewMode(viewMode === 'list' ? 'map' : 'list');
+  };
+
+  const handleSpaceSelect = (id: string) => {
+    console.log(`Vaga selecionada: ${id}`);
+    // Aqui redirecionaria para a página de detalhes da vaga
+    window.location.href = `/spaces/${id}`;
   };
 
   return (
@@ -145,7 +169,11 @@ const Spaces = () => {
                 </div>
               ) : (
                 <div className="h-[calc(100vh-220px)]">
-                  <Map spaces={spaces} className="h-full" />
+                  <Map 
+                    spaces={spaces} 
+                    className="h-full" 
+                    onSelect={handleSpaceSelect}
+                  />
                 </div>
               )}
             </>
