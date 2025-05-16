@@ -36,7 +36,7 @@ const Footer = () => {
               <li><Link to="/" className="text-gray-300 hover:text-primary transition-colors">Home</Link></li>
               <li><Link to="/spaces" className="text-gray-300 hover:text-primary transition-colors">Encontrar Vagas</Link></li>
               <li><Link to="/how-it-works" className="text-gray-300 hover:text-primary transition-colors">Como Funciona</Link></li>
-              <li><Link to="/host" className="text-gray-300 hover:text-primary transition-colors">Anuncie sua Vaga</Link></li>
+              <li><Link to="/rent-out-spot" className="text-gray-300 hover:text-primary transition-colors">Anuncie sua Vaga</Link></li>
             </ul>
           </div>
           
