@@ -1,4 +1,5 @@
 
+/// <reference types="@types/google.maps" />
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { 
   useJsApiLoader, 

@@ -65,7 +65,7 @@ const PropertyForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-6">
         {/* Fotos da vaga */}
         <FormField
           control={form.control}
