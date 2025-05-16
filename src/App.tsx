@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Spaces from "./pages/Spaces";
 import SpaceDetails from "./pages/SpaceDetails";
 import HowItWorks from "./pages/HowItWorks";
+import RentOutSpot from "./pages/RentOutSpot";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/spaces" element={<Spaces />} />
           <Route path="/spaces/:id" element={<SpaceDetails />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/rent-out-spot" element={<RentOutSpot />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
