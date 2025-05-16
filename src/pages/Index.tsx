@@ -189,7 +189,7 @@ const Index = () => {
               Transforme seu espaço vazio em renda extra. Anuncie sua vaga no Estaciona Aí e comece a ganhar.
             </p>
             <Button variant="secondary" size="lg" asChild>
-              <Link to="/host">Anunciar minha vaga</Link>
+              <Link to="/rent-out-spot">Anunciar minha vaga</Link>
             </Button>
           </div>
         </section>

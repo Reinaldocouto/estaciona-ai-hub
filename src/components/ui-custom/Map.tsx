@@ -1,17 +1,27 @@
+/// <reference types="google.maps" />
 
-/// <reference types="@types/google.maps" />
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { 
-  useJsApiLoader, 
-  GoogleMap, 
-  MarkerF, 
-  InfoWindowF, 
-  MarkerClustererF 
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+} from 'react';
+import {
+  useJsApiLoader,
+  GoogleMap,
+  MarkerF,
+  InfoWindowF,
+  MarkerClustererF,
 } from '@react-google-maps/api';
 import isEqual from 'react-fast-compare';
+
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { MapPin, Loader2 } from 'lucide-react';
+
+/* -------------------------------------------------------------------------- */
+/* Types -------------------------------------------------------------------- */
 
 export interface SpaceProps {
   id: string;
@@ -37,13 +47,21 @@ interface MapProps {
   onSelect?: (id: string) => void;
 }
 
-// Default settings for the map
-const DEFAULT_CENTER = { lat: -23.5505, lng: -46.6333 }; // São Paulo
-const DEFAULT_ZOOM = 13;
-const MAP_CONTAINER_STYLE = { width: '100%', height: '100%' };
+/* -------------------------------------------------------------------------- */
+/* Constantes ---------------------------------------------------------------- */
 
-// Default map options
-const defaultOptions = {
+const DEFAULT_CENTER: google.maps.LatLngLiteral = {
+  lat: -23.5505,
+  lng: -46.6333, // São Paulo
+};
+const DEFAULT_ZOOM = 13;
+
+const MAP_CONTAINER_STYLE: React.CSSProperties = {
+  width: '100%',
+  height: '100%',
+};
+
+const MAP_OPTIONS: google.maps.MapOptions = {
   disableDefaultUI: false,
   zoomControl: true,
   mapTypeControl: false,
@@ -51,129 +69,105 @@ const defaultOptions = {
   fullscreenControl: true,
 };
 
-const Map: React.FC<MapProps> = ({ 
-  spaces = [], 
+/* -------------------------------------------------------------------------- */
+/* Componente ---------------------------------------------------------------- */
+
+const Map: React.FC<MapProps> = ({
+  spaces = [],
   center,
   zoom = DEFAULT_ZOOM,
   className = '',
-  onSelect
+  onSelect,
 }) => {
-  const [mapCenter, setMapCenter] = useState(center || DEFAULT_CENTER);
-  const [mapZoom, setMapZoom] = useState(zoom);
+  /* ---------------------------- Estado local ----------------------------- */
+  const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral>(
+    center ?? DEFAULT_CENTER,
+  );
+  const [mapZoom, setMapZoom] = useState<number>(zoom);
   const [selectedSpace, setSelectedSpace] = useState<SpaceProps | null>(null);
   const [loadError, setLoadError] = useState(false);
+
   const mapRef = useRef<google.maps.Map | null>(null);
-  
-  // Load the Google Maps JS API
+
+  /* ------------------------- Carrega Google Maps ------------------------- */
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: import.meta.env.VITE_GMAPS_KEY || '',
+    libraries: ['places'],
+    googleMapsApiKey: import.meta.env.VITE_GMAPS_KEY ?? '',
   });
 
-  // Try to get user's location if no center was provided
+  /* ----------------------- Geolocalização inicial ------------------------ */
   useEffect(() => {
     if (!center && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setMapCenter({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.warn("Error getting geolocation:", error);
-          // Keep the default center if geolocation fails
-        }
+        ({ coords }) =>
+          setMapCenter({ lat: coords.latitude, lng: coords.longitude }),
+        (error) => console.warn('Geolocation error:', error),
       );
     }
   }, [center]);
 
-  // Handle API load timeout
+  /* ----------------------- Timeout p/ falha de API ----------------------- */
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (!isLoaded) {
-        setLoadError(true);
-      }
-    }, 5000);
-
+      if (!isLoaded) setLoadError(true);
+    }, 5_000);
     return () => clearTimeout(timer);
   }, [isLoaded]);
 
-  // Update map center and zoom when props change
+  /* --------------- Atualiza center/zoom quando props mudam --------------- */
   useEffect(() => {
     if (center) {
       setMapCenter(center);
-      
-      // Smoothly pan to new center if map is already loaded
-      if (mapRef.current) {
-        mapRef.current.panTo(center);
-      }
+      if (mapRef.current) mapRef.current.panTo(center);
     }
-    
-    if (zoom !== undefined) {
-      setMapZoom(zoom);
-    }
+    setMapZoom(zoom);
   }, [center, zoom]);
 
-  // Store map instance on load
-  const onLoad = useCallback((map: google.maps.Map) => {
+  /* --------------------------- Callbacks Mapa ---------------------------- */
+  const handleMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
   }, []);
 
-  // Clear reference on unmount
-  const onUnmount = useCallback(() => {
+  const handleMapUnmount = useCallback(() => {
     mapRef.current = null;
   }, []);
 
-  // Handle marker click
   const handleMarkerClick = useCallback((space: SpaceProps) => {
     setSelectedSpace(space);
   }, []);
 
-  // Handle info window close
-  const handleInfoWindowClose = useCallback(() => {
-    setSelectedSpace(null);
-  }, []);
+  const handleInfoClose = useCallback(() => setSelectedSpace(null), []);
 
-  // Handle reservation button click
-  const handleReserveClick = useCallback((id: string) => {
-    if (onSelect) {
-      onSelect(id);
+  const handleReserve = useCallback(
+    (id: string) => {
+      onSelect?.(id);
       setSelectedSpace(null);
-    }
-  }, [onSelect]);
+    },
+    [onSelect],
+  );
 
-  // Handle map zoom change
   const handleZoomChanged = () => {
-    if (mapRef.current) {
-      setMapZoom(mapRef.current.getZoom() || DEFAULT_ZOOM);
-    }
+    const z = mapRef.current?.getZoom();
+    if (z) setMapZoom(z);
   };
 
-  // Handle map center change
   const handleCenterChanged = () => {
-    if (mapRef.current) {
-      const newCenter = mapRef.current.getCenter();
-      if (newCenter) {
-        setMapCenter({
-          lat: newCenter.lat(),
-          lng: newCenter.lng(),
-        });
-      }
-    }
+    const c = mapRef.current?.getCenter();
+    if (c) setMapCenter({ lat: c.lat(), lng: c.lng() });
   };
 
-  // Memoize markers to prevent unnecessary re-renders
+  /* --------------------------- Memo Markers ------------------------------ */
   const markers = useMemo(() => {
-    if (!isLoaded) return [];
-    
+    if (!isLoaded) return null;
+
     return spaces
-      .filter(space => space.lat !== undefined && space.lng !== undefined)
-      .map(space => (
+      .filter((s) => s.lat !== undefined && s.lng !== undefined)
+      .map((s) => (
         <MarkerF
-          key={space.id}
-          position={{ lat: space.lat as number, lng: space.lng as number }}
-          onClick={() => handleMarkerClick(space)}
+          key={s.id}
+          position={{ lat: s.lat as number, lng: s.lng as number }}
+          onClick={() => handleMarkerClick(s)}
           icon={{
             url: '/pin.svg',
             scaledSize: new google.maps.Size(32, 32),
@@ -181,16 +175,18 @@ const Map: React.FC<MapProps> = ({
             anchor: new google.maps.Point(16, 32),
           }}
           animation={google.maps.Animation.DROP}
-          aria-label={space.title}
-          title={`${space.title} - R$${space.price}/h`}
+          aria-label={s.title}
+          title={`${s.title} – R$${s.price}/h`}
         />
       ));
-  }, [spaces, handleMarkerClick, isLoaded]);
+  }, [isLoaded, spaces, handleMarkerClick]);
 
-  // If API is still loading, show skeleton
+  /* --------------------------- Skeleton / Erro --------------------------- */
   if (!isLoaded) {
     return (
-      <div className={`rounded-xl overflow-hidden w-full h-full min-h-[400px] flex flex-col items-center justify-center bg-gray-100 ${className}`}>
+      <div
+        className={`rounded-xl overflow-hidden w-full h-full min-h-[400px] flex flex-col items-center justify-center bg-gray-100 ${className}`}
+      >
         {loadError ? (
           <div className="text-center p-6">
             <MapPin className="h-12 w-12 text-gray-400 mb-2 mx-auto" />
@@ -200,7 +196,7 @@ const Map: React.FC<MapProps> = ({
         ) : (
           <>
             <Loader2 className="h-12 w-12 text-primary animate-spin mb-2" />
-            <p className="text-gray-500 mb-4">Carregando mapa...</p>
+            <p className="text-gray-500 mb-4">Carregando mapa…</p>
             <Skeleton className="w-full h-[160px] max-w-md" />
           </>
         )}
@@ -208,62 +204,69 @@ const Map: React.FC<MapProps> = ({
     );
   }
 
+  /* ----------------------------- Render Mapa ----------------------------- */
   return (
-    <div className={`rounded-xl overflow-hidden w-full h-full min-h-[400px] ${className}`}>
+    <div
+      className={`relative rounded-xl overflow-hidden w-full h-full min-h-[400px] ${className}`}
+    >
       <GoogleMap
         mapContainerStyle={MAP_CONTAINER_STYLE}
         center={mapCenter}
         zoom={mapZoom}
-        onLoad={onLoad}
-        onUnmount={onUnmount}
-        options={defaultOptions}
+        onLoad={handleMapLoad}
+        onUnmount={handleMapUnmount}
+        options={MAP_OPTIONS}
         onZoomChanged={handleZoomChanged}
         onCenterChanged={handleCenterChanged}
       >
         {mapZoom < 12 ? (
           <MarkerClustererF>
-            {(clusterer) => (
-              <div>
-                {spaces
-                  .filter(space => space.lat !== undefined && space.lng !== undefined)
-                  .map(space => (
-                    <MarkerF
-                      key={space.id}
-                      position={{ lat: space.lat as number, lng: space.lng as number }}
-                      onClick={() => handleMarkerClick(space)}
-                      clusterer={clusterer}
-                      icon={{
-                        url: '/pin.svg',
-                        scaledSize: new google.maps.Size(32, 32),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(16, 32),
-                      }}
-                      aria-label={space.title}
-                      title={`${space.title} - R$${space.price}/h`}
-                    />
-                  ))}
-              </div>
-            )}
+             {(clusterer) => (
+    <>
+      {spaces
+        .filter((s) => s.lat && s.lng)
+        .map((s) => (
+          <MarkerF
+            key={s.id}
+            position={{ lat: s.lat!, lng: s.lng! }}
+            onClick={() => handleMarkerClick(s)}
+            clusterer={clusterer}
+            icon={{
+              url: '/pin.svg',
+              scaledSize: new google.maps.Size(32, 32),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(16, 32),
+            }}
+            aria-label={s.title}
+            title={`${s.title} – R$${s.price}/h`}
+          />
+        ))}
+    </>
+  )}
           </MarkerClustererF>
         ) : (
           markers
         )}
 
-        {selectedSpace && selectedSpace.lat !== undefined && selectedSpace.lng !== undefined && (
+        {selectedSpace && selectedSpace.lat && selectedSpace.lng && (
           <InfoWindowF
             position={{ lat: selectedSpace.lat, lng: selectedSpace.lng }}
-            onCloseClick={handleInfoWindowClose}
+            onCloseClick={handleInfoClose}
           >
             <div className="p-2 max-w-xs">
               <h3 className="font-bold text-gray-900">{selectedSpace.title}</h3>
-              <p className="text-primary-700 font-medium my-1">R${selectedSpace.price}/hora</p>
+              <p className="text-primary-700 font-medium my-1">
+                R${selectedSpace.price}/hora
+              </p>
               {selectedSpace.type && (
-                <p className="text-sm text-gray-600 mb-2">Tipo: {selectedSpace.type}</p>
+                <p className="text-sm text-gray-600 mb-2">
+                  Tipo: {selectedSpace.type}
+                </p>
               )}
-              <Button 
-                size="sm" 
-                className="w-full mt-2" 
-                onClick={() => handleReserveClick(selectedSpace.id)}
+              <Button
+                size="sm"
+                className="w-full mt-2"
+                onClick={() => handleReserve(selectedSpace.id)}
               >
                 Reservar
               </Button>
@@ -272,22 +275,24 @@ const Map: React.FC<MapProps> = ({
         )}
       </GoogleMap>
 
-      {/* Debug info - hidden on mobile */}
+      {/* Debug info (escondido no mobile) */}
       <div className="hidden md:block absolute bottom-1 right-1 bg-white/80 px-2 py-1 text-xs text-gray-500 rounded-md">
-        Lat: {mapCenter.lat.toFixed(6)}, Lng: {mapCenter.lng.toFixed(6)}, Zoom: {mapZoom}
+        Lat: {mapCenter.lat.toFixed(6)}, Lng: {mapCenter.lng.toFixed(6)}, Zoom:{' '}
+        {mapZoom}
       </div>
     </div>
   );
 };
 
-// Use React.memo with custom comparison to prevent unnecessary re-renders
-export default React.memo(Map, (prevProps, nextProps) => {
-  // Only re-render if these props change
-  return (
-    prevProps.className === nextProps.className &&
-    prevProps.zoom === nextProps.zoom &&
-    isEqual(prevProps.center, nextProps.center) &&
-    isEqual(prevProps.spaces, nextProps.spaces) &&
-    prevProps.onSelect === nextProps.onSelect
-  );
-});
+/* -------------------------------------------------------------------------- */
+/* Memoization ----------------------------------------------------------------*/
+
+export default React.memo(
+  Map,
+  (prev, next) =>
+    prev.className === next.className &&
+    prev.zoom === next.zoom &&
+    isEqual(prev.center, next.center) &&
+    isEqual(prev.spaces, next.spaces) &&
+    prev.onSelect === next.onSelect,
+);

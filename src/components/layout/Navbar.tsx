@@ -32,7 +32,7 @@ const Navbar = () => {
   const navLinks = [
     { name: 'Encontrar Vagas', path: '/spaces' },
     { name: 'Como Funciona', path: '/how-it-works' },
-    { name: 'Anuncie sua Vaga', path: '/host' },
+    { name: 'Anuncie sua Vaga', path: '/rent-out-spot' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
