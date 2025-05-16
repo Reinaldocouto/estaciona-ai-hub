@@ -72,7 +72,7 @@ const Index = () => {
           
           <div className="container relative z-10 mx-auto px-4 text-center text-white">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Encontre vagas de estacionamento<br />perto de você
+              Encontre vagas de estacionamento<br />Fácil e Rápido
             </h1>
             <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
               O jeito mais fácil de encontrar e reservar vagas de estacionamento em sua cidade
