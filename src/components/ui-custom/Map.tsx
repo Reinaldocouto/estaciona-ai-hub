@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { 
   useJsApiLoader, 
@@ -163,6 +164,8 @@ const Map: React.FC<MapProps> = ({
 
   // Memoize markers to prevent unnecessary re-renders
   const markers = useMemo(() => {
+    if (!isLoaded) return [];
+    
     return spaces
       .filter(space => space.lat !== undefined && space.lng !== undefined)
       .map(space => (
@@ -172,16 +175,16 @@ const Map: React.FC<MapProps> = ({
           onClick={() => handleMarkerClick(space)}
           icon={{
             url: '/pin.svg',
-            scaledSize: new window.google.maps.Size(32, 32),
-            origin: new window.google.maps.Point(0, 0),
-            anchor: new window.google.maps.Point(16, 32),
+            scaledSize: new google.maps.Size(32, 32),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(16, 32),
           }}
-          animation={window.google.maps.Animation.DROP}
+          animation={google.maps.Animation.DROP}
           aria-label={space.title}
           title={`${space.title} - R$${space.price}/h`}
         />
       ));
-  }, [spaces, handleMarkerClick]);
+  }, [spaces, handleMarkerClick, isLoaded]);
 
   // If API is still loading, show skeleton
   if (!isLoaded) {
@@ -230,9 +233,9 @@ const Map: React.FC<MapProps> = ({
                       clusterer={clusterer}
                       icon={{
                         url: '/pin.svg',
-                        scaledSize: new window.google.maps.Size(32, 32),
-                        origin: new window.google.maps.Point(0, 0),
-                        anchor: new window.google.maps.Point(16, 32),
+                        scaledSize: new google.maps.Size(32, 32),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(16, 32),
                       }}
                       aria-label={space.title}
                       title={`${space.title} - R$${space.price}/h`}
