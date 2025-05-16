@@ -34,7 +34,7 @@ const RentOutSpot = () => {
       <Navbar />
       
       <Box 
-        component="main"
+        as="main"
         className="font-roboto"
       >
         <HeroSection 
