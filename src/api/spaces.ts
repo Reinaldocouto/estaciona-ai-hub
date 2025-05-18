@@ -4,7 +4,7 @@ import { SpaceProps } from '@/components/ui-custom/SpaceCard';
 export async function fetchSpace(id: string): Promise<SpaceProps> {
   // Mock data - would be replaced with a real API call in production
   // This simulates the server response based on the space id
-  const mockSpaces = {
+  const mockSpaces: Record<string, SpaceProps> = {
     '1': {
       id: '1',
       title: 'Estacionamento Seguro na Paulista',
@@ -132,7 +132,7 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 800));
   
-  const space = mockSpaces[id as keyof typeof mockSpaces];
+  const space = mockSpaces[id];
   
   if (!space) {
     throw new Error('Vaga não encontrada');
