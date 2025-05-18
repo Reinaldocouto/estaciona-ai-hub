@@ -45,7 +45,7 @@ const GoogleMapComponent: React.FC<MapProps> = ({
   const [mapZoom, setMapZoom] = useState<number>(zoom);
   const [selectedSpace, setSelectedSpace] = useState<typeof spaces[0] | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
-  // Add a ref to track if center was set from props
+  // Ref to track if center was set from props
   const centerSetFromProps = useRef<boolean>(false);
 
   // Geolocation init
@@ -59,15 +59,15 @@ const GoogleMapComponent: React.FC<MapProps> = ({
     }
   }, [center]);
 
-  // Update center/zoom when props change
+  // Update center when props change - Fixed to prevent infinite loop
   useEffect(() => {
-    if (center) {
+    if (center && (center.lat !== mapCenter.lat || center.lng !== mapCenter.lng)) {
       setMapCenter(center);
       centerSetFromProps.current = true;
       if (mapRef.current) mapRef.current.panTo(center);
     }
     setMapZoom(zoom);
-  }, [center, zoom]);
+  }, [center, zoom]); // Don't include mapCenter in dependencies
 
   const handleMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
@@ -96,12 +96,21 @@ const GoogleMapComponent: React.FC<MapProps> = ({
     if (z) setMapZoom(z);
   };
 
-  // Modified to prevent infinite loop
+  // Fixed to prevent infinite loop
   const handleCenterChanged = () => {
+    if (!mapRef.current) return;
+    
     // Only update center state if the change wasn't triggered by props
-    if (mapRef.current && !centerSetFromProps.current) {
-      const c = mapRef.current?.getCenter();
-      if (c) setMapCenter({ lat: c.lat(), lng: c.lng() });
+    if (!centerSetFromProps.current) {
+      const c = mapRef.current.getCenter();
+      if (!c) return;
+      
+      const newCenter = { lat: c.lat(), lng: c.lng() };
+      
+      // Avoid setState if nothing changed
+      if (newCenter.lat !== mapCenter.lat || newCenter.lng !== mapCenter.lng) {
+        setMapCenter(newCenter);
+      }
     }
     // Reset the flag after handling the center change
     centerSetFromProps.current = false;
