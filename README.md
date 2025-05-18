@@ -1,8 +1,30 @@
+
 # Welcome to your Lovable project
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/54f1ce28-36ca-491d-a54e-6babef2a9e27
+
+## Google Maps API Integration
+
+This project uses Google Maps API for displaying maps and location data. To set up the API key:
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the following APIs:
+   - Maps JavaScript API
+   - Places API
+   - Geocoding API
+4. Create an API key with appropriate restrictions
+5. Add the API key to your environment variables:
+
+Create a `.env.local` file in the root directory of your project and add:
+
+```
+VITE_GMAPS_KEY=your_google_maps_api_key_here
+```
+
+**Important**: Never commit your API key to version control. The `.env.local` file is automatically excluded by `.gitignore`.
 
 ## How can I edit this code?
 
@@ -59,6 +81,7 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Google Maps API
 
 ## How can I deploy this project?
 

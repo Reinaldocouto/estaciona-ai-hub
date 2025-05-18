@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -11,6 +10,7 @@ import {
   MapPin, Star, Shield, Calendar, Clock, Info, Car, ChevronRight,
   CreditCard, MessageCircle, Check, X, AlertCircle
 } from 'lucide-react';
+import DetailMap from '@/components/ui-custom/DetailMap';
 
 const SpaceDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -288,14 +288,7 @@ const SpaceDetails = () => {
                   </TabsContent>
                   <TabsContent value="location" className="pt-6">
                     <h2 className="text-xl font-semibold mb-3">Localização</h2>
-                    <div className="rounded-xl overflow-hidden h-[300px] bg-gray-200 mb-4">
-                      <div className="h-full flex items-center justify-center">
-                        <p className="text-center text-gray-500">
-                          Em um ambiente de produção, aqui seria exibido o mapa<br />
-                          com a localização exata da vaga.
-                        </p>
-                      </div>
-                    </div>
+                    <DetailMap space={space} className="mb-4" />
                     <p className="text-gray-600 mb-4">
                       {space.address}
                     </p>
