@@ -45,6 +45,8 @@ const GoogleMapComponent: React.FC<MapProps> = ({
   const [mapZoom, setMapZoom] = useState<number>(zoom);
   const [selectedSpace, setSelectedSpace] = useState<typeof spaces[0] | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
+  // Add a ref to track if center was set from props
+  const centerSetFromProps = useRef<boolean>(false);
 
   // Geolocation init
   useEffect(() => {
@@ -61,6 +63,7 @@ const GoogleMapComponent: React.FC<MapProps> = ({
   useEffect(() => {
     if (center) {
       setMapCenter(center);
+      centerSetFromProps.current = true;
       if (mapRef.current) mapRef.current.panTo(center);
     }
     setMapZoom(zoom);
@@ -93,9 +96,15 @@ const GoogleMapComponent: React.FC<MapProps> = ({
     if (z) setMapZoom(z);
   };
 
+  // Modified to prevent infinite loop
   const handleCenterChanged = () => {
-    const c = mapRef.current?.getCenter();
-    if (c) setMapCenter({ lat: c.lat(), lng: c.lng() });
+    // Only update center state if the change wasn't triggered by props
+    if (mapRef.current && !centerSetFromProps.current) {
+      const c = mapRef.current?.getCenter();
+      if (c) setMapCenter({ lat: c.lat(), lng: c.lng() });
+    }
+    // Reset the flag after handling the center change
+    centerSetFromProps.current = false;
   };
 
   if (!isLoaded) {
