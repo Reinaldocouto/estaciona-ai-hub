@@ -1,4 +1,6 @@
+
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import SpaceCard, { SpaceProps } from '@/components/ui-custom/SpaceCard';
@@ -134,6 +136,7 @@ const Spaces = () => {
 
   /* ------------------------- Selecionar vaga ----------------------------- */
   const handleSpaceSelect = (id: string) => {
+    // Use react-router's navigate instead of window.location
     window.location.href = `/spaces/${id}`;
   };
 

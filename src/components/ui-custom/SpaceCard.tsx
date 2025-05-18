@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,41 @@ export interface SpaceProps {
   lat?: number;
   lng?: number;
   type?: 'Pequeno' | 'Médio' | 'SUV';
+  // Extended properties for detail view
+  priceHour?: number;
+  priceDay?: number;
+  description?: string;
+  rules?: string[];
+  owner?: {
+    name: string;
+    joined: string;
+    responseTime: string;
+    rating: number;
+    image: string;
+  };
+  images?: string[];
+  reviews?: {
+    id: string;
+    user: string;
+    date: string;
+    rating: number;
+    comment: string;
+    image: string;
+  }[];
+  location?: {
+    lat: number;
+    lng: number;
+    nearbyPlaces?: string[];
+  };
+  availability?: {
+    monday: string;
+    tuesday: string;
+    wednesday: string;
+    thursday: string;
+    friday: string;
+    saturday: string;
+    sunday: string;
+  };
 }
 
 interface SpaceCardProps {
