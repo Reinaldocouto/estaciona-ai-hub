@@ -66,7 +66,7 @@ const PropertyForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
-        {/* Fotos da vaga */}
+        {/* Photos section */}
         <FormField
           control={form.control}
           name="photos"
@@ -103,7 +103,7 @@ const PropertyForm = () => {
           )}
         />
 
-        {/* Endereço */}
+        {/* Address */}
         <FormField
           control={form.control}
           name="address"
@@ -128,7 +128,7 @@ const PropertyForm = () => {
           )}
         />
 
-        {/* Dimensões */}
+        {/* Dimensions */}
         <FormField
           control={form.control}
           name="size"
@@ -155,7 +155,7 @@ const PropertyForm = () => {
           )}
         />
 
-        {/* Preço por hora */}
+        {/* Price per hour */}
         <FormField
           control={form.control}
           name="hourlyPrice"
@@ -193,7 +193,7 @@ const PropertyForm = () => {
           )}
         />
 
-        {/* Disponibilidade */}
+        {/* Availability */}
         <FormField
           control={form.control}
           name="availability"
@@ -220,7 +220,7 @@ const PropertyForm = () => {
           )}
         />
 
-        {/* Regras da vaga */}
+        {/* Space rules */}
         <FormField
           control={form.control}
           name="rules"
@@ -246,7 +246,7 @@ const PropertyForm = () => {
           )}
         />
 
-        {/* Conta PIX */}
+        {/* PIX Account */}
         <FormField
           control={form.control}
           name="pixAccount"
@@ -283,7 +283,7 @@ const PropertyForm = () => {
           )}
         />
 
-        {/* Aceitar termos */}
+        {/* Accept terms */}
         <FormField
           control={form.control}
           name="acceptTerms"
