@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, MapPin, X } from 'lucide-react';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
+import { useToast } from '@/hooks/use-toast';
 
 const SearchBar: React.FC = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const { isLoaded } = useGoogleMaps({ libraries: ['places'] });
   const [searchTerm, setSearchTerm] = useState('');
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
@@ -20,6 +22,16 @@ const SearchBar: React.FC = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!searchTerm.trim()) {
+      toast({
+        title: "Digite um endereço",
+        description: "Por favor, informe um endereço ou local para buscar",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     onPlaceChanged();
   };
 
@@ -33,21 +45,35 @@ const SearchBar: React.FC = () => {
 
   const onPlaceChanged = () => {
     if (!autocomplete) {
-      console.warn('Autocomplete is not loaded yet!');
+      toast({
+        title: "Serviço indisponível",
+        description: "O serviço de busca de endereços não está disponível no momento",
+        variant: "destructive",
+      });
       return;
     }
 
     const place = autocomplete.getPlace();
     
     if (!place || !place.geometry || !place.geometry.location) {
-      console.warn('No place selected or invalid place');
+      toast({
+        title: "Endereço não encontrado",
+        description: "Não foi possível localizar o endereço informado",
+        variant: "destructive",
+      });
       return;
     }
 
     const lat = place.geometry.location.lat();
     const lng = place.geometry.location.lng();
 
-    console.log(`Navigating to: /spaces?lat=${lat}&lng=${lng}`);
+    console.log(`Navegando para: /spaces?lat=${lat}&lng=${lng}`);
+    
+    toast({
+      title: "Buscando vagas",
+      description: "Procurando vagas próximas ao endereço informado",
+    });
+    
     navigate(`/spaces?lat=${lat}&lng=${lng}`);
   };
 

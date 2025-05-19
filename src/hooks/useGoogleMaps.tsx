@@ -7,9 +7,13 @@ interface UseGoogleMapsOptions {
   libraries?: LoadScriptProps['libraries'];
 }
 
+// Make sure we use consistent libraries across all usages of this hook
+const defaultLibraries: LoadScriptProps['libraries'] = ['places', 'geometry'];
+
 export function useGoogleMaps(options: UseGoogleMapsOptions = {}) {
   const apiKey = options.apiKey || import.meta.env.VITE_GMAPS_KEY || '';
-  const libraries = options.libraries || ['places', 'geometry'];
+  // Ensure we always use the same set of libraries to avoid the "Loader must not be called again with different options" error
+  const libraries = defaultLibraries;
   const [loadError, setLoadError] = useState<boolean>(false);
 
   const { isLoaded, loadError: apiLoadError } = useJsApiLoader({
