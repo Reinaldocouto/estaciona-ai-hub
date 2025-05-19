@@ -4,7 +4,7 @@ import { Autocomplete } from '@react-google-maps/api';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, MapPin } from 'lucide-react';
+import { Search, MapPin, X } from 'lucide-react';
 import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 
 const SearchBar: React.FC = () => {
@@ -21,6 +21,14 @@ const SearchBar: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     onPlaceChanged();
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+    if (inputRef.current) {
+      inputRef.current.value = '';
+      inputRef.current.focus();
+    }
   };
 
   const onPlaceChanged = () => {
@@ -69,6 +77,17 @@ const SearchBar: React.FC = () => {
             disabled
           />
         )}
+        
+        {searchTerm && (
+          <button
+            type="button"
+            onClick={clearSearch}
+            className="absolute right-20 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
+        
         <Button 
           type="submit" 
           className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-full bg-primary hover:bg-primary-dark px-6"

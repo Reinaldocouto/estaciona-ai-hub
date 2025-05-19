@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Search, Filter, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Filter, ChevronDown, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -10,12 +10,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 
 interface FilterBarProps {
   onFilterChange: (filters: FilterState) => void;
 }
 
-interface FilterState {
+export interface FilterState {
   search: string;
   priceRange: number; // Alterado de [number, number] para number para simplificar
   features: string[];
@@ -23,6 +24,7 @@ interface FilterState {
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
+  const { toast } = useToast();
   const [filters, setFilters] = useState<FilterState>({
     search: '',
     priceRange: 100, // Valor máximo inicial
@@ -40,13 +42,17 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
     'Acessível'
   ];
 
+  // Efeito para chamar onFilterChange sempre que os filtros mudarem
+  useEffect(() => {
+    onFilterChange(filters);
+  }, [filters, onFilterChange]);
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newFilters = {
       ...filters,
       search: event.target.value,
     };
     setFilters(newFilters);
-    onFilterChange(newFilters);
   };
 
   const toggleFeature = (feature: string) => {
@@ -59,7 +65,20 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
       features: newFeatures,
     };
     setFilters(newFilters);
-    onFilterChange(newFilters);
+  };
+
+  const resetFilters = () => {
+    const newFilters = {
+      search: '',
+      priceRange: 100,
+      features: [],
+      availability: true,
+    };
+    setFilters(newFilters);
+    toast({
+      title: "Filtros resetados",
+      description: "Os filtros foram limpos com sucesso",
+    });
   };
 
   return (
@@ -108,7 +127,6 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
                             priceRange: parseInt(e.target.value),
                           };
                           setFilters(newFilters);
-                          onFilterChange(newFilters);
                         }}
                         className="flex-grow"
                       />
@@ -147,7 +165,6 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
                             availability: e.target.checked,
                           };
                           setFilters(newFilters);
-                          onFilterChange(newFilters);
                         }}
                         className="mr-2"
                       />
@@ -157,6 +174,15 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
+            
+            <Button 
+              variant="outline"
+              onClick={resetFilters}
+              title="Limpar filtros"
+              className="px-3"
+            >
+              <RotateCcw className="h-4 w-4" />
+            </Button>
             
             <Button className="bg-primary hover:bg-primary-dark">
               Buscar
@@ -171,9 +197,11 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
               <Badge
                 key={feature}
                 variant="secondary"
-                className="bg-gray-100 text-gray-700"
+                className="bg-gray-100 text-gray-700 flex items-center gap-1 cursor-pointer"
+                onClick={() => toggleFeature(feature)}
               >
-                {feature} ×
+                {feature} 
+                <span className="font-bold">×</span>
               </Badge>
             ))}
             {filters.features.length > 0 && (
@@ -184,7 +212,6 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
                     features: [],
                   };
                   setFilters(newFilters);
-                  onFilterChange(newFilters);
                 }}
                 className="text-sm text-primary hover:underline"
               >

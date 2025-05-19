@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SpacesHeader from './SpacesHeader';
 import SpacesList from './SpacesList';
@@ -8,22 +8,22 @@ import Map from '@/components/ui-custom/Map';
 import FilterBar from '@/components/ui-custom/FilterBar';
 import { SpaceProps } from '@/components/ui-custom/SpaceCard';
 import { fetchSpaces } from '@/api/spaces';
-
-/* -------------------------------------------------------------------------- */
-/* Tipagem dos filtros  ----------------------------------------------------- */
-/* Obtém o tipo que <FilterBar /> realmente entrega, evitando duplicação.    */
-type FilterBarProps = React.ComponentProps<typeof FilterBar>;
-type FilterState = Parameters<
-  NonNullable<FilterBarProps['onFilterChange']>
->[0];
-
-/* -------------------------------------------------------------------------- */
+import { useToast } from '@/hooks/use-toast';
+import { FilterState } from '@/components/ui-custom/FilterBar';
 
 const SpacesContainer: React.FC = () => {
+  const { toast } = useToast();
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [loading, setLoading] = useState(false);
   const [spaces, setSpaces] = useState<SpaceProps[]>([]);
+  const [filteredSpaces, setFilteredSpaces] = useState<SpaceProps[]>([]);
   const [searchParams] = useSearchParams();
+  const [filters, setFilters] = useState<FilterState>({
+    search: '',
+    priceRange: 100,
+    features: [],
+    availability: true,
+  });
   
   // Get search params for map center
   const searchLat = searchParams.get('lat');
@@ -43,37 +43,90 @@ const SpacesContainer: React.FC = () => {
       fetchSpaces(parseFloat(searchLat), parseFloat(searchLng), 2)
         .then((fetchedSpaces) => {
           setSpaces(fetchedSpaces);
+          setFilteredSpaces(fetchedSpaces);
           setLoading(false);
           
           // Auto-switch to map view when coming from search
           setViewMode('map');
+          
+          toast({
+            title: `${fetchedSpaces.length} vagas encontradas`,
+            description: "Resultados para a localização pesquisada",
+          });
         })
         .catch((error) => {
           console.error("Error fetching spaces:", error);
           setLoading(false);
+          
+          toast({
+            title: "Erro ao buscar vagas",
+            description: "Não foi possível encontrar vagas nesta localização. Tente novamente.",
+            variant: "destructive",
+          });
         });
     } else {
       // If no specific location, fetch all spaces
       fetchSpaces(-23.5505, -46.6333, 5) // Default to São Paulo center
         .then((fetchedSpaces) => {
           setSpaces(fetchedSpaces);
+          setFilteredSpaces(fetchedSpaces);
           setLoading(false);
         })
         .catch((error) => {
           console.error("Error fetching spaces:", error);
           setLoading(false);
+          
+          toast({
+            title: "Erro ao buscar vagas",
+            description: "Não foi possível carregar as vagas. Tente novamente mais tarde.",
+            variant: "destructive",
+          });
         });
     }
-  }, [searchLat, searchLng]);
+  }, [searchLat, searchLng, toast]);
 
-  /* --------------------------- Filtro aplicado --------------------------- */
-  const handleFilterChange = (filters: FilterState) => {
-    console.log('Filtros alterados:', filters);
-    setLoading(true);
+  /* --------------------------- Aplicação de filtros --------------------------- */
+  // Filtrar espaços com base nos filtros definidos
+  useEffect(() => {
+    if (spaces.length === 0) return;
     
-    // Here we would fetch filtered spaces
-    // For now, we'll just simulate a delay
-    setTimeout(() => setLoading(false), 800);
+    let filtered = [...spaces];
+    
+    // Filtrar por termo de busca
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (space) => 
+          space.title.toLowerCase().includes(searchLower) || 
+          space.address.toLowerCase().includes(searchLower) ||
+          (space.features && space.features.some(f => f.toLowerCase().includes(searchLower)))
+      );
+    }
+    
+    // Filtrar por preço
+    filtered = filtered.filter(space => space.price <= filters.priceRange);
+    
+    // Filtrar por características
+    if (filters.features.length > 0) {
+      filtered = filtered.filter(space => 
+        space.features && 
+        filters.features.every(feature => 
+          space.features?.includes(feature)
+        )
+      );
+    }
+    
+    // Filtrar por disponibilidade
+    if (filters.availability) {
+      filtered = filtered.filter(space => space.available !== false);
+    }
+    
+    setFilteredSpaces(filtered);
+  }, [filters, spaces]);
+
+  const handleFilterChange = (newFilters: FilterState) => {
+    console.log('Filtros alterados:', newFilters);
+    setFilters(newFilters);
   };
 
   /* ------------------------ Toggle list / map ---------------------------- */
@@ -89,7 +142,7 @@ const SpacesContainer: React.FC = () => {
       <FilterBar onFilterChange={handleFilterChange} />
       
       <SpacesHeader 
-        spacesCount={spaces.length} 
+        spacesCount={filteredSpaces.length} 
         viewMode={viewMode} 
         toggleViewMode={toggleViewMode} 
         showLocationText={!!searchLat && !!searchLng}
@@ -98,11 +151,11 @@ const SpacesContainer: React.FC = () => {
       {loading ? (
         <SpacesLoading />
       ) : viewMode === 'list' ? (
-        <SpacesList spaces={spaces} />
+        <SpacesList spaces={filteredSpaces} />
       ) : (
         <div className="h-[calc(100vh-220px)]">
           <Map
-            spaces={spaces}
+            spaces={filteredSpaces}
             className="h-full"
             onSelect={handleSpaceSelect}
             center={mapCenter}
