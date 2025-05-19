@@ -9,8 +9,8 @@ export const propertyFormSchema = z.object({
   availability: z.any().optional(),
   rules: z.string().optional(),
   pixAccount: z.string().min(11, { message: 'CPF/CNPJ inválido' }),
-  acceptTerms: z.literal(true, {
-    errorMap: () => ({ message: 'Você deve aceitar os termos' }),
+  acceptTerms: z.boolean().refine(val => val === true, {
+    message: 'Você deve aceitar os termos',
   }),
 });
 
