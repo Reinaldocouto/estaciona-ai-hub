@@ -147,7 +147,7 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
   
   // In a real implementation, this would call your backend API
   // For now, we'll just return mock data and simulate distance calculation
-  const mockSpaces = [
+  const mockSpaces: SpaceProps[] = [
     {
       id: '1',
       title: 'Estacionamento Seguro na Paulista',
@@ -162,7 +162,7 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       available: true,
       lat: -23.5613,
       lng: -46.6558,
-      type: 'Médio',
+      type: 'Médio', // Fixed: Using one of the allowed literal types
     },
     {
       id: '2',
@@ -178,7 +178,7 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       available: true,
       lat: -23.5651,
       lng: -46.6911,
-      type: 'Pequeno',
+      type: 'Pequeno', // Fixed: Using one of the allowed literal types
     },
     {
       id: '3',
@@ -194,7 +194,7 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       available: true,
       lat: -23.5469,
       lng: -46.6389,
-      type: 'Médio',
+      type: 'Médio', // Fixed: Using one of the allowed literal types
     },
     {
       id: '4',
@@ -210,7 +210,7 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       available: true,
       lat: -23.5557,
       lng: -46.6859,
-      type: 'SUV',
+      type: 'SUV', // Fixed: Using one of the allowed literal types
     },
   ];
   
