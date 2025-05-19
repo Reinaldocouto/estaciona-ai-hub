@@ -15,11 +15,24 @@ import {
 
 interface SpaceInfoTabsProps {
   space: SpaceProps;
+  activeTab?: string;
+  setActiveTab?: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const SpaceInfoTabs: React.FC<SpaceInfoTabsProps> = ({ space }) => {
+const SpaceInfoTabs: React.FC<SpaceInfoTabsProps> = ({ space, activeTab = "details", setActiveTab }) => {
+  const handleTabChange = (value: string) => {
+    if (setActiveTab) {
+      setActiveTab(value);
+    }
+  };
+
   return (
-    <Tabs defaultValue="details" className="mt-6">
+    <Tabs 
+      defaultValue="details" 
+      value={activeTab}
+      onValueChange={handleTabChange}
+      className="mt-6"
+    >
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="details">
           <InfoIcon className="mr-2 h-4 w-4" />
