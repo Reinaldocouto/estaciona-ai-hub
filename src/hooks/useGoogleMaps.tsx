@@ -2,14 +2,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useJsApiLoader, LoadScriptProps } from '@react-google-maps/api';
 
-const libraries: LoadScriptProps['libraries'] = ['places', 'geometry'];
-
 interface UseGoogleMapsOptions {
   apiKey?: string;
+  libraries?: LoadScriptProps['libraries'];
 }
 
 export function useGoogleMaps(options: UseGoogleMapsOptions = {}) {
   const apiKey = options.apiKey || import.meta.env.VITE_GMAPS_KEY || '';
+  const libraries = options.libraries || ['places', 'geometry'];
   const [loadError, setLoadError] = useState<boolean>(false);
 
   const { isLoaded, loadError: apiLoadError } = useJsApiLoader({

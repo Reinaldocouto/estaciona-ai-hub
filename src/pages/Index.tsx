@@ -1,16 +1,13 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Search, MapPin, Car, Clock, Shield, Star, Zap } from 'lucide-react';
 import SpaceCard, { SpaceProps } from '@/components/ui-custom/SpaceCard';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import SearchBar from '@/components/search/SearchBar';
 
 const Index = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  
   // Dados fictícios para as vagas em destaque
   const featuredSpaces: SpaceProps[] = [
     {
@@ -48,12 +45,6 @@ const Index = () => {
     },
   ];
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Em um cenário real, aqui redirecionaria para a página de resultados
-    console.log('Busca por:', searchTerm);
-  };
-
   return (
     <>
       <Navbar />
@@ -78,24 +69,8 @@ const Index = () => {
               O jeito mais fácil de encontrar e reservar vagas de estacionamento em sua cidade
             </p>
             
-            <form onSubmit={handleSearchSubmit} className="max-w-md mx-auto">
-              <div className="relative">
-                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Digite um endereço ou local"
-                  className="pl-12 pr-24 py-6 rounded-full text-gray-200"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <Button 
-                  type="submit" 
-                  className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-full bg-primary hover:bg-primary-dark px-6"
-                >
-                  <Search className="w-4 h-4 mr-2" /> Buscar
-                </Button>
-              </div>
-            </form>
+            {/* Replaced the old search form with our new SearchBar component */}
+            <SearchBar />
           </div>
         </section>
         

@@ -140,3 +140,83 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
   
   return space;
 }
+
+// New function to fetch spaces near a location
+export async function fetchSpaces(lat: number, lng: number, radius: number = 2): Promise<SpaceProps[]> {
+  console.log(`Fetching spaces near ${lat}, ${lng} with ${radius}km radius`);
+  
+  // In a real implementation, this would call your backend API
+  // For now, we'll just return mock data and simulate distance calculation
+  const mockSpaces = [
+    {
+      id: '1',
+      title: 'Estacionamento Seguro na Paulista',
+      address: 'Av. Paulista, 1000 - São Paulo',
+      price: 15,
+      rating: 4.8,
+      reviewCount: 125,
+      imageUrl:
+        'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop',
+      distance: '300m',
+      features: ['Coberto', 'Segurança 24h', 'Carregador EV'],
+      available: true,
+      lat: -23.5613,
+      lng: -46.6558,
+      type: 'Médio',
+    },
+    {
+      id: '2',
+      title: 'Vaga Residencial em Pinheiros',
+      address: 'R. dos Pinheiros, 275 - São Paulo',
+      price: 10,
+      rating: 4.5,
+      reviewCount: 87,
+      imageUrl:
+        'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=1470&auto=format&fit=crop',
+      distance: '1.2km',
+      features: ['Privativo', 'Coberto'],
+      available: true,
+      lat: -23.5651,
+      lng: -46.6911,
+      type: 'Pequeno',
+    },
+    {
+      id: '3',
+      title: 'Estacionamento 24h Centro',
+      address: 'R. 7 de Abril, 154 - São Paulo',
+      price: 12,
+      rating: 4.2,
+      reviewCount: 63,
+      imageUrl:
+        'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?q=80&w=1470&auto=format&fit=crop',
+      distance: '2.5km',
+      features: ['24h', 'Segurança'],
+      available: true,
+      lat: -23.5469,
+      lng: -46.6389,
+      type: 'Médio',
+    },
+    {
+      id: '4',
+      title: 'Vaga Coberta Vila Madalena',
+      address: 'R. Fradique Coutinho, 320 - São Paulo',
+      price: 18,
+      rating: 4.7,
+      reviewCount: 42,
+      imageUrl:
+        'https://images.unsplash.com/photo-1590674899484-13e8dc049dc9?q=80&w=1470&auto=format&fit=crop',
+      distance: '3.1km',
+      features: ['Coberto', 'Privativo'],
+      available: true,
+      lat: -23.5557,
+      lng: -46.6859,
+      type: 'SUV',
+    },
+  ];
+  
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  // In a real implementation, we would filter by distance calculation
+  return mockSpaces;
+}

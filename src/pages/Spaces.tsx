@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import SpaceCard, { SpaceProps } from '@/components/ui-custom/SpaceCard';
@@ -22,9 +22,17 @@ type FilterState = Parameters<
 const Spaces = () => {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+  
+  // Get search params for map center
+  const searchLat = searchParams.get('lat');
+  const searchLng = searchParams.get('lng');
+  const mapCenter = searchLat && searchLng 
+    ? { lat: parseFloat(searchLat), lng: parseFloat(searchLng) } 
+    : undefined;
 
   /* --------------------- Dados mockados (com coordenadas) ---------------- */
-  const [spaces] = useState<SpaceProps[]>([
+  const [spaces, setSpaces] = useState<SpaceProps[]>([
     {
       id: '1',
       title: 'Estacionamento Seguro na Paulista',
@@ -123,6 +131,29 @@ const Spaces = () => {
     },
   ]);
 
+  // Handle search params for spaces
+  useEffect(() => {
+    if (searchLat && searchLng) {
+      setLoading(true);
+      
+      // Simulate API request with the search coordinates
+      console.log(`Searching spaces near: ${searchLat}, ${searchLng}`);
+      
+      // In a real implementation, we would call an API like:
+      // fetchSpaces(parseFloat(searchLat), parseFloat(searchLng), 2) // 2km radius
+      
+      // For now, let's simulate an API delay and use our mock data
+      setTimeout(() => {
+        // We would filter spaces by distance to the search location
+        // Here we're just using the mock data as is
+        setLoading(false);
+        
+        // Auto-switch to map view when coming from search
+        setViewMode('map');
+      }, 800);
+    }
+  }, [searchLat, searchLng]);
+
   /* --------------------------- Filtro aplicado --------------------------- */
   const handleFilterChange = (filters: FilterState) => {
     console.log('Filtros alterados:', filters);
@@ -153,6 +184,11 @@ const Spaces = () => {
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">
               {spaces.length} vagas disponíveis
+              {searchLat && searchLng && (
+                <span className="text-sm font-normal text-gray-500 block">
+                  Resultados para a localização pesquisada
+                </span>
+              )}
             </h1>
 
             <Button
@@ -192,6 +228,8 @@ const Spaces = () => {
                 spaces={spaces}
                 className="h-full"
                 onSelect={handleSpaceSelect}
+                center={mapCenter}
+                zoom={mapCenter ? 14 : undefined}
               />
             </div>
           )}
