@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   CheckCircle
 } from 'lucide-react';
+import LocationMap from '@/components/maps/LocationMap';
 
 interface SpaceInfoTabsProps {
   space: SpaceProps;
@@ -159,12 +160,19 @@ const SpaceInfoTabs: React.FC<SpaceInfoTabsProps> = ({ space, activeTab = "detai
       </TabsContent>
       
       <TabsContent value="location" className="mt-4">
-        <div className="aspect-video bg-gray-200 rounded-md flex items-center justify-center">
-          <p className="text-gray-500">Mapa de localização</p>
-        </div>
-        <div className="mt-4 p-4">
+        <div className="p-4">
           <h3 className="text-lg font-semibold mb-2">Endereço</h3>
-          <p className="text-gray-600">{space.address}</p>
+          <p className="text-gray-600 mb-4">{space.address}</p>
+          
+          {/* Integrated LocationMap component */}
+          {space.lat && space.lng && (
+            <LocationMap
+              lat={space.lat}
+              lng={space.lng}
+              title={space.title}
+              address={space.address}
+            />
+          )}
           
           <h3 className="text-lg font-semibold mt-4 mb-2">Como chegar</h3>
           <p className="text-gray-600">
