@@ -47,7 +47,46 @@ const SearchBar: React.FC = () => {
       return;
     }
     
+    // Se não houver autocomplete, tente usar geocoding diretamente
+    if (!autocomplete || !isLoaded) {
+      handleDirectSearch();
+      return;
+    }
+    
     onPlaceChanged();
+  };
+
+  // Função para busca direta usando o termo digitado quando o autocomplete falha
+  const handleDirectSearch = async () => {
+    const { getGeocodeForAddress } = useGoogleMaps();
+    
+    toast({
+      title: "Buscando localização",
+      description: "Procurando pelo endereço informado...",
+    });
+    
+    try {
+      // Tenta obter as coordenadas do endereço digitado
+      const location = await getGeocodeForAddress(searchTerm);
+      
+      if (location) {
+        const { lat, lng } = location;
+        navigate(`/spaces?lat=${lat}&lng=${lng}&q=${encodeURIComponent(searchTerm)}`);
+      } else {
+        toast({
+          title: "Endereço não encontrado",
+          description: "Não foi possível localizar o endereço informado",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao buscar coordenadas:', error);
+      toast({
+        title: "Erro na busca",
+        description: "Ocorreu um erro ao processar sua busca",
+        variant: "destructive",
+      });
+    }
   };
 
   const clearSearch = () => {
@@ -60,22 +99,16 @@ const SearchBar: React.FC = () => {
 
   const onPlaceChanged = () => {
     if (!autocomplete) {
-      toast({
-        title: "Serviço indisponível",
-        description: "O serviço de busca de endereços não está disponível no momento",
-        variant: "destructive",
-      });
+      // Se não tem autocomplete, tenta busca direta
+      handleDirectSearch();
       return;
     }
 
     const place = autocomplete.getPlace();
     
+    // Se não tem geometria, tenta busca direta
     if (!place || !place.geometry || !place.geometry.location) {
-      toast({
-        title: "Endereço não encontrado",
-        description: "Não foi possível localizar o endereço informado",
-        variant: "destructive",
-      });
+      handleDirectSearch();
       return;
     }
 
