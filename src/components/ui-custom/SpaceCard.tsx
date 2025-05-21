@@ -62,28 +62,39 @@ interface SpaceCardProps {
 }
 
 const SpaceCard: React.FC<SpaceCardProps> = ({ space }) => {
+  // Set default image if not provided
+  const imageUrl = space.imageUrl || 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop';
+  
   return (
-    <Card className="glass-effect">
+    <Card className="glass-effect transition-transform hover:shadow-lg hover:-translate-y-1">
       <CardContent className="p-4">
         <div className="relative">
-          {space.imageUrl && (
-            <img
-              src={space.imageUrl}
-              alt={space.title}
-              className="rounded-md w-full h-40 object-cover mb-3"
-            />
-          )}
+          <img
+            src={imageUrl}
+            alt={space.title}
+            className="rounded-md w-full h-40 object-cover mb-3"
+          />
+          
           {!space.available && (
             <Badge className="absolute top-2 left-2 bg-red-500 text-white">
               Indisponível
             </Badge>
           )}
+          
+          {space.type && (
+            <Badge className="absolute top-2 right-2 bg-primary">
+              {space.type}
+            </Badge>
+          )}
         </div>
+        
         <h3 className="text-lg font-semibold mb-2 line-clamp-1">{space.title}</h3>
+        
         <div className="flex items-center text-sm text-gray-500 mb-2">
-          <MapPin className="h-4 w-4 mr-1" />
+          <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
           <span className="line-clamp-1">{space.address}</span>
         </div>
+        
         <div className="flex items-center justify-between mb-3">
           <div>
             <span className="text-xl font-bold text-primary">R$ {space.price}</span>
@@ -93,25 +104,30 @@ const SpaceCard: React.FC<SpaceCardProps> = ({ space }) => {
             <div className="flex items-center">
               <Star className="h-5 w-5 text-yellow-500 mr-1" />
               <span className="font-medium">{space.rating}</span>
-              <span className="text-gray-500">({space.reviewCount})</span>
+              <span className="text-gray-500 ml-1">({space.reviewCount})</span>
             </div>
           )}
         </div>
-        {space.features && (
+        
+        {space.features && space.features.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
-            {space.features.map((feature, index) => (
-              <Badge key={index} variant="secondary">{feature}</Badge>
+            {space.features.slice(0, 3).map((feature, index) => (
+              <Badge key={index} variant="secondary" className="text-xs">{feature}</Badge>
             ))}
+            {space.features.length > 3 && (
+              <Badge variant="outline" className="text-xs">+{space.features.length - 3}</Badge>
+            )}
           </div>
         )}
+        
         {space.distance && (
           <div className="text-sm text-gray-500">
             Distância: {space.distance}
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex justify-between items-center p-4">
-        <Button asChild>
+      <CardFooter className="flex justify-between items-center p-4 pt-0">
+        <Button asChild className="w-full">
           <Link to={`/spaces/${space.id}`}>Ver detalhes</Link>
         </Button>
       </CardFooter>

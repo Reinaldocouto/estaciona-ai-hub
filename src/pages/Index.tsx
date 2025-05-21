@@ -9,7 +9,7 @@ import Footer from '@/components/layout/Footer';
 import SearchBar from '@/components/search/SearchBar';
 
 const Index = () => {
-  // Dados fictícios para as vagas em destaque
+  // Dados fictícios para as vagas em destaque - mostrando 6 vagas agora
   const featuredSpaces: SpaceProps[] = [
     {
       id: '1',
@@ -42,6 +42,39 @@ const Index = () => {
       reviewCount: 63,
       imageUrl: 'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?q=80&w=1470&auto=format&fit=crop',
       features: ['24h', 'Segurança'],
+      available: true,
+    },
+    {
+      id: '6',
+      title: 'Vaga Privativa Jardins',
+      address: 'R. Oscar Freire, 725 - São Paulo',
+      price: 25,
+      rating: 4.9,
+      reviewCount: 36,
+      imageUrl: 'https://images.unsplash.com/photo-1621819783320-147734de70f8?q=80&w=1472&auto=format&fit=crop',
+      features: ['Premium', 'Segurança', 'Câmeras'],
+      available: true,
+    },
+    {
+      id: '9',
+      title: 'Estacionamento Shopping Morumbi',
+      address: 'Av. Roque Petroni Júnior, 1089 - São Paulo',
+      price: 14,
+      rating: 4.5,
+      reviewCount: 167,
+      imageUrl: 'https://images.unsplash.com/photo-1545179605-1c19deb492d2?q=80&w=1470&auto=format&fit=crop',
+      features: ['Shopping', 'Segurança', 'Coberto'],
+      available: true,
+    },
+    {
+      id: '19',
+      title: 'Estacionamento Parque Ibirapuera',
+      address: 'Av. Pedro Álvares Cabral - São Paulo',
+      price: 12,
+      rating: 4.6,
+      reviewCount: 225,
+      imageUrl: 'https://images.unsplash.com/photo-1588266458641-1c30f0a654e0?q=80&w=1476&auto=format&fit=crop',
+      features: ['Parque', 'Lazer', 'Segurança'],
       available: true,
     },
   ];
