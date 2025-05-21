@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SpacesHeader from './SpacesHeader';
 import SpacesList from './SpacesList';
@@ -28,6 +28,7 @@ const SpacesContainer: React.FC = () => {
   // Get search params for map center
   const searchLat = searchParams.get('lat');
   const searchLng = searchParams.get('lng');
+  const searchQuery = searchParams.get('q') || '';
   const mapCenter = searchLat && searchLng 
     ? { lat: parseFloat(searchLat), lng: parseFloat(searchLng) } 
     : undefined;
@@ -36,8 +37,16 @@ const SpacesContainer: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     
+    // Update search filter with the query from URL if available
+    if (searchQuery && filters.search !== searchQuery) {
+      setFilters(prev => ({
+        ...prev,
+        search: searchQuery
+      }));
+    }
+    
     if (searchLat && searchLng) {
-      console.log(`Searching spaces near: ${searchLat}, ${searchLng}`);
+      console.log(`Searching spaces near: ${searchLat}, ${searchLng} with query: ${searchQuery}`);
       
       // Call the API to fetch spaces near the location
       fetchSpaces(parseFloat(searchLat), parseFloat(searchLng), 2)
@@ -83,7 +92,7 @@ const SpacesContainer: React.FC = () => {
           });
         });
     }
-  }, [searchLat, searchLng, toast]);
+  }, [searchLat, searchLng, searchQuery, toast]);
 
   /* --------------------------- Aplicação de filtros --------------------------- */
   // Filtrar espaços com base nos filtros definidos
@@ -139,7 +148,10 @@ const SpacesContainer: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 pt-6">
-      <FilterBar onFilterChange={handleFilterChange} />
+      <FilterBar 
+        onFilterChange={handleFilterChange} 
+        initialSearch={searchQuery}
+      />
       
       <SpacesHeader 
         spacesCount={filteredSpaces.length} 
