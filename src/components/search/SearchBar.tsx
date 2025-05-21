@@ -101,7 +101,7 @@ const SearchBar: React.FC = () => {
   return (
     <form onSubmit={handleSearch} className="relative max-w-md w-full mx-auto">
       <div className="relative">
-        <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         {isLoaded ? (
           <Autocomplete
             onLoad={onLoad}
@@ -115,7 +115,7 @@ const SearchBar: React.FC = () => {
             <Input
               type="text"
               placeholder="Digite um endereço ou local"
-              className="pl-12 pr-24 py-6 rounded-full"
+              className="pl-10 pr-24 py-6 h-14 rounded-lg"
               value={searchTerm}
               onChange={handleInputChange}
               ref={inputRef}
@@ -126,7 +126,7 @@ const SearchBar: React.FC = () => {
           <Input
             type="text"
             placeholder={loadError ? "Erro ao carregar" : "Carregando..."}
-            className="pl-12 pr-24 py-6 rounded-full"
+            className="pl-10 pr-24 py-6 h-14 rounded-lg"
             disabled
           />
         )}
@@ -144,7 +144,7 @@ const SearchBar: React.FC = () => {
         
         <Button 
           type="submit" 
-          className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-full bg-primary hover:bg-primary-dark px-6"
+          className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-md bg-primary hover:bg-primary-dark px-6 h-12"
           aria-label="Buscar"
         >
           <Search className="w-4 h-4 mr-2" /> Buscar
