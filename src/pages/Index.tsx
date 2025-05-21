@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -69,8 +70,9 @@ const Index = () => {
               O jeito mais fácil de encontrar e reservar vagas de estacionamento em sua cidade
             </p>
             
-            {/* Replaced the old search form with our new SearchBar component */}
-            <SearchBar />
+            <div className="max-w-xl mx-auto">
+              <SearchBar />
+            </div>
           </div>
         </section>
         
