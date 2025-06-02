@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Star, Check, Crown, Zap, MapPin, Clock } from 'lucide-react';
+import { Star, Check, Crown, Zap, MapPin, Clock, RefreshCw } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const Premium = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const { user, isPremium, premiumUntil, checkSubscription } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -25,7 +26,10 @@ const Premium = () => {
         title: "Assinatura Premium ativada!",
         description: "Bem-vindo ao Estaciona Aí Premium! Aproveite todos os benefícios.",
       });
-      checkSubscription();
+      // Force refresh subscription status
+      setTimeout(() => {
+        checkSubscription();
+      }, 2000);
       navigate('/premium', { replace: true });
     } else if (searchParams.get('canceled')) {
       toast({
@@ -49,20 +53,51 @@ const Premium = () => {
 
     setIsLoading(true);
     try {
+      console.log('Creating checkout session for user:', user.id);
+      
       const { data, error } = await supabase.functions.invoke('create-checkout');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Checkout error:', error);
+        throw new Error(error.message || 'Erro ao processar pagamento');
+      }
       
-      // Open Stripe checkout in new tab
-      window.open(data.url, '_blank');
+      if (!data?.url) {
+        throw new Error('URL de pagamento não recebida');
+      }
+      
+      console.log('Redirecting to checkout:', data.url);
+      // Redirect to Stripe checkout
+      window.location.href = data.url;
     } catch (error: any) {
+      console.error('Payment error:', error);
       toast({
         title: "Erro ao processar pagamento",
-        description: error.message,
+        description: error.message || "Tente novamente em alguns instantes.",
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleRefreshStatus = async () => {
+    setIsRefreshing(true);
+    try {
+      await checkSubscription();
+      toast({
+        title: "Status atualizado",
+        description: "Status da assinatura verificado com sucesso.",
+      });
+    } catch (error) {
+      console.error('Refresh error:', error);
+      toast({
+        title: "Erro ao verificar status",
+        description: "Tente novamente em alguns instantes.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -135,12 +170,21 @@ const Premium = () => {
                     </div>
                   ))}
                 </div>
-                <Button 
-                  className="w-full" 
-                  onClick={() => navigate('/spaces')}
-                >
-                  Encontrar Vagas Premium
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    className="flex-1" 
+                    onClick={() => navigate('/spaces')}
+                  >
+                    Encontrar Vagas Premium
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleRefreshStatus}
+                    disabled={isRefreshing}
+                  >
+                    <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ) : (
@@ -185,20 +229,35 @@ const Premium = () => {
                     ))}
                   </ul>
                   
-                  <Button 
-                    className="w-full bg-gradient-to-r from-primary to-yellow-600 hover:from-primary/90 hover:to-yellow-600/90" 
-                    size="lg"
-                    onClick={handleUpgrade}
-                    disabled={isLoading || !user}
-                  >
-                    {isLoading ? 'Processando...' : 'Assinar Premium'}
-                  </Button>
-                  
-                  {!user && (
-                    <p className="text-xs text-center text-gray-600 mt-2">
-                      Faça login para assinar o Premium
-                    </p>
-                  )}
+                  <div className="space-y-2">
+                    <Button 
+                      className="w-full bg-gradient-to-r from-primary to-yellow-600 hover:from-primary/90 hover:to-yellow-600/90" 
+                      size="lg"
+                      onClick={handleUpgrade}
+                      disabled={isLoading || !user}
+                    >
+                      {isLoading ? 'Processando...' : 'Assinar Premium'}
+                    </Button>
+                    
+                    {!user && (
+                      <p className="text-xs text-center text-gray-600">
+                        Faça login para assinar o Premium
+                      </p>
+                    )}
+                    
+                    {user && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="w-full"
+                        onClick={handleRefreshStatus}
+                        disabled={isRefreshing}
+                      >
+                        <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                        Verificar Status da Assinatura
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </>

@@ -34,16 +34,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkSubscription = async () => {
     try {
-      if (!user) return;
+      if (!user) {
+        setIsPremium(false);
+        setPremiumUntil(null);
+        return;
+      }
+      
+      console.log('Checking subscription for user:', user.id);
       
       const { data, error } = await supabase.functions.invoke('check-subscription');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error checking subscription:', error);
+        // Don't throw error, just log it and continue with default values
+        setIsPremium(false);
+        setPremiumUntil(null);
+        return;
+      }
       
-      setIsPremium(data.isPremium || false);
-      setPremiumUntil(data.premiumUntil || null);
+      console.log('Subscription check result:', data);
+      setIsPremium(data?.isPremium || false);
+      setPremiumUntil(data?.premiumUntil || null);
     } catch (error) {
       console.error('Error checking subscription:', error);
+      setIsPremium(false);
+      setPremiumUntil(null);
     }
   };
 
@@ -64,6 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: "Verifique seu email para confirmar a conta.",
       });
     } catch (error: any) {
+      console.error('Sign up error:', error);
       toast({
         title: "Erro ao criar conta",
         description: error.message,
@@ -86,6 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: "Login realizado com sucesso!",
       });
     } catch (error: any) {
+      console.error('Sign in error:', error);
       toast({
         title: "Erro ao fazer login",
         description: error.message,
@@ -107,6 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: "Logout realizado com sucesso!",
       });
     } catch (error: any) {
+      console.error('Sign out error:', error);
       toast({
         title: "Erro ao fazer logout",
         description: error.message,
@@ -125,11 +143,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.id);
         setUser(session?.user ?? null);
         setLoading(false);
         
         if (session?.user) {
-          await checkSubscription();
+          // Small delay to ensure user is properly set
+          setTimeout(() => {
+            checkSubscription();
+          }, 1000);
         } else {
           setIsPremium(false);
           setPremiumUntil(null);
@@ -142,10 +164,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Check subscription when user changes
   useEffect(() => {
-    if (user) {
+    if (user && !loading) {
       checkSubscription();
     }
-  }, [user]);
+  }, [user, loading]);
 
   const value = {
     user,

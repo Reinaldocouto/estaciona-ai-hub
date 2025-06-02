@@ -14,26 +14,71 @@ serve(async (req) => {
   }
 
   try {
+    console.log("Starting checkout creation...");
+    
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) {
+      console.error("STRIPE_SECRET_KEY not configured");
+      return new Response(JSON.stringify({ 
+        error: "Stripe não configurado. Entre em contato com o suporte." 
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      });
+    }
+
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ 
+        error: "Usuário não autenticado" 
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401,
+      });
+    }
+
     const token = authHeader.replace("Bearer ", "");
     const { data } = await supabaseClient.auth.getUser(token);
     const user = data.user;
     
     if (!user?.email) {
-      throw new Error("User not authenticated");
+      return new Response(JSON.stringify({ 
+        error: "Usuário não encontrado" 
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401,
+      });
     }
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    console.log("User authenticated for checkout:", user.email);
+
+    const stripe = new Stripe(stripeKey, {
       apiVersion: "2023-10-16",
     });
 
+    // Check if customer already exists
+    const customers = await stripe.customers.list({
+      email: user.email,
+      limit: 1,
+    });
+
+    let customerId;
+    if (customers.data.length > 0) {
+      customerId = customers.data[0].id;
+      console.log("Existing customer found:", customerId);
+    }
+
+    const origin = req.headers.get("origin") || "http://localhost:3000";
+    
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
+      customer: customerId,
+      customer_email: customerId ? undefined : user.email,
       line_items: [
         {
           price_data: {
@@ -50,18 +95,24 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      customer_email: user.email,
       client_reference_id: user.id,
-      success_url: `${req.headers.get("origin")}/premium?success=true`,
-      cancel_url: `${req.headers.get("origin")}/premium?canceled=true`,
+      success_url: `${origin}/premium?success=true`,
+      cancel_url: `${origin}/premium?canceled=true`,
+      allow_promotion_codes: true,
+      billing_address_collection: "required",
     });
+
+    console.log("Checkout session created:", session.id);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error("Error creating checkout session:", error);
+    return new Response(JSON.stringify({ 
+      error: `Erro ao processar pagamento: ${error.message}` 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
