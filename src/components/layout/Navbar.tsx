@@ -1,16 +1,19 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogIn } from 'lucide-react';
+import { Menu, X, User, LogIn, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/ui-custom/Logo';
 import AuthModal from '@/components/auth/AuthModal';
+import PremiumBadge from '@/components/ui-custom/PremiumBadge';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const location = useLocation();
+  const { user, isPremium, signOut } = useAuth();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
@@ -29,9 +32,15 @@ const Navbar = () => {
 
   const closeAuthModal = () => setIsAuthModalOpen(false);
 
+  const handleSignOut = () => {
+    signOut();
+    closeMenu();
+  };
+
   const navLinks = [
     { name: 'Encontrar Vagas', path: '/spaces' },
     { name: 'Como Funciona', path: '/how-it-works' },
+    { name: 'Premium', path: '/premium' },
     { name: 'Anuncie sua Vaga', path: '/rent-out-spot' },
   ];
 
@@ -63,12 +72,27 @@ const Navbar = () => {
 
             {/* Desktop Auth Buttons */}
             <div className="hidden md:flex items-center space-x-2">
-              <Button variant="outline" onClick={openLoginModal} size="sm" className="flex items-center gap-1">
-                <LogIn className="w-4 h-4" /> Entrar
-              </Button>
-              <Button variant="default" onClick={openRegisterModal} size="sm" className="bg-primary hover:bg-primary-dark flex items-center gap-1">
-                <User className="w-4 h-4" /> Cadastrar
-              </Button>
+              {user ? (
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-md">
+                    <User className="w-4 h-4" />
+                    <span className="text-sm">{user.email}</span>
+                    {isPremium && <PremiumBadge />}
+                  </div>
+                  <Button variant="outline" onClick={handleSignOut} size="sm">
+                    <LogOut className="w-4 h-4 mr-1" /> Sair
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <Button variant="outline" onClick={openLoginModal} size="sm" className="flex items-center gap-1">
+                    <LogIn className="w-4 h-4" /> Entrar
+                  </Button>
+                  <Button variant="default" onClick={openRegisterModal} size="sm" className="bg-primary hover:bg-primary-dark flex items-center gap-1">
+                    <User className="w-4 h-4" /> Cadastrar
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -101,12 +125,27 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-2 border-t border-gray-200">
-                <Button variant="outline" onClick={openLoginModal} className="justify-start">
-                  <LogIn className="w-4 h-4 mr-2" /> Entrar
-                </Button>
-                <Button variant="default" onClick={openRegisterModal} className="bg-primary justify-start">
-                  <User className="w-4 h-4 mr-2" /> Cadastrar
-                </Button>
+                {user ? (
+                  <>
+                    <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-md">
+                      <User className="w-4 h-4" />
+                      <span className="text-sm">{user.email}</span>
+                      {isPremium && <PremiumBadge />}
+                    </div>
+                    <Button variant="outline" onClick={handleSignOut} className="justify-start">
+                      <LogOut className="w-4 h-4 mr-2" /> Sair
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" onClick={openLoginModal} className="justify-start">
+                      <LogIn className="w-4 h-4 mr-2" /> Entrar
+                    </Button>
+                    <Button variant="default" onClick={openRegisterModal} className="bg-primary justify-start">
+                      <User className="w-4 h-4 mr-2" /> Cadastrar
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

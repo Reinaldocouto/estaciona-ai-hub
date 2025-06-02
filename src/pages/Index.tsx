@@ -2,14 +2,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Search, MapPin, Car, Clock, Shield, Star, Zap } from 'lucide-react';
+import { Search, MapPin, Car, Clock, Shield, Star, Zap, Crown } from 'lucide-react';
 import SpaceCard, { SpaceProps } from '@/components/ui-custom/SpaceCard';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import SearchBar from '@/components/search/SearchBar';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
-  // Dados fictícios para as vagas em destaque - mostrando 6 vagas agora
+  const { isPremium } = useAuth();
+
+  // Dados fictícios para as vagas em destaque - agora com discount_premium
   const featuredSpaces: SpaceProps[] = [
     {
       id: '1',
@@ -21,6 +24,7 @@ const Index = () => {
       imageUrl: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop',
       features: ['Coberto', 'Segurança 24h', 'Carregador EV'],
       available: true,
+      discount_premium: true,
     },
     {
       id: '2',
@@ -32,6 +36,7 @@ const Index = () => {
       imageUrl: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=1470&auto=format&fit=crop',
       features: ['Privativo', 'Coberto'],
       available: true,
+      discount_premium: false,
     },
     {
       id: '3',
@@ -43,6 +48,7 @@ const Index = () => {
       imageUrl: 'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?q=80&w=1470&auto=format&fit=crop',
       features: ['24h', 'Segurança'],
       available: true,
+      discount_premium: false,
     },
     {
       id: '6',
@@ -54,6 +60,7 @@ const Index = () => {
       imageUrl: 'https://images.unsplash.com/photo-1621819783320-147734de70f8?q=80&w=1472&auto=format&fit=crop',
       features: ['Premium', 'Segurança', 'Câmeras'],
       available: true,
+      discount_premium: true,
     },
     {
       id: '9',
@@ -65,6 +72,7 @@ const Index = () => {
       imageUrl: 'https://images.unsplash.com/photo-1545179605-1c19deb492d2?q=80&w=1470&auto=format&fit=crop',
       features: ['Shopping', 'Segurança', 'Coberto'],
       available: true,
+      discount_premium: false,
     },
     {
       id: '19',
@@ -76,8 +84,22 @@ const Index = () => {
       imageUrl: 'https://images.unsplash.com/photo-1588266458641-1c30f0a654e0?q=80&w=1476&auto=format&fit=crop',
       features: ['Parque', 'Lazer', 'Segurança'],
       available: true,
+      discount_premium: true,
     },
   ];
+
+  // SmartMatch: Sort spaces to prioritize premium discounts for premium users
+  const sortedSpaces = React.useMemo(() => {
+    return [...featuredSpaces].sort((a, b) => {
+      if (isPremium) {
+        // Premium users see discount spaces first
+        const aScore = a.discount_premium ? 1 : 0;
+        const bScore = b.discount_premium ? 1 : 0;
+        return bScore - aScore;
+      }
+      return 0; // No sorting for non-premium users
+    });
+  }, [featuredSpaces, isPremium]);
 
   return (
     <>
@@ -106,6 +128,17 @@ const Index = () => {
             <div className="max-w-xl mx-auto">
               <SearchBar />
             </div>
+            
+            {!isPremium && (
+              <div className="mt-8">
+                <Link to="/premium">
+                  <Button className="bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-white font-semibold px-8 py-3 rounded-lg">
+                    <Crown className="mr-2 h-5 w-5" />
+                    Upgrade para Premium - Descontos Exclusivos!
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </section>
         
@@ -145,14 +178,17 @@ const Index = () => {
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold">Vagas em Destaque</h2>
+              <h2 className="text-3xl font-bold">
+                Vagas em Destaque
+                {isPremium && <span className="text-sm text-green-600 ml-2">(Ordenação Premium ativa)</span>}
+              </h2>
               <Link to="/spaces" className="text-primary hover:underline flex items-center">
                 Ver todas <span className="ml-1">→</span>
               </Link>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredSpaces.map((space) => (
+              {sortedSpaces.map((space) => (
                 <SpaceCard key={space.id} space={space} />
               ))}
             </div>

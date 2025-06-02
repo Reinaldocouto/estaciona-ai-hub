@@ -9,7 +9,117 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          premium: boolean | null
+          premium_until: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id: string
+          premium?: boolean | null
+          premium_until?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          premium?: boolean | null
+          premium_until?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      reservas: {
+        Row: {
+          created_at: string | null
+          end_time: string
+          id: string
+          start_time: string
+          status: string | null
+          total_price: number | null
+          user_id: string | null
+          vaga_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_time: string
+          id?: string
+          start_time: string
+          status?: string | null
+          total_price?: number | null
+          user_id?: string | null
+          vaga_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_time?: string
+          id?: string
+          start_time?: string
+          status?: string | null
+          total_price?: number | null
+          user_id?: string | null
+          vaga_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservas_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservas_vaga_id_fkey"
+            columns: ["vaga_id"]
+            isOneToOne: false
+            referencedRelation: "vagas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vagas: {
+        Row: {
+          available: boolean | null
+          created_at: string | null
+          discount_premium: boolean | null
+          endereco: string | null
+          features: string[] | null
+          id: string
+          image_url: string | null
+          price: number
+          titulo: string
+        }
+        Insert: {
+          available?: boolean | null
+          created_at?: string | null
+          discount_premium?: boolean | null
+          endereco?: string | null
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          price: number
+          titulo: string
+        }
+        Update: {
+          available?: boolean | null
+          created_at?: string | null
+          discount_premium?: boolean | null
+          endereco?: string | null
+          features?: string[] | null
+          id?: string
+          image_url?: string | null
+          price?: number
+          titulo?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

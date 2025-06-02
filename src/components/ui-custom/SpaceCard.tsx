@@ -1,10 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Star, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import PremiumDiscountBadge from './PremiumDiscountBadge';
 
 export interface SpaceProps {
   id: string;
@@ -20,6 +21,7 @@ export interface SpaceProps {
   lat?: number;
   lng?: number;
   type?: 'Pequeno' | 'Médio' | 'SUV';
+  discount_premium?: boolean;
   // Extended properties for detail view
   priceHour?: number;
   priceDay?: number;
@@ -62,8 +64,15 @@ interface SpaceCardProps {
 }
 
 const SpaceCard: React.FC<SpaceCardProps> = ({ space }) => {
+  const { isPremium } = useAuth();
+  
   // Set default image if not provided
   const imageUrl = space.imageUrl || 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop';
+  
+  // Calculate discounted price
+  const discountedPrice = space.discount_premium && isPremium 
+    ? space.price * 0.9 // 10% discount for premium users
+    : space.price;
   
   return (
     <Card className="glass-effect transition-transform hover:shadow-lg hover:-translate-y-1">
@@ -79,6 +88,13 @@ const SpaceCard: React.FC<SpaceCardProps> = ({ space }) => {
             <Badge className="absolute top-2 left-2 bg-red-500 text-white">
               Indisponível
             </Badge>
+          )}
+          
+          {space.discount_premium && isPremium && (
+            <PremiumDiscountBadge 
+              discount={10} 
+              className="absolute top-2 left-2" 
+            />
           )}
           
           {space.type && (
@@ -97,7 +113,14 @@ const SpaceCard: React.FC<SpaceCardProps> = ({ space }) => {
         
         <div className="flex items-center justify-between mb-3">
           <div>
-            <span className="text-xl font-bold text-primary">R$ {space.price}</span>
+            {space.discount_premium && isPremium ? (
+              <div className="flex flex-col">
+                <span className="text-sm text-gray-500 line-through">R$ {space.price.toFixed(2)}</span>
+                <span className="text-xl font-bold text-green-600">R$ {discountedPrice.toFixed(2)}</span>
+              </div>
+            ) : (
+              <span className="text-xl font-bold text-primary">R$ {space.price.toFixed(2)}</span>
+            )}
             <span className="text-gray-500">/hora</span>
           </div>
           {space.rating && space.reviewCount && (
