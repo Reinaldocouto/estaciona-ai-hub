@@ -24,6 +24,7 @@ const SpacesContainer: React.FC = () => {
     features: [],
     availability: true,
   });
+  const [hasShownResultsToast, setHasShownResultsToast] = useState(false);
   
   // Get search params for map center
   const searchLat = searchParams.get('lat');
@@ -36,6 +37,7 @@ const SpacesContainer: React.FC = () => {
   // Handle search params for spaces
   useEffect(() => {
     setLoading(true);
+    setHasShownResultsToast(false);
     
     // Update search filter with the query from URL if available
     if (searchQuery && filters.search !== searchQuery) {
@@ -58,20 +60,31 @@ const SpacesContainer: React.FC = () => {
           // Auto-switch to map view when coming from search
           setViewMode('map');
           
-          toast({
-            title: `${fetchedSpaces.length} vagas encontradas`,
-            description: "Resultados para a localização pesquisada",
-          });
+          // Show results toast only once and after a delay to avoid conflicts
+          if (!hasShownResultsToast) {
+            setTimeout(() => {
+              toast({
+                title: `${fetchedSpaces.length} vaga${fetchedSpaces.length !== 1 ? 's' : ''} encontrada${fetchedSpaces.length !== 1 ? 's' : ''}`,
+                description: "Resultados para a localização pesquisada",
+              });
+              setHasShownResultsToast(true);
+            }, 800);
+          }
         })
         .catch((error) => {
           console.error("Error fetching spaces:", error);
           setLoading(false);
           
-          toast({
-            title: "Erro ao buscar vagas",
-            description: "Não foi possível encontrar vagas nesta localização. Tente novamente.",
-            variant: "destructive",
-          });
+          if (!hasShownResultsToast) {
+            setTimeout(() => {
+              toast({
+                title: "Erro ao buscar vagas",
+                description: "Não foi possível encontrar vagas nesta localização. Tente novamente.",
+                variant: "destructive",
+              });
+              setHasShownResultsToast(true);
+            }, 800);
+          }
         });
     } else {
       // If no specific location, fetch all spaces
@@ -138,10 +151,8 @@ const SpacesContainer: React.FC = () => {
     setFilters(newFilters);
   };
 
-  /* ------------------------ Toggle list / map ---------------------------- */
   const toggleViewMode = () => setViewMode((m) => (m === 'list' ? 'map' : 'list'));
 
-  /* ------------------------- Selecionar vaga ----------------------------- */
   const handleSpaceSelect = (id: string) => {
     window.location.href = `/spaces/${id}`;
   };

@@ -28,17 +28,25 @@ export const useLocationSearch = () => {
     setIsSearching(true);
     
     try {
+      // Small delay to prevent multiple rapid calls
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       const location = findLocation(searchTerm);
       
       if (location) {
         console.log(`Coordenadas encontradas: lat=${location.lat}, lng=${location.lng}`);
         
-        toast({
-          title: "Endereço encontrado!",
-          description: "Redirecionando para busca de vagas...",
-        });
-        
+        // Navigate first, then show success message
         navigate(`/spaces?lat=${location.lat}&lng=${location.lng}&q=${encodeURIComponent(searchTerm)}`);
+        
+        // Show success toast after navigation
+        setTimeout(() => {
+          toast({
+            title: "Endereço encontrado!",
+            description: "Redirecionando para busca de vagas...",
+          });
+        }, 200);
+        
         return true;
       } else {
         console.log('Nenhuma localização encontrada para:', searchTerm);
