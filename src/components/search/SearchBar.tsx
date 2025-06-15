@@ -19,23 +19,15 @@ const SearchBar: React.FC = () => {
   const initialQuery = searchParams.get('q') || '';
   const [searchTerm, setSearchTerm] = useState(initialQuery);
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
+    console.log('Autocomplete carregado com sucesso');
     setAutocomplete(autocompleteInstance);
   };
 
-  // Debounce the place changed function to avoid excessive API calls
-  const debouncedPlaceChanged = useCallback(
-    debounce(() => {
-      if (autocomplete) {
-        onPlaceChanged();
-      }
-    }, 400),
-    [autocomplete]
-  );
-
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!searchTerm.trim()) {
@@ -46,44 +38,110 @@ const SearchBar: React.FC = () => {
       });
       return;
     }
-    
-    // Se não houver autocomplete, tente usar geocoding diretamente
-    if (!autocomplete || !isLoaded) {
-      handleDirectSearch();
+
+    if (isSearching) {
+      console.log('Busca já em andamento, ignorando...');
       return;
     }
     
-    onPlaceChanged();
+    console.log('Iniciando busca para:', searchTerm);
+    setIsSearching(true);
+    
+    try {
+      // Primeiro tenta usar o place do autocomplete se disponível
+      if (autocomplete && isLoaded) {
+        const place = autocomplete.getPlace();
+        if (place && place.geometry && place.geometry.location) {
+          console.log('Usando place do autocomplete:', place);
+          const lat = place.geometry.location.lat();
+          const lng = place.geometry.location.lng();
+          
+          toast({
+            title: "Buscando vagas",
+            description: "Procurando vagas próximas ao endereço informado",
+          });
+          
+          navigate(`/spaces?lat=${lat}&lng=${lng}&q=${encodeURIComponent(searchTerm)}`);
+          setIsSearching(false);
+          return;
+        }
+      }
+      
+      // Se não tem place ou autocomplete, usa geocoding direto
+      await handleDirectSearch();
+    } catch (error) {
+      console.error('Erro na busca:', error);
+      toast({
+        title: "Erro na busca",
+        description: "Ocorreu um erro ao processar sua busca. Tente novamente.",
+        variant: "destructive",
+      });
+      setIsSearching(false);
+    }
   };
 
-  // Função para busca direta usando o termo digitado quando o autocomplete falha
+  // Função para busca direta usando geocoding
   const handleDirectSearch = async () => {
+    console.log('Iniciando busca direta para:', searchTerm);
+    
+    if (!isLoaded) {
+      console.log('Google Maps ainda não carregou');
+      toast({
+        title: "Carregando",
+        description: "Aguarde o Google Maps carregar...",
+        variant: "destructive",
+      });
+      setIsSearching(false);
+      return;
+    }
+
+    if (loadError) {
+      console.log('Erro no carregamento do Google Maps');
+      toast({
+        title: "Erro de carregamento",
+        description: "Erro ao carregar o Google Maps. Verifique sua conexão.",
+        variant: "destructive",
+      });
+      setIsSearching(false);
+      return;
+    }
+    
     toast({
       title: "Buscando localização",
       description: "Procurando pelo endereço informado...",
     });
     
     try {
-      // Tenta obter as coordenadas do endereço digitado
+      console.log('Chamando getGeocodeForAddress com:', searchTerm);
       const location = await getGeocodeForAddress(searchTerm);
+      console.log('Resultado do geocoding:', location);
       
-      if (location) {
-        const { lat, lng } = location;
-        navigate(`/spaces?lat=${lat}&lng=${lng}&q=${encodeURIComponent(searchTerm)}`);
+      if (location && location.lat && location.lng) {
+        console.log(`Coordenadas encontradas: lat=${location.lat}, lng=${location.lng}`);
+        
+        toast({
+          title: "Endereço encontrado!",
+          description: "Redirecionando para busca de vagas...",
+        });
+        
+        navigate(`/spaces?lat=${location.lat}&lng=${location.lng}&q=${encodeURIComponent(searchTerm)}`);
       } else {
+        console.log('Nenhuma coordenada retornada pelo geocoding');
         toast({
           title: "Endereço não encontrado",
-          description: "Não foi possível localizar o endereço informado",
+          description: "Tente ser mais específico com o endereço (inclua cidade, bairro, etc.)",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error('Erro ao buscar coordenadas:', error);
+      console.error('Erro detalhado no geocoding:', error);
       toast({
         title: "Erro na busca",
-        description: "Ocorreu um erro ao processar sua busca",
+        description: "Não foi possível processar o endereço. Tente novamente com um endereço mais específico.",
         variant: "destructive",
       });
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -95,38 +153,40 @@ const SearchBar: React.FC = () => {
     }
   };
 
-  const onPlaceChanged = () => {
+  const onPlaceChanged = async () => {
+    console.log('onPlaceChanged chamado');
+    
     if (!autocomplete) {
-      // Se não tem autocomplete, tenta busca direta
-      handleDirectSearch();
+      console.log('Autocomplete não disponível, usando busca direta');
+      await handleDirectSearch();
       return;
     }
 
     const place = autocomplete.getPlace();
+    console.log('Place selecionado:', place);
     
-    // Se não tem geometria, tenta busca direta
     if (!place || !place.geometry || !place.geometry.location) {
-      handleDirectSearch();
+      console.log('Place sem geometria, usando busca direta');
+      await handleDirectSearch();
       return;
     }
 
     const lat = place.geometry.location.lat();
     const lng = place.geometry.location.lng();
-    const query = searchTerm;
+    console.log(`Place com coordenadas: lat=${lat}, lng=${lng}`);
 
-    console.log(`Navegando para: /spaces?lat=${lat}&lng=${lng}&q=${encodeURIComponent(query)}`);
-    
     toast({
-      title: "Buscando vagas",
-      description: "Procurando vagas próximas ao endereço informado",
+      title: "Local selecionado",
+      description: "Buscando vagas próximas...",
     });
     
-    // Include the query in the URL for persistence
-    navigate(`/spaces?lat=${lat}&lng=${lng}&q=${encodeURIComponent(query)}`);
+    navigate(`/spaces?lat=${lat}&lng=${lng}&q=${encodeURIComponent(searchTerm)}`);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    const value = e.target.value;
+    console.log('Input alterado para:', value);
+    setSearchTerm(value);
   };
 
   return (
@@ -136,7 +196,7 @@ const SearchBar: React.FC = () => {
         {isLoaded ? (
           <Autocomplete
             onLoad={onLoad}
-            onPlaceChanged={debouncedPlaceChanged}
+            onPlaceChanged={onPlaceChanged}
             options={{
               componentRestrictions: { country: 'br' },
               fields: ['geometry.location', 'formatted_address', 'name'],
@@ -151,18 +211,19 @@ const SearchBar: React.FC = () => {
               onChange={handleInputChange}
               ref={inputRef}
               aria-label="Buscar por endereço"
+              disabled={isSearching}
             />
           </Autocomplete>
         ) : (
           <Input
             type="text"
-            placeholder={loadError ? "Erro ao carregar" : "Carregando..."}
+            placeholder={loadError ? "Erro ao carregar Google Maps" : "Carregando Google Maps..."}
             className="pl-10 pr-24 py-6 h-14 rounded-lg"
             disabled
           />
         )}
         
-        {searchTerm && (
+        {searchTerm && !isSearching && (
           <button
             type="button"
             onClick={clearSearch}
@@ -175,10 +236,12 @@ const SearchBar: React.FC = () => {
         
         <Button 
           type="submit" 
-          className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-md bg-primary hover:bg-primary-dark px-6 h-12"
+          disabled={isSearching || !isLoaded}
+          className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-md bg-primary hover:bg-primary-dark px-6 h-12 disabled:opacity-50"
           aria-label="Buscar"
         >
-          <Search className="w-4 h-4 mr-2" /> Buscar
+          <Search className="w-4 h-4 mr-2" /> 
+          {isSearching ? 'Buscando...' : 'Buscar'}
         </Button>
       </div>
     </form>
