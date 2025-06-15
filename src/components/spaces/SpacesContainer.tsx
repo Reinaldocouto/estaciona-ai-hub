@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SpacesHeader from './SpacesHeader';
@@ -24,7 +23,6 @@ const SpacesContainer: React.FC = () => {
     features: [],
     availability: true,
   });
-  const [hasShownResultsToast, setHasShownResultsToast] = useState(false);
   
   // Get search params for map center
   const searchLat = searchParams.get('lat');
@@ -37,7 +35,6 @@ const SpacesContainer: React.FC = () => {
   // Handle search params for spaces
   useEffect(() => {
     setLoading(true);
-    setHasShownResultsToast(false);
     
     // Update search filter with the query from URL if available
     if (searchQuery && filters.search !== searchQuery) {
@@ -60,31 +57,25 @@ const SpacesContainer: React.FC = () => {
           // Auto-switch to map view when coming from search
           setViewMode('map');
           
-          // Show results toast only once and after a delay to avoid conflicts
-          if (!hasShownResultsToast) {
-            setTimeout(() => {
-              toast({
-                title: `${fetchedSpaces.length} vaga${fetchedSpaces.length !== 1 ? 's' : ''} encontrada${fetchedSpaces.length !== 1 ? 's' : ''}`,
-                description: "Resultados para a localização pesquisada",
-              });
-              setHasShownResultsToast(true);
-            }, 800);
-          }
+          // Show results toast with correct count and grammar
+          setTimeout(() => {
+            toast({
+              title: `${fetchedSpaces.length} vaga${fetchedSpaces.length !== 1 ? 's' : ''} encontrada${fetchedSpaces.length !== 1 ? 's' : ''}`,
+              description: "Resultados para a localização pesquisada",
+            });
+          }, 1000);
         })
         .catch((error) => {
           console.error("Error fetching spaces:", error);
           setLoading(false);
           
-          if (!hasShownResultsToast) {
-            setTimeout(() => {
-              toast({
-                title: "Erro ao buscar vagas",
-                description: "Não foi possível encontrar vagas nesta localização. Tente novamente.",
-                variant: "destructive",
-              });
-              setHasShownResultsToast(true);
-            }, 800);
-          }
+          setTimeout(() => {
+            toast({
+              title: "Erro ao buscar vagas",
+              description: "Não foi possível encontrar vagas nesta localização. Tente novamente.",
+              variant: "destructive",
+            });
+          }, 1000);
         });
     } else {
       // If no specific location, fetch all spaces
@@ -105,7 +96,7 @@ const SpacesContainer: React.FC = () => {
           });
         });
     }
-  }, [searchLat, searchLng, searchQuery, toast]);
+  }, [searchLat, searchLng, searchQuery]); // Removed toast from dependencies
 
   /* --------------------------- Aplicação de filtros --------------------------- */
   // Filtrar espaços com base nos filtros definidos

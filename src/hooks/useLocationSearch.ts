@@ -36,16 +36,9 @@ export const useLocationSearch = () => {
       if (location) {
         console.log(`Coordenadas encontradas: lat=${location.lat}, lng=${location.lng}`);
         
-        // Navigate first, then show success message
+        // Navigate directly without showing success toast here
+        // The SpacesContainer will show the results toast
         navigate(`/spaces?lat=${location.lat}&lng=${location.lng}&q=${encodeURIComponent(searchTerm)}`);
-        
-        // Show success toast after navigation
-        setTimeout(() => {
-          toast({
-            title: "Endereço encontrado!",
-            description: "Redirecionando para busca de vagas...",
-          });
-        }, 200);
         
         return true;
       } else {
