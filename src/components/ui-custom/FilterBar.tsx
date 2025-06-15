@@ -76,21 +76,21 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+    <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-lg shadow-xl border border-gray-700 p-6 mb-6">
       {/* Search bar */}
-      <div className="relative mb-4">
+      <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         <Input 
           type="text"
           placeholder="Buscar por nome, endereço ou características"
           value={search}
           onChange={handleSearchChange}
-          className="pl-10 pr-10"
+          className="pl-10 pr-10 bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:border-primary focus:ring-primary"
         />
         {search && (
           <button 
             onClick={clearSearch}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
             aria-label="Limpar busca"
           >
             <X size={18} />
@@ -99,9 +99,11 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
       </div>
 
       {/* Desktop filters */}
-      <div className="hidden md:flex flex-wrap items-center gap-4">
+      <div className="hidden md:flex flex-wrap items-center gap-6">
         <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm text-gray-500 mb-1">Preço máximo: R${priceRange}/hora</label>
+          <label className="block text-sm text-gray-300 mb-2 font-medium">
+            Preço máximo: <span className="text-primary">R${priceRange}/hora</span>
+          </label>
           <Slider 
             value={[priceRange]} 
             min={5}
@@ -113,13 +115,17 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
         </div>
         
         <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm text-gray-500 mb-2">Características</label>
+          <label className="block text-sm text-gray-300 mb-3 font-medium">Características</label>
           <div className="flex flex-wrap gap-2">
             {availableFeatures.slice(0, 5).map((feature) => (
               <Badge 
                 key={feature}
                 variant={selectedFeatures.includes(feature) ? "default" : "outline"}
-                className={`cursor-pointer ${selectedFeatures.includes(feature) ? 'bg-primary' : ''}`}
+                className={`cursor-pointer transition-all ${
+                  selectedFeatures.includes(feature) 
+                    ? 'bg-primary hover:bg-primary/90 text-white' 
+                    : 'border-gray-600 text-gray-300 hover:border-primary hover:text-primary'
+                }`}
                 onClick={() => toggleFeature(feature)}
               >
                 {feature}
@@ -128,20 +134,24 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
             {availableFeatures.length > 5 && (
               <Sheet>
                 <SheetTrigger asChild>
-                  <Badge variant="outline" className="cursor-pointer">
+                  <Badge variant="outline" className="cursor-pointer border-gray-600 text-gray-300 hover:border-primary hover:text-primary">
                     +{availableFeatures.length - 5} mais
                   </Badge>
                 </SheetTrigger>
-                <SheetContent>
+                <SheetContent className="bg-gray-900 border-gray-700">
                   <SheetHeader>
-                    <SheetTitle>Todas as características</SheetTitle>
+                    <SheetTitle className="text-white">Todas as características</SheetTitle>
                   </SheetHeader>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {availableFeatures.map((feature) => (
                       <Badge 
                         key={feature}
                         variant={selectedFeatures.includes(feature) ? "default" : "outline"}
-                        className={`cursor-pointer ${selectedFeatures.includes(feature) ? 'bg-primary' : ''}`}
+                        className={`cursor-pointer transition-all ${
+                          selectedFeatures.includes(feature) 
+                            ? 'bg-primary hover:bg-primary/90 text-white' 
+                            : 'border-gray-600 text-gray-300 hover:border-primary hover:text-primary'
+                        }`}
                         onClick={() => toggleFeature(feature)}
                       >
                         {feature}
@@ -154,13 +164,13 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
           </div>
         </div>
         
-        <div className="flex items-center gap-2 ml-auto">
+        <div className="flex items-center gap-3 ml-auto">
           <Switch 
             id="available-only"
             checked={showAvailable}
             onCheckedChange={setShowAvailable}
           />
-          <label htmlFor="available-only" className="text-sm cursor-pointer">
+          <label htmlFor="available-only" className="text-sm cursor-pointer text-gray-300 font-medium">
             Somente disponíveis
           </label>
           
@@ -169,7 +179,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
               variant="ghost" 
               size="sm" 
               onClick={clearFilters}
-              className="ml-4"
+              className="ml-4 text-gray-300 hover:text-white hover:bg-gray-700"
             >
               Limpar filtros
             </Button>
@@ -181,7 +191,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
       <div className="flex md:hidden justify-end">
         <Sheet open={isMobileFilterOpen} onOpenChange={setIsMobileFilterOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2 border-gray-600 text-gray-300 hover:border-primary hover:text-primary bg-gray-800">
               <Filter size={16} />
               Filtros
               {(selectedFeatures.length > 0 || priceRange < 100 || !showAvailable) && (
@@ -191,14 +201,16 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent>
+          <SheetContent className="bg-gray-900 border-gray-700">
             <SheetHeader>
-              <SheetTitle>Filtros</SheetTitle>
+              <SheetTitle className="text-white">Filtros</SheetTitle>
             </SheetHeader>
             
             <div className="mt-6 space-y-6">
               <div>
-                <h3 className="text-sm font-medium mb-2">Preço máximo: R${priceRange}/hora</h3>
+                <h3 className="text-sm font-medium mb-2 text-gray-300">
+                  Preço máximo: <span className="text-primary">R${priceRange}/hora</span>
+                </h3>
                 <Slider 
                   value={[priceRange]} 
                   min={5}
@@ -209,13 +221,17 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
               </div>
               
               <div>
-                <h3 className="text-sm font-medium mb-2">Características</h3>
+                <h3 className="text-sm font-medium mb-2 text-gray-300">Características</h3>
                 <div className="flex flex-wrap gap-2">
                   {availableFeatures.map((feature) => (
                     <Badge 
                       key={feature}
                       variant={selectedFeatures.includes(feature) ? "default" : "outline"}
-                      className={`cursor-pointer ${selectedFeatures.includes(feature) ? 'bg-primary' : ''}`}
+                      className={`cursor-pointer transition-all ${
+                        selectedFeatures.includes(feature) 
+                          ? 'bg-primary hover:bg-primary/90 text-white' 
+                          : 'border-gray-600 text-gray-300 hover:border-primary hover:text-primary'
+                      }`}
                       onClick={() => toggleFeature(feature)}
                     >
                       {feature}
@@ -230,7 +246,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
                   checked={showAvailable}
                   onCheckedChange={setShowAvailable}
                 />
-                <label htmlFor="available-only-mobile" className="text-sm cursor-pointer">
+                <label htmlFor="available-only-mobile" className="text-sm cursor-pointer text-gray-300 font-medium">
                   Somente disponíveis
                 </label>
               </div>
@@ -239,11 +255,13 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
                 <Button 
                   variant="outline" 
                   onClick={clearFilters}
+                  className="border-gray-600 text-gray-300 hover:border-primary hover:text-primary bg-gray-800"
                 >
                   Limpar filtros
                 </Button>
                 <Button 
                   onClick={onMobileFilterClose}
+                  className="bg-primary hover:bg-primary/90"
                 >
                   Aplicar
                 </Button>
