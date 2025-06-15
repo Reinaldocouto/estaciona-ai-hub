@@ -50,17 +50,37 @@ const SpacesContainer: React.FC = () => {
       // Call the API to fetch spaces near the location
       fetchSpaces(parseFloat(searchLat), parseFloat(searchLng), 2)
         .then((fetchedSpaces) => {
-          setSpaces(fetchedSpaces);
-          setFilteredSpaces(fetchedSpaces);
+          console.log(`API returned ${fetchedSpaces.length} spaces`);
+          
+          // Filter spaces to only show those that are actually close to the search location
+          const searchLocation = { lat: parseFloat(searchLat), lng: parseFloat(searchLng) };
+          const nearbySpaces = fetchedSpaces.filter(space => {
+            if (!space.lat || !space.lng) return false;
+            
+            // Calculate distance (simple approximation)
+            const distance = Math.sqrt(
+              Math.pow(space.lat - searchLocation.lat, 2) + 
+              Math.pow(space.lng - searchLocation.lng, 2)
+            );
+            
+            // Only include spaces within reasonable distance (adjust as needed)
+            return distance < 0.05; // roughly 5km
+          });
+          
+          console.log(`Found ${nearbySpaces.length} spaces near the search location`);
+          
+          setSpaces(nearbySpaces);
+          setFilteredSpaces(nearbySpaces);
           setLoading(false);
           
           // Auto-switch to map view when coming from search
           setViewMode('map');
           
-          // Show results toast with correct count and grammar
+          // Show results toast with correct count
           setTimeout(() => {
+            const count = nearbySpaces.length;
             toast({
-              title: `${fetchedSpaces.length} vaga${fetchedSpaces.length !== 1 ? 's' : ''} encontrada${fetchedSpaces.length !== 1 ? 's' : ''}`,
+              title: `${count} vaga${count !== 1 ? 's' : ''} encontrada${count !== 1 ? 's' : ''}`,
               description: "Resultados para a localização pesquisada",
             });
           }, 1000);
@@ -96,7 +116,7 @@ const SpacesContainer: React.FC = () => {
           });
         });
     }
-  }, [searchLat, searchLng, searchQuery]); // Removed toast from dependencies
+  }, [searchLat, searchLng, searchQuery]);
 
   /* --------------------------- Aplicação de filtros --------------------------- */
   // Filtrar espaços com base nos filtros definidos
