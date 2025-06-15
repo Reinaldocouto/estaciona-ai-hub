@@ -13,7 +13,7 @@ const SearchBar: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
-  const { isLoaded, loadError } = useGoogleMaps({ libraries: ['places'] });
+  const { isLoaded, loadError, getGeocodeForAddress } = useGoogleMaps({ libraries: ['places'] });
   
   // Initialize search term from URL query parameter if available
   const initialQuery = searchParams.get('q') || '';
@@ -58,8 +58,6 @@ const SearchBar: React.FC = () => {
 
   // Função para busca direta usando o termo digitado quando o autocomplete falha
   const handleDirectSearch = async () => {
-    const { getGeocodeForAddress } = useGoogleMaps();
-    
     toast({
       title: "Buscando localização",
       description: "Procurando pelo endereço informado...",
