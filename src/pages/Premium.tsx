@@ -1,12 +1,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Star, Check, Crown, Zap, MapPin, Clock, RefreshCw } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { Container, Box } from '@/components/ui/container';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -126,10 +128,18 @@ const Premium = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Premium | Estaciona Aí</title>
+        <meta name="description" content="Upgrade para Premium e tenha acesso a descontos exclusivos, prioridade na busca e muito mais!" />
+      </Helmet>
+      
       <Navbar />
       
-      <main className="min-h-screen bg-gradient-to-br from-primary/5 via-white to-yellow-50">
-        <div className="container mx-auto px-4 py-16">
+      <Box 
+        as="main"
+        className="font-roboto min-h-screen"
+      >
+        <Container className="py-12 md:py-16">
           {/* Header */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center mb-4">
@@ -138,7 +148,7 @@ const Premium = () => {
                 Estaciona Aí Premium
               </h1>
             </div>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-foreground max-w-2xl mx-auto">
               Upgrade para Premium e tenha acesso a descontos exclusivos, prioridade na busca e muito mais!
             </p>
           </div>
@@ -199,7 +209,7 @@ const Premium = () => {
                         {benefit.icon}
                       </div>
                       <h3 className="font-semibold mb-2">{benefit.title}</h3>
-                      <p className="text-sm text-gray-600">{benefit.description}</p>
+                      <p className="text-sm text-muted-foreground">{benefit.description}</p>
                     </CardContent>
                   </Card>
                 ))}
@@ -213,7 +223,7 @@ const Premium = () => {
                     <CardTitle className="text-2xl">Premium</CardTitle>
                   </div>
                   <div className="text-3xl font-bold text-primary mb-2">
-                    R$ 29,90<span className="text-lg font-normal text-gray-600">/mês</span>
+                    R$ 29,90<span className="text-lg font-normal text-muted-foreground">/mês</span>
                   </div>
                   <CardDescription>
                     Cancele a qualquer momento
@@ -240,7 +250,7 @@ const Premium = () => {
                     </Button>
                     
                     {!user && (
-                      <p className="text-xs text-center text-gray-600">
+                      <p className="text-xs text-center text-muted-foreground">
                         Faça login para assinar o Premium
                       </p>
                     )}
@@ -262,8 +272,8 @@ const Premium = () => {
               </Card>
             </>
           )}
-        </div>
-      </main>
+        </Container>
+      </Box>
       
       <Footer />
     </>

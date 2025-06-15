@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { Container, Box } from '@/components/ui/container';
 import {
   HeroSection,
   QuickSummaryGrid,
@@ -59,48 +60,58 @@ const HowItWorks = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Como Funciona | Estaciona Aí</title>
+        <meta name="description" content="Entenda como funciona o Estaciona Aí. Reserve ou alugue vagas em 3 etapas simples." />
+      </Helmet>
+      
       <Navbar />
       
-      <main className="min-h-screen">
-        <HeroSection 
-          title="Como o Estaciona Aí funciona?"
-          subtitle="Reserve ou alugue vagas em 3 etapas simples."
-        />
-        
-        <QuickSummaryGrid />
-        
-        <section className="py-12 bg-white">
-          <div className="container mx-auto px-4">
-            <Tabs 
-              defaultValue="locatario" 
-              value={activeTab} 
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="locatario">Sou Motorista (Locatário)</TabsTrigger>
-                <TabsTrigger value="locador">Sou Proprietário (Locador)</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="locatario" className="mt-6">
-                <TabContent 
-                  persona="locatario"
-                  steps={locatarioSteps}
-                />
-              </TabsContent>
-              
-              <TabsContent value="locador" className="mt-6">
-                <TabContent 
-                  persona="locador"
-                  steps={locadorSteps}
-                />
-              </TabsContent>
-            </Tabs>
-          </div>
-        </section>
-        
-        <CTASection />
-      </main>
+      <Box 
+        as="main"
+        className="font-roboto min-h-screen"
+      >
+        <Container className="py-12 md:py-16">
+          <HeroSection 
+            title="Como o Estaciona Aí funciona?"
+            subtitle="Reserve ou alugue vagas em 3 etapas simples."
+          />
+          
+          <QuickSummaryGrid />
+          
+          <section className="py-12">
+            <div className="w-full">
+              <Tabs 
+                defaultValue="locatario" 
+                value={activeTab} 
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="locatario">Sou Motorista (Locatário)</TabsTrigger>
+                  <TabsTrigger value="locador">Sou Proprietário (Locador)</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="locatario" className="mt-6">
+                  <TabContent 
+                    persona="locatario"
+                    steps={locatarioSteps}
+                  />
+                </TabsContent>
+                
+                <TabsContent value="locador" className="mt-6">
+                  <TabContent 
+                    persona="locador"
+                    steps={locadorSteps}
+                  />
+                </TabsContent>
+              </Tabs>
+            </div>
+          </section>
+          
+          <CTASection />
+        </Container>
+      </Box>
       
       <Footer />
     </>
