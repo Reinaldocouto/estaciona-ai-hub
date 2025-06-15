@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SpacesHeader from './SpacesHeader';
@@ -45,11 +46,12 @@ const SpacesContainer: React.FC = () => {
     }
     
     if (searchLat && searchLng) {
-      console.log(`Searching spaces near: ${searchLat}, ${searchLng} with query: ${searchQuery}`);
+      console.log(`Buscando vagas próximas a: ${searchLat}, ${searchLng} com termo: ${searchQuery}`);
       
-      // Call the API to fetch spaces near the location
-      fetchSpaces(parseFloat(searchLat), parseFloat(searchLng), 2)
+      // Call the API to fetch spaces near the location with proximity calculation
+      fetchSpaces(parseFloat(searchLat), parseFloat(searchLng), 10) // Raio de 10km
         .then((fetchedSpaces) => {
+          console.log(`API retornou ${fetchedSpaces.length} vagas próximas`);
           setSpaces(fetchedSpaces);
           setFilteredSpaces(fetchedSpaces);
           setLoading(false);
@@ -58,28 +60,33 @@ const SpacesContainer: React.FC = () => {
           setViewMode('map');
           
           // Show results toast with correct count and grammar
-          setTimeout(() => {
+          const count = fetchedSpaces.length;
+          if (count > 0) {
             toast({
-              title: `${fetchedSpaces.length} vaga${fetchedSpaces.length !== 1 ? 's' : ''} encontrada${fetchedSpaces.length !== 1 ? 's' : ''}`,
-              description: "Resultados para a localização pesquisada",
+              title: `${count} vaga${count !== 1 ? 's' : ''} encontrada${count !== 1 ? 's' : ''}`,
+              description: `Vagas próximas ao endereço "${searchQuery}"`,
             });
-          }, 1000);
-        })
-        .catch((error) => {
-          console.error("Error fetching spaces:", error);
-          setLoading(false);
-          
-          setTimeout(() => {
+          } else {
             toast({
-              title: "Erro ao buscar vagas",
-              description: "Não foi possível encontrar vagas nesta localização. Tente novamente.",
+              title: "Nenhuma vaga encontrada",
+              description: `Não foi possível encontrar vagas próximas ao endereço "${searchQuery}". Tente expandir a busca.`,
               variant: "destructive",
             });
-          }, 1000);
+          }
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar vagas:", error);
+          setLoading(false);
+          
+          toast({
+            title: "Erro ao buscar vagas",
+            description: "Não foi possível encontrar vagas nesta localização. Tente novamente.",
+            variant: "destructive",
+          });
         });
     } else {
-      // If no specific location, fetch all spaces
-      fetchSpaces(-23.5505, -46.6333, 5) // Default to São Paulo center
+      // If no specific location, fetch all spaces near São Paulo center
+      fetchSpaces(-23.5505, -46.6333, 15) // Raio maior para São Paulo centro
         .then((fetchedSpaces) => {
           setSpaces(fetchedSpaces);
           setFilteredSpaces(fetchedSpaces);

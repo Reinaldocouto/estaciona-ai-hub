@@ -1,6 +1,28 @@
 
 import { SpaceProps } from '@/components/ui-custom/SpaceCard';
 
+// Função para calcular distância entre dois pontos usando a fórmula de Haversine
+function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371; // Raio da Terra em km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLng/2) * Math.sin(dLng/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const distance = R * c;
+  return distance;
+}
+
+// Função para formatar distância
+function formatDistance(distance: number): string {
+  if (distance < 1) {
+    return `${Math.round(distance * 1000)}m`;
+  }
+  return `${distance.toFixed(1)}km`;
+}
+
 export async function fetchSpace(id: string): Promise<SpaceProps> {
   // Mock data - would be replaced with a real API call in production
   // This simulates the server response based on the space id
@@ -538,13 +560,12 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
   return space;
 }
 
-// New function to fetch spaces near a location
-export async function fetchSpaces(lat: number, lng: number, radius: number = 2): Promise<SpaceProps[]> {
-  console.log(`Fetching spaces near ${lat}, ${lng} with ${radius}km radius`);
+// Nova função para buscar vagas por proximidade
+export async function fetchSpaces(lat: number, lng: number, radius: number = 10): Promise<SpaceProps[]> {
+  console.log(`Buscando vagas próximas a ${lat}, ${lng} em um raio de ${radius}km`);
   
-  // In a real implementation, this would call your backend API
-  // For now, we'll just return mock data and simulate distance calculation
-  const mockSpaces: SpaceProps[] = [
+  // Todas as vagas mockadas com suas coordenadas reais
+  const allSpaces: SpaceProps[] = [
     {
       id: '1',
       title: 'Estacionamento Seguro na Paulista',
@@ -553,12 +574,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.8,
       reviewCount: 125,
       imageUrl: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop',
-      distance: '300m',
       features: ['Coberto', 'Segurança 24h', 'Carregador EV'],
       available: true,
       lat: -23.5613,
       lng: -46.6558,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '2',
@@ -568,12 +589,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.5,
       reviewCount: 87,
       imageUrl: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=1470&auto=format&fit=crop',
-      distance: '1.2km',
       features: ['Privativo', 'Coberto'],
       available: true,
       lat: -23.5651,
       lng: -46.6911,
       type: 'Pequeno',
+      distance: '0km'
     },
     {
       id: '3',
@@ -583,12 +604,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.2,
       reviewCount: 63,
       imageUrl: 'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?q=80&w=1470&auto=format&fit=crop',
-      distance: '2.5km',
       features: ['24h', 'Segurança'],
       available: true,
       lat: -23.5469,
       lng: -46.6389,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '4',
@@ -598,12 +619,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.7,
       reviewCount: 42,
       imageUrl: 'https://images.unsplash.com/photo-1590674899484-13e8dc049dc9?q=80&w=1470&auto=format&fit=crop',
-      distance: '3.1km',
       features: ['Coberto', 'Privativo'],
       available: true,
       lat: -23.5557,
       lng: -46.6859,
       type: 'SUV',
+      distance: '0km'
     },
     {
       id: '5',
@@ -613,12 +634,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.4,
       reviewCount: 128,
       imageUrl: 'https://images.unsplash.com/photo-1573348722427-f453d96540be?q=80&w=1476&auto=format&fit=crop',
-      distance: '4.2km',
       features: ['Shopping', 'Coberto', 'Segurança 24h'],
       available: true,
       lat: -23.6081,
       lng: -46.6676,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '6',
@@ -628,12 +649,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.9,
       reviewCount: 36,
       imageUrl: 'https://images.unsplash.com/photo-1621819783320-147734de70f8?q=80&w=1472&auto=format&fit=crop',
-      distance: '2.8km',
       features: ['Premium', 'Segurança', 'Câmeras'],
       available: true,
       lat: -23.5623,
       lng: -46.6691,
       type: 'Pequeno',
+      distance: '0km'
     },
     {
       id: '7',
@@ -643,12 +664,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.3,
       reviewCount: 215,
       imageUrl: 'https://images.unsplash.com/photo-1621610086071-19e66c96b07c?q=80&w=1470&auto=format&fit=crop',
-      distance: '7.5km',
       features: ['Aeroporto', 'Segurança', '24h'],
       available: true,
       lat: -23.6267,
       lng: -46.6559,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '8',
@@ -658,12 +679,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.1,
       reviewCount: 52,
       imageUrl: 'https://images.unsplash.com/photo-1582281298055-e25b84a30b0b?q=80&w=1470&auto=format&fit=crop',
-      distance: '3.8km',
       features: ['Residencial', 'Metrô', 'Coberto'],
       available: true,
       lat: -23.5725,
       lng: -46.6382,
       type: 'Pequeno',
+      distance: '0km'
     },
     {
       id: '9',
@@ -673,12 +694,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.5,
       reviewCount: 167,
       imageUrl: 'https://images.unsplash.com/photo-1545179605-1c19deb492d2?q=80&w=1470&auto=format&fit=crop',
-      distance: '8.3km',
       features: ['Shopping', 'Segurança', 'Coberto'],
       available: true,
       lat: -23.6228,
       lng: -46.7016,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '10',
@@ -688,12 +709,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.8,
       reviewCount: 47,
       imageUrl: 'https://images.unsplash.com/photo-1562191326-0168279a0e1d?q=80&w=1470&auto=format&fit=crop',
-      distance: '4.7km',
       features: ['Privativo', 'Condomínio', 'Segurança'],
       available: false,
       lat: -23.5828,
       lng: -46.6764,
       type: 'SUV',
+      distance: '0km'
     },
     {
       id: '11',
@@ -703,12 +724,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.2,
       reviewCount: 89,
       imageUrl: 'https://images.unsplash.com/photo-1549295264-617241ca7360?q=80&w=1471&auto=format&fit=crop',
-      distance: '7.9km',
       features: ['Hospital', '24h', 'Coberto'],
       available: true,
       lat: -23.5999,
       lng: -46.7151,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '12',
@@ -718,12 +739,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.6,
       reviewCount: 38,
       imageUrl: 'https://images.unsplash.com/photo-1617973427478-95abe1838deb?q=80&w=1470&auto=format&fit=crop',
-      distance: '5.1km',
       features: ['Residencial', 'Privativo', 'Segurança'],
       available: true,
       lat: -23.5373,
       lng: -46.6784,
       type: 'Pequeno',
+      distance: '0km'
     },
     {
       id: '13',
@@ -733,12 +754,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 3.9,
       reviewCount: 112,
       imageUrl: 'https://images.unsplash.com/photo-1562079176-6729edba39ca?q=80&w=1470&auto=format&fit=crop',
-      distance: '1.8km',
       features: ['Universidade', 'Econômico'],
       available: true,
       lat: -23.5515,
       lng: -46.6401,
       type: 'Pequeno',
+      distance: '0km'
     },
     {
       id: '14',
@@ -748,12 +769,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.4,
       reviewCount: 143,
       imageUrl: 'https://images.unsplash.com/photo-1597047084993-bf337e09ede0?q=80&w=1470&auto=format&fit=crop',
-      distance: '6.2km',
       features: ['Shopping', 'Coberto', 'Segurança'],
       available: true,
       lat: -23.5744,
       lng: -46.7013,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '15',
@@ -763,12 +784,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.3,
       reviewCount: 76,
       imageUrl: 'https://images.unsplash.com/photo-1567613714042-9db3fd443d5c?q=80&w=1470&auto=format&fit=crop',
-      distance: '2.9km',
       features: ['Cultural', 'Metrô', 'Coberto'],
       available: true,
       lat: -23.5717,
       lng: -46.6395,
       type: 'Pequeno',
+      distance: '0km'
     },
     {
       id: '16',
@@ -778,12 +799,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.4,
       reviewCount: 58,
       imageUrl: 'https://images.unsplash.com/photo-1606885118474-c8bea71dd452?q=80&w=1476&auto=format&fit=crop',
-      distance: '1.5km',
       features: ['Centro', 'Histórico', 'Segurança'],
       available: false,
       lat: -23.5469,
       lng: -46.6451,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '17',
@@ -793,12 +814,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.0,
       reviewCount: 195,
       imageUrl: 'https://images.unsplash.com/photo-1621949541108-1b5093a4b6ec?q=80&w=1470&auto=format&fit=crop',
-      distance: '1.0km',
       features: ['Metrô', 'Centro', 'Econômico'],
       available: true,
       lat: -23.5504,
       lng: -46.6333,
       type: 'Pequeno',
+      distance: '0km'
     },
     {
       id: '18',
@@ -808,12 +829,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.1,
       reviewCount: 87,
       imageUrl: 'https://images.unsplash.com/photo-1594074594651-25653c7a8b25?q=80&w=1470&auto=format&fit=crop',
-      distance: '9.5km',
       features: ['Universidade', 'Econômico'],
       available: true,
       lat: -23.5599,
       lng: -46.7308,
       type: 'Pequeno',
+      distance: '0km'
     },
     {
       id: '19',
@@ -823,12 +844,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.6,
       reviewCount: 225,
       imageUrl: 'https://images.unsplash.com/photo-1588266458641-1c30f0a654e0?q=80&w=1476&auto=format&fit=crop',
-      distance: '5.4km',
       features: ['Parque', 'Lazer', 'Segurança'],
       available: true,
       lat: -23.5874,
       lng: -46.6576,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '20',
@@ -838,12 +859,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.2,
       reviewCount: 178,
       imageUrl: 'https://images.unsplash.com/photo-1591161555818-7b9bebdfbe14?q=80&w=1470&auto=format&fit=crop',
-      distance: '6.8km',
       features: ['Terminal', '24h', 'Segurança'],
       available: true,
       lat: -23.5162,
       lng: -46.6252,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '21',
@@ -853,12 +874,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.3,
       reviewCount: 156,
       imageUrl: 'https://images.unsplash.com/photo-1616364851747-155b0801bad1?q=80&w=1470&auto=format&fit=crop',
-      distance: '8.2km',
       features: ['Shopping', 'Coberto', 'Segurança'],
       available: true,
       lat: -23.5376,
       lng: -46.5763,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '22',
@@ -868,12 +889,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.4,
       reviewCount: 42,
       imageUrl: 'https://images.unsplash.com/photo-1577496549804-8c49d8b9397b?q=80&w=1470&auto=format&fit=crop',
-      distance: '7.1km',
       features: ['Residencial', 'Privativo', 'Portaria'],
       available: true,
       lat: -23.5045,
       lng: -46.6361,
       type: 'Pequeno',
+      distance: '0km'
     },
     {
       id: '23',
@@ -883,12 +904,12 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.0,
       reviewCount: 132,
       imageUrl: 'https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?q=80&w=1374&auto=format&fit=crop',
-      distance: '2.2km',
       features: ['Centro', 'Turístico', 'Segurança'],
       available: true,
       lat: -23.5418,
       lng: -46.6294,
       type: 'Médio',
+      distance: '0km'
     },
     {
       id: '24',
@@ -898,19 +919,33 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 2):
       rating: 4.7,
       reviewCount: 65,
       imageUrl: 'https://images.unsplash.com/photo-1624696388970-35eecf37d212?q=80&w=1470&auto=format&fit=crop',
-      distance: '1.7km',
       features: ['Cultural', 'Centro', 'VIP'],
       available: true,
       lat: -23.5453,
       lng: -46.6388,
       type: 'SUV',
+      distance: '0km'
     },
   ];
   
-  // Simulate API delay
+  // Simular delay da API
   await new Promise(resolve => setTimeout(resolve, 1000));
   
-  // In a real implementation, we would filter by distance calculation
-  return mockSpaces;
+  // Calcular distância para cada vaga e filtrar por raio
+  const spacesWithDistance = allSpaces
+    .filter(space => space.lat && space.lng) // Garantir que tem coordenadas
+    .map(space => {
+      const distance = calculateDistance(lat, lng, space.lat!, space.lng!);
+      return {
+        ...space,
+        distance: formatDistance(distance),
+        distanceKm: distance
+      };
+    })
+    .filter(space => space.distanceKm <= radius) // Filtrar por raio
+    .sort((a, b) => a.distanceKm - b.distanceKm); // Ordenar por proximidade
+  
+  console.log(`Encontradas ${spacesWithDistance.length} vagas em um raio de ${radius}km`);
+  
+  return spacesWithDistance;
 }
-
