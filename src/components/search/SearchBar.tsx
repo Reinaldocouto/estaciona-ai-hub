@@ -1,30 +1,57 @@
 
-import React, { useState, useRef, useCallback } from 'react';
-import { Autocomplete } from '@react-google-maps/api';
+import React, { useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import debounce from 'lodash/debounce';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, MapPin, X } from 'lucide-react';
-import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { useToast } from '@/hooks/use-toast';
 
 const SearchBar: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
-  const { isLoaded, loadError, getGeocodeForAddress } = useGoogleMaps({ libraries: ['places'] });
   
-  // Initialize search term from URL query parameter if available
   const initialQuery = searchParams.get('q') || '';
   const [searchTerm, setSearchTerm] = useState(initialQuery);
-  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
-    console.log('Autocomplete carregado com sucesso');
-    setAutocomplete(autocompleteInstance);
+  // Dados de localizações simuladas para demonstração (como na página de vagas)
+  const mockLocations = [
+    { address: 'Av. Paulista, 1000 - São Paulo', lat: -23.5613, lng: -46.6563 },
+    { address: 'R. dos Pinheiros, 275 - São Paulo', lat: -23.5629, lng: -46.6944 },
+    { address: 'R. 7 de Abril, 154 - São Paulo', lat: -23.5440, lng: -46.6396 },
+    { address: 'R. Oscar Freire, 725 - São Paulo', lat: -23.5629, lng: -46.6731 },
+    { address: 'Av. Roque Petroni Júnior, 1089 - São Paulo', lat: -23.6278, lng: -46.6975 },
+    { address: 'Av. Pedro Álvares Cabral - São Paulo', lat: -23.5875, lng: -46.6577 },
+    { address: 'paulista', lat: -23.5613, lng: -46.6563 },
+    { address: 'pinheiros', lat: -23.5629, lng: -46.6944 },
+    { address: 'centro', lat: -23.5440, lng: -46.6396 },
+    { address: 'jardins', lat: -23.5629, lng: -46.6731 },
+    { address: 'morumbi', lat: -23.6278, lng: -46.6975 },
+    { address: 'ibirapuera', lat: -23.5875, lng: -46.6577 },
+  ];
+
+  const findLocation = (searchQuery: string) => {
+    console.log('Procurando localização para:', searchQuery);
+    
+    const query = searchQuery.toLowerCase().trim();
+    
+    // Busca exata primeiro
+    let location = mockLocations.find(loc => 
+      loc.address.toLowerCase() === query
+    );
+    
+    // Se não encontrou, busca parcial
+    if (!location) {
+      location = mockLocations.find(loc => 
+        loc.address.toLowerCase().includes(query) || 
+        query.includes(loc.address.toLowerCase())
+      );
+    }
+    
+    console.log('Localização encontrada:', location);
+    return location;
   };
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -48,75 +75,9 @@ const SearchBar: React.FC = () => {
     setIsSearching(true);
     
     try {
-      // Primeiro tenta usar o place do autocomplete se disponível
-      if (autocomplete && isLoaded) {
-        const place = autocomplete.getPlace();
-        if (place && place.geometry && place.geometry.location) {
-          console.log('Usando place do autocomplete:', place);
-          const lat = place.geometry.location.lat();
-          const lng = place.geometry.location.lng();
-          
-          toast({
-            title: "Buscando vagas",
-            description: "Procurando vagas próximas ao endereço informado",
-          });
-          
-          navigate(`/spaces?lat=${lat}&lng=${lng}&q=${encodeURIComponent(searchTerm)}`);
-          setIsSearching(false);
-          return;
-        }
-      }
+      const location = findLocation(searchTerm);
       
-      // Se não tem place ou autocomplete, usa geocoding direto
-      await handleDirectSearch();
-    } catch (error) {
-      console.error('Erro na busca:', error);
-      toast({
-        title: "Erro na busca",
-        description: "Ocorreu um erro ao processar sua busca. Tente novamente.",
-        variant: "destructive",
-      });
-      setIsSearching(false);
-    }
-  };
-
-  // Função para busca direta usando geocoding
-  const handleDirectSearch = async () => {
-    console.log('Iniciando busca direta para:', searchTerm);
-    
-    if (!isLoaded) {
-      console.log('Google Maps ainda não carregou');
-      toast({
-        title: "Carregando",
-        description: "Aguarde o Google Maps carregar...",
-        variant: "destructive",
-      });
-      setIsSearching(false);
-      return;
-    }
-
-    if (loadError) {
-      console.log('Erro no carregamento do Google Maps');
-      toast({
-        title: "Erro de carregamento",
-        description: "Erro ao carregar o Google Maps. Verifique sua conexão.",
-        variant: "destructive",
-      });
-      setIsSearching(false);
-      return;
-    }
-    
-    toast({
-      title: "Buscando localização",
-      description: "Procurando pelo endereço informado...",
-    });
-    
-    try {
-      console.log('Chamando getGeocodeForAddress com:', searchTerm);
-      const location = await getGeocodeForAddress(searchTerm);
-      console.log('Resultado do geocoding:', location);
-      
-      if (location && location.lat && location.lng) {
+      if (location) {
         console.log(`Coordenadas encontradas: lat=${location.lat}, lng=${location.lng}`);
         
         toast({
@@ -126,18 +87,18 @@ const SearchBar: React.FC = () => {
         
         navigate(`/spaces?lat=${location.lat}&lng=${location.lng}&q=${encodeURIComponent(searchTerm)}`);
       } else {
-        console.log('Nenhuma coordenada retornada pelo geocoding');
+        console.log('Nenhuma localização encontrada para:', searchTerm);
         toast({
           title: "Endereço não encontrado",
-          description: "Tente ser mais específico com o endereço (inclua cidade, bairro, etc.)",
+          description: "Tente com: Paulista, Pinheiros, Centro, Jardins, Morumbi ou Ibirapuera",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error('Erro detalhado no geocoding:', error);
+      console.error('Erro na busca:', error);
       toast({
         title: "Erro na busca",
-        description: "Não foi possível processar o endereço. Tente novamente com um endereço mais específico.",
+        description: "Ocorreu um erro ao processar sua busca. Tente novamente.",
         variant: "destructive",
       });
     } finally {
@@ -153,36 +114,6 @@ const SearchBar: React.FC = () => {
     }
   };
 
-  const onPlaceChanged = async () => {
-    console.log('onPlaceChanged chamado');
-    
-    if (!autocomplete) {
-      console.log('Autocomplete não disponível, usando busca direta');
-      await handleDirectSearch();
-      return;
-    }
-
-    const place = autocomplete.getPlace();
-    console.log('Place selecionado:', place);
-    
-    if (!place || !place.geometry || !place.geometry.location) {
-      console.log('Place sem geometria, usando busca direta');
-      await handleDirectSearch();
-      return;
-    }
-
-    const lat = place.geometry.location.lat();
-    const lng = place.geometry.location.lng();
-    console.log(`Place com coordenadas: lat=${lat}, lng=${lng}`);
-
-    toast({
-      title: "Local selecionado",
-      description: "Buscando vagas próximas...",
-    });
-    
-    navigate(`/spaces?lat=${lat}&lng=${lng}&q=${encodeURIComponent(searchTerm)}`);
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     console.log('Input alterado para:', value);
@@ -193,35 +124,16 @@ const SearchBar: React.FC = () => {
     <form onSubmit={handleSearch} className="relative max-w-md w-full mx-auto">
       <div className="relative">
         <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-        {isLoaded ? (
-          <Autocomplete
-            onLoad={onLoad}
-            onPlaceChanged={onPlaceChanged}
-            options={{
-              componentRestrictions: { country: 'br' },
-              fields: ['geometry.location', 'formatted_address', 'name'],
-              strictBounds: false,
-            }}
-          >
-            <Input
-              type="text"
-              placeholder="Digite um endereço ou local"
-              className="pl-10 pr-24 py-6 h-14 rounded-lg"
-              value={searchTerm}
-              onChange={handleInputChange}
-              ref={inputRef}
-              aria-label="Buscar por endereço"
-              disabled={isSearching}
-            />
-          </Autocomplete>
-        ) : (
-          <Input
-            type="text"
-            placeholder={loadError ? "Erro ao carregar Google Maps" : "Carregando Google Maps..."}
-            className="pl-10 pr-24 py-6 h-14 rounded-lg"
-            disabled
-          />
-        )}
+        <Input
+          type="text"
+          placeholder="Digite um endereço ou local (ex: Paulista, Centro)"
+          className="pl-10 pr-24 py-6 h-14 rounded-lg"
+          value={searchTerm}
+          onChange={handleInputChange}
+          ref={inputRef}
+          aria-label="Buscar por endereço"
+          disabled={isSearching}
+        />
         
         {searchTerm && !isSearching && (
           <button
@@ -236,7 +148,7 @@ const SearchBar: React.FC = () => {
         
         <Button 
           type="submit" 
-          disabled={isSearching || !isLoaded}
+          disabled={isSearching}
           className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-md bg-primary hover:bg-primary-dark px-6 h-12 disabled:opacity-50"
           aria-label="Buscar"
         >
