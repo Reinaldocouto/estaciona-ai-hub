@@ -1,4 +1,3 @@
-
 import { SpaceProps } from '@/components/ui-custom/SpaceCard';
 
 // Função para calcular distância entre dois pontos usando a fórmula de Haversine
@@ -150,7 +149,6 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
       available: true,
       distance: '1.2km',
     },
-    // Updated vagas with images
     '3': {
       id: '3',
       title: 'Estacionamento 24h Centro',
@@ -382,9 +380,9 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
       reviewCount: 112,
       description: 'Estacionamento próximo à Universidade Nove de Julho. Ideal para estudantes.',
       features: ['Universidade', 'Econômico'],
-      imageUrl: 'https://images.unsplash.com/photo-1562079176-6729edba39ca?q=80&w=1470&auto=format&fit=crop',
+      imageUrl: 'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=1470&auto=format&fit=crop',
       images: [
-        'https://images.unsplash.com/photo-1562079176-6729edba39ca?q=80&w=1470&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=1470&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1582281298055-e25b84a30b0b?q=80&w=1470&auto=format&fit=crop',
       ],
       lat: -23.5515,
@@ -653,7 +651,7 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
 export async function fetchSpaces(lat: number, lng: number, radius: number = 10): Promise<SpaceProps[]> {
   console.log(`Buscando vagas próximas a ${lat}, ${lng} em um raio de ${radius}km`);
   
-  // Todas as vagas mockadas com suas coordenadas reais
+  // Todas as vagas mockadas com suas coordenadas reais e imagens corrigidas
   const allSpaces: SpaceProps[] = [
     {
       id: '1',
@@ -842,7 +840,7 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 10)
       price: 8,
       rating: 3.9,
       reviewCount: 112,
-      imageUrl: 'https://images.unsplash.com/photo-1562079176-6729edba39ca?q=80&w=1470&auto=format&fit=crop',
+      imageUrl: 'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=1470&auto=format&fit=crop',
       features: ['Universidade', 'Econômico'],
       available: true,
       lat: -23.5515,

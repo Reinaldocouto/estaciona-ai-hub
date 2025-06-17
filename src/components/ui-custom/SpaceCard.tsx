@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -66,13 +67,15 @@ interface SpaceCardProps {
 const SpaceCard: React.FC<SpaceCardProps> = ({ space }) => {
   const { isPremium } = useAuth();
   
-  // Set default image if not provided
+  // Set default image if not provided - usando uma imagem de estacionamento mais genérica
   const imageUrl = space.imageUrl || 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop';
   
   // Calculate discounted price
   const discountedPrice = space.discount_premium && isPremium 
     ? space.price * 0.9 // 10% discount for premium users
     : space.price;
+
+  console.log(`SpaceCard ${space.id} - imageUrl: ${imageUrl}`);
   
   return (
     <Card className="glass-effect transition-transform hover:shadow-lg hover:-translate-y-1">
@@ -82,6 +85,12 @@ const SpaceCard: React.FC<SpaceCardProps> = ({ space }) => {
             src={imageUrl}
             alt={space.title}
             className="rounded-md w-full h-40 object-cover mb-3"
+            onError={(e) => {
+              console.error(`Erro ao carregar imagem para vaga ${space.id}:`, imageUrl);
+              const target = e.target as HTMLImageElement;
+              target.src = 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop';
+            }}
+            loading="lazy"
           />
           
           {!space.available && (
