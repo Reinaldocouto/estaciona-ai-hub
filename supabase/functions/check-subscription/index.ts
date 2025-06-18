@@ -33,8 +33,14 @@ serve(async (req) => {
       });
     }
 
+    // Get user using anon key first for authentication
+    const supabaseAuth = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+    );
+
     const token = authHeader.replace("Bearer ", "");
-    const { data, error: userError } = await supabaseClient.auth.getUser(token);
+    const { data, error: userError } = await supabaseAuth.auth.getUser(token);
     
     if (userError || !data.user) {
       console.log("User authentication failed:", userError);
@@ -50,7 +56,25 @@ serve(async (req) => {
     const user = data.user;
     console.log("User authenticated:", user.id);
 
-    // Check profile in database using service role
+    // Ensure profile exists using service role
+    const { error: upsertError } = await supabaseClient
+      .from("profiles")
+      .upsert({
+        id: user.id,
+        email: user.email,
+        premium: false,
+        premium_until: null
+      }, {
+        onConflict: 'id'
+      });
+
+    if (upsertError) {
+      console.log("Profile upsert error:", upsertError);
+    } else {
+      console.log("Profile ensured for user:", user.id);
+    }
+
+    // Check profile status
     const { data: profile, error: profileError } = await supabaseClient
       .from("profiles")
       .select("premium, premium_until")
@@ -58,27 +82,7 @@ serve(async (req) => {
       .single();
 
     if (profileError) {
-      console.log("Profile error:", profileError);
-      // Try to create profile if it doesn't exist using service role
-      if (profileError.code === 'PGRST116') {
-        const { error: insertError } = await supabaseClient
-          .from("profiles")
-          .upsert({
-            id: user.id,
-            email: user.email,
-            premium: false,
-            premium_until: null
-          }, {
-            onConflict: 'id'
-          });
-        
-        if (insertError) {
-          console.log("Failed to create profile:", insertError);
-        } else {
-          console.log("Profile created successfully");
-        }
-      }
-      
+      console.log("Profile fetch error:", profileError);
       return new Response(JSON.stringify({ 
         isPremium: false,
         premiumUntil: null 
