@@ -15,9 +15,10 @@ serve(async (req) => {
   try {
     console.log("Starting subscription check...");
     
+    // Use service role key to bypass RLS for profile operations
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
     const authHeader = req.headers.get("Authorization");
@@ -49,7 +50,7 @@ serve(async (req) => {
     const user = data.user;
     console.log("User authenticated:", user.id);
 
-    // Check profile in database
+    // Check profile in database using service role
     const { data: profile, error: profileError } = await supabaseClient
       .from("profiles")
       .select("premium, premium_until")
@@ -58,19 +59,23 @@ serve(async (req) => {
 
     if (profileError) {
       console.log("Profile error:", profileError);
-      // Try to create profile if it doesn't exist
+      // Try to create profile if it doesn't exist using service role
       if (profileError.code === 'PGRST116') {
         const { error: insertError } = await supabaseClient
           .from("profiles")
-          .insert({
+          .upsert({
             id: user.id,
             email: user.email,
             premium: false,
             premium_until: null
+          }, {
+            onConflict: 'id'
           });
         
         if (insertError) {
           console.log("Failed to create profile:", insertError);
+        } else {
+          console.log("Profile created successfully");
         }
       }
       

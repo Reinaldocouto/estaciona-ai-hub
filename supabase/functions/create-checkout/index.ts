@@ -27,9 +27,12 @@ serve(async (req) => {
       });
     }
 
+    console.log("Stripe key found, creating Supabase client...");
+
+    // Use service role key to bypass RLS for profile operations
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
     const authHeader = req.headers.get("Authorization");
@@ -56,6 +59,24 @@ serve(async (req) => {
     }
 
     console.log("User authenticated for checkout:", user.email);
+
+    // Ensure profile exists using service role
+    const { error: profileError } = await supabaseClient
+      .from("profiles")
+      .upsert({
+        id: user.id,
+        email: user.email,
+        premium: false,
+        premium_until: null
+      }, {
+        onConflict: 'id'
+      });
+
+    if (profileError) {
+      console.log("Profile upsert error:", profileError);
+    } else {
+      console.log("Profile ensured for user:", user.id);
+    }
 
     const stripe = new Stripe(stripeKey, {
       apiVersion: "2023-10-16",
