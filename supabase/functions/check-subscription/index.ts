@@ -8,22 +8,24 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  console.log("=== CHECK-SUBSCRIPTION FUNCTION STARTED ===");
+  
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.log("Starting subscription check...");
-    
-    // Use service role key to bypass RLS for profile operations
+    // Usar chave de serviço para bypass RLS em operações de perfil
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
+    console.log("🔧 Supabase client initialized with service role key");
+
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      console.log("No authorization header");
+      console.log("ℹ️ No authorization header - returning default status");
       return new Response(JSON.stringify({ 
         isPremium: false,
         premiumUntil: null 
@@ -33,17 +35,19 @@ serve(async (req) => {
       });
     }
 
-    // Get user using anon key first for authentication
+    // Usar chave anônima para autenticação do usuário
     const supabaseAuth = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
     const token = authHeader.replace("Bearer ", "");
+    console.log("🔐 Authenticating user...");
+    
     const { data, error: userError } = await supabaseAuth.auth.getUser(token);
     
     if (userError || !data.user) {
-      console.log("User authentication failed:", userError);
+      console.log("❌ User authentication failed:", userError?.message || "No user data");
       return new Response(JSON.stringify({ 
         isPremium: false,
         premiumUntil: null 
@@ -54,9 +58,10 @@ serve(async (req) => {
     }
 
     const user = data.user;
-    console.log("User authenticated:", user.id);
+    console.log("✓ User authenticated:", user.id, user.email);
 
-    // Ensure profile exists using service role
+    // Garantir que o perfil existe usando chave de serviço
+    console.log("📝 Ensuring profile exists...");
     const { error: upsertError } = await supabaseClient
       .from("profiles")
       .upsert({
@@ -69,12 +74,13 @@ serve(async (req) => {
       });
 
     if (upsertError) {
-      console.log("Profile upsert error:", upsertError);
+      console.log("⚠️ Profile upsert warning:", upsertError.message);
     } else {
-      console.log("Profile ensured for user:", user.id);
+      console.log("✓ Profile ensured for user:", user.id);
     }
 
-    // Check profile status
+    // Verificar status do perfil
+    console.log("🔍 Checking premium status...");
     const { data: profile, error: profileError } = await supabaseClient
       .from("profiles")
       .select("premium, premium_until")
@@ -82,7 +88,7 @@ serve(async (req) => {
       .single();
 
     if (profileError) {
-      console.log("Profile fetch error:", profileError);
+      console.log("❌ Profile fetch error:", profileError.message);
       return new Response(JSON.stringify({ 
         isPremium: false,
         premiumUntil: null 
@@ -96,7 +102,11 @@ serve(async (req) => {
       profile?.premium_until && 
       new Date(profile.premium_until) > new Date();
 
-    console.log("Premium status:", { isPremium, premiumUntil: profile?.premium_until });
+    console.log("📊 Premium status result:", { 
+      isPremium, 
+      premiumUntil: profile?.premium_until,
+      premium: profile?.premium 
+    });
 
     return new Response(JSON.stringify({ 
       isPremium: isPremium || false,
@@ -105,15 +115,24 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
+    
   } catch (error) {
-    console.error("Error in check-subscription:", error);
+    console.error("💥 ERROR in check-subscription:");
+    console.error("Error type:", error.constructor.name);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    
     return new Response(JSON.stringify({ 
       error: "Internal server error",
       isPremium: false,
-      premiumUntil: null 
+      premiumUntil: null,
+      details: {
+        type: error.constructor.name,
+        message: error.message
+      }
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200, // Return 200 to avoid breaking the app
+      status: 200, // Retorna 200 para não quebrar a aplicação
     });
   }
 });

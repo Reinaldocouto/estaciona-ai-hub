@@ -9,30 +9,30 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  console.log("=== CREATE-CHECKOUT FUNCTION STARTED ===");
+  
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.log("=== STARTING CHECKOUT CREATION ===");
-    
-    // Check all environment variables
+    // Verificar todas as variáveis de ambiente
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     
-    console.log("Environment check:", {
-      supabaseUrl: supabaseUrl ? "✓ Present" : "✗ Missing",
-      supabaseAnonKey: supabaseAnonKey ? "✓ Present" : "✗ Missing",
-      supabaseServiceKey: supabaseServiceKey ? "✓ Present" : "✗ Missing",
-      stripeKey: stripeKey ? `✓ Present (${stripeKey.substring(0, 8)}...)` : "✗ Missing"
-    });
+    console.log("Environment variables check:");
+    console.log("- SUPABASE_URL:", supabaseUrl ? "✓ Present" : "✗ Missing");
+    console.log("- SUPABASE_ANON_KEY:", supabaseAnonKey ? "✓ Present" : "✗ Missing");
+    console.log("- SUPABASE_SERVICE_KEY:", supabaseServiceKey ? "✓ Present" : "✗ Missing");
+    console.log("- STRIPE_SECRET_KEY:", stripeKey ? `✓ Present (starts with: ${stripeKey.substring(0, 7)}...)` : "✗ Missing");
 
     if (!stripeKey) {
-      console.error("STRIPE_SECRET_KEY is not configured in environment");
+      console.error("STRIPE_SECRET_KEY não encontrada!");
       return new Response(JSON.stringify({ 
-        error: "Stripe não configurado. Verifique as configurações do sistema." 
+        error: "Configuração do Stripe ausente. Verifique se STRIPE_SECRET_KEY está configurada nos secrets da Edge Function.",
+        details: "STRIPE_SECRET_KEY not found in environment"
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,
@@ -40,28 +40,30 @@ serve(async (req) => {
     }
 
     if (!stripeKey.startsWith('sk_')) {
-      console.error("Invalid Stripe key format:", stripeKey.substring(0, 10));
+      console.error("Formato da chave Stripe inválido:", stripeKey.substring(0, 10));
       return new Response(JSON.stringify({ 
-        error: "Chave do Stripe inválida. Verifique se começam com sk_" 
+        error: "Chave do Stripe com formato inválido. Deve começar com 'sk_'",
+        details: `Key format invalid: ${stripeKey.substring(0, 10)}`
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,
       });
     }
 
-    console.log("✓ Stripe key validated");
+    console.log("✓ Stripe key validated successfully");
 
-    // Use anon key for user authentication
+    // Usar chave anônima para autenticação do usuário
     const supabaseAuth = createClient(supabaseUrl ?? "", supabaseAnonKey ?? "");
     
-    // Use service role key for profile operations
+    // Usar chave de serviço para operações de perfil
     const supabaseAdmin = createClient(supabaseUrl ?? "", supabaseServiceKey ?? "");
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      console.log("No authorization header provided");
+      console.log("❌ No authorization header provided");
       return new Response(JSON.stringify({ 
-        error: "Usuário não autenticado" 
+        error: "Token de autorização necessário",
+        details: "No authorization header"
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 401,
@@ -69,14 +71,15 @@ serve(async (req) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    console.log("Authenticating user...");
+    console.log("🔐 Authenticating user with token...");
     
     const { data, error: authError } = await supabaseAuth.auth.getUser(token);
     
     if (authError) {
-      console.error("Authentication error:", authError);
+      console.error("❌ Authentication error:", authError.message);
       return new Response(JSON.stringify({ 
-        error: "Erro de autenticação: " + authError.message 
+        error: "Erro de autenticação: " + authError.message,
+        details: authError
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 401,
@@ -85,19 +88,20 @@ serve(async (req) => {
     
     const user = data.user;
     if (!user?.email) {
-      console.log("No user or email found");
+      console.log("❌ No user or email found");
       return new Response(JSON.stringify({ 
-        error: "Usuário não encontrado" 
+        error: "Usuário não encontrado ou email ausente",
+        details: "User not found or no email"
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 401,
       });
     }
 
-    console.log("✓ User authenticated:", user.email);
+    console.log("✓ User authenticated successfully:", user.email);
 
-    // Ensure profile exists using service role
-    console.log("Ensuring profile exists...");
+    // Garantir que o perfil existe usando chave de serviço
+    console.log("📝 Ensuring user profile exists...");
     const { error: profileError } = await supabaseAdmin
       .from("profiles")
       .upsert({
@@ -110,18 +114,18 @@ serve(async (req) => {
       });
 
     if (profileError) {
-      console.log("Profile upsert error:", profileError);
+      console.log("⚠️ Profile upsert warning:", profileError.message);
     } else {
       console.log("✓ Profile ensured for user:", user.id);
     }
 
-    console.log("Initializing Stripe...");
+    console.log("💳 Initializing Stripe with key...");
     const stripe = new Stripe(stripeKey, {
       apiVersion: "2023-10-16",
     });
 
-    console.log("Checking for existing customer...");
-    // Check if customer already exists
+    console.log("🔍 Checking for existing Stripe customer...");
+    // Verificar se o cliente já existe
     const customers = await stripe.customers.list({
       email: user.email,
       limit: 1,
@@ -130,13 +134,13 @@ serve(async (req) => {
     let customerId;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
-      console.log("✓ Existing customer found:", customerId);
+      console.log("✓ Existing Stripe customer found:", customerId);
     } else {
-      console.log("No existing customer found, will create new one");
+      console.log("ℹ️ No existing customer found, will create new one during checkout");
     }
 
     const origin = req.headers.get("origin") || "http://localhost:3000";
-    console.log("Creating checkout session for origin:", origin);
+    console.log("🛒 Creating Stripe checkout session for origin:", origin);
     
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -165,21 +169,32 @@ serve(async (req) => {
       billing_address_collection: "required",
     });
 
-    console.log("✓ Checkout session created successfully:", session.id);
+    console.log("✅ Checkout session created successfully!");
+    console.log("Session ID:", session.id);
     console.log("Session URL:", session.url);
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    return new Response(JSON.stringify({ 
+      url: session.url,
+      sessionId: session.id 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
+    
   } catch (error) {
-    console.error("=== ERROR IN CREATE-CHECKOUT ===");
+    console.error("💥 CRITICAL ERROR IN CREATE-CHECKOUT:");
     console.error("Error type:", error.constructor.name);
     console.error("Error message:", error.message);
     console.error("Error stack:", error.stack);
     
+    // Retornar erro mais detalhado para debug
     return new Response(JSON.stringify({ 
-      error: `Erro ao processar pagamento: ${error.message}` 
+      error: `Erro interno do servidor: ${error.message}`,
+      details: {
+        type: error.constructor.name,
+        message: error.message,
+        stack: error.stack?.split('\n').slice(0, 5) // Primeiras 5 linhas do stack
+      }
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
