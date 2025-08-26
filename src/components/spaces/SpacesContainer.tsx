@@ -20,6 +20,9 @@ const SpacesContainer: React.FC = () => {
   const [spaces, setSpaces] = useState<SpaceProps[]>([]);
   const [filteredSpaces, setFilteredSpaces] = useState<SpaceProps[]>([]);
   const [searchParams] = useSearchParams();
+  
+  // Check if SmartMatch was activated
+  const isSmartMatch = searchParams.get('smartmatch') === 'true';
   const [filters, setFilters] = useState<FilterState>({
     search: '',
     priceRange: 100,
@@ -66,22 +69,30 @@ const SpacesContainer: React.FC = () => {
           setFilteredSpaces(fetchedSpaces);
           setLoading(false);
           
+          // Auto-activate AI for SmartMatch
+          if (isSmartMatch) {
+            console.log('🤖 SmartMatch detectado - ativando IA automaticamente');
+            setIaEnabled(true);
+          }
+          
           // Auto-switch to map view when coming from search
           setViewMode('map');
           
-          // Show results toast with correct count and grammar
-          const count = fetchedSpaces.length;
-          if (count > 0) {
-            toast({
-              title: `${count} vaga${count !== 1 ? 's' : ''} encontrada${count !== 1 ? 's' : ''}`,
-              description: `Vagas próximas ao endereço "${searchQuery}"`,
-            });
-          } else {
-            toast({
-              title: "Nenhuma vaga encontrada",
-              description: `Não foi possível encontrar vagas próximas ao endereço "${searchQuery}". Tente expandir a busca.`,
-              variant: "destructive",
-            });
+          // Show results toast with correct count and grammar (skip for SmartMatch)
+          if (!isSmartMatch) {
+            const count = fetchedSpaces.length;
+            if (count > 0) {
+              toast({
+                title: `${count} vaga${count !== 1 ? 's' : ''} encontrada${count !== 1 ? 's' : ''}`,
+                description: `Vagas próximas ao endereço "${searchQuery}"`,
+              });
+            } else {
+              toast({
+                title: "Nenhuma vaga encontrada",
+                description: `Não foi possível encontrar vagas próximas ao endereço "${searchQuery}". Tente expandir a busca.`,
+                variant: "destructive",
+              });
+            }
           }
         })
         .catch((error) => {
@@ -113,7 +124,7 @@ const SpacesContainer: React.FC = () => {
           });
         });
     }
-  }, [searchLat, searchLng, searchQuery]); // Removed toast from dependencies
+  }, [searchLat, searchLng, searchQuery, isSmartMatch]); // Added isSmartMatch dependency
 
   /* --------------------------- Aplicação de filtros --------------------------- */
   // Filtrar espaços com base nos filtros definidos

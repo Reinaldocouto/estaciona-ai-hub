@@ -7,6 +7,7 @@ import SpaceCard, { SpaceProps } from '@/components/ui-custom/SpaceCard';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import SearchBar from '@/components/search/SearchBar';
+import SmartMatchButton from '@/components/search/SmartMatchButton';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
@@ -125,8 +126,13 @@ const Index = () => {
               O jeito mais fácil de encontrar e reservar vagas de estacionamento em sua cidade
             </p>
             
-            <div className="max-w-xl mx-auto">
-              <SearchBar />
+            <div className="max-w-2xl mx-auto">
+              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+                <div className="flex-1 max-w-md">
+                  <SearchBar />
+                </div>
+                <SmartMatchButton />
+              </div>
             </div>
             
             {!isPremium && (
