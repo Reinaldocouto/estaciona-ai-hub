@@ -71,29 +71,11 @@ export const useIARecommendations = () => {
         queryParams.append('distancia_max', params.distancia_max.toString());
       }
 
-      // Chamar a Edge Function
-      const { data: response, error: functionError } = await supabase.functions.invoke(
-        'ia-recommendations',
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: {
-            lat: params.lat,
-            lng: params.lng,
-            radius_km: params.radius_km || 3,
-            max_results: params.max_results || 20,
-            peso_preco: params.peso_preco || 0.6,
-            peso_dist: params.peso_dist || 0.4,
-            recursos: params.recursos || [],
-            preco_min: params.preco_min,
-            preco_max: params.preco_max,
-            distancia_min: params.distancia_min,
-            distancia_max: params.distancia_max
-          }
-        }
-      );
+      // Chamar a Edge Function via query string (garante que a função receba os parâmetros)
+      const functionName = `ia-recommendations?${queryParams.toString()}`;
+      const { data: response, error: functionError } = await supabase.functions.invoke(functionName, {
+        headers: { 'Content-Type': 'application/json' }
+      });
 
       if (functionError) {
         console.error('❌ Erro na função IA:', functionError);
