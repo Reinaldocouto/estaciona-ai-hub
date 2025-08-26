@@ -112,12 +112,12 @@ const IAControls: React.FC<IAControlsProps> = ({
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label className="text-sm font-medium">Preço</Label>
-                  <span className="text-sm text-muted-foreground">R${precoMin} - R${precoMax}</span>
+                  <span className="text-sm text-muted-foreground">R${precoMax}/hora</span>
                 </div>
                 <div className="px-2">
                   <Slider
-                    value={[precoMin, precoMax]}
-                    onValueChange={([min, max]) => onPrecoChange(min, max)}
+                    value={[precoMax]}
+                    onValueChange={([max]) => onPrecoChange(5, max)}
                     max={100}
                     min={5}
                     step={5}
@@ -134,12 +134,12 @@ const IAControls: React.FC<IAControlsProps> = ({
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label className="text-sm font-medium">Distância</Label>
-                  <span className="text-sm text-muted-foreground">{distanciaMin}km - {distanciaMax}km</span>
+                  <span className="text-sm text-muted-foreground">{distanciaMax}km</span>
                 </div>
                 <div className="px-2">
                   <Slider
-                    value={[distanciaMin, distanciaMax]}
-                    onValueChange={([min, max]) => onDistanciaChange(min, max)}
+                    value={[distanciaMax]}
+                    onValueChange={([max]) => onDistanciaChange(1, max)}
                     max={20}
                     min={1}
                     step={1}
@@ -179,7 +179,7 @@ const IAControls: React.FC<IAControlsProps> = ({
                   <span className="font-medium">IA Ativa:</span>
                 </div>
                 <p className="mt-1">
-                  Buscando em {raioKm}km • Preço: R${precoMin}-R${precoMax} • Distância: {distanciaMin}-{distanciaMax}km
+                  Buscando em {raioKm}km • Preço: até R${precoMax} • Distância: até {distanciaMax}km
                   {recursos.length > 0 && ` • Recursos: ${recursos.join(', ')}`}
                 </p>
               </div>
