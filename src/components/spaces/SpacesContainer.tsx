@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Brain } from 'lucide-react';
 import SpacesHeader from './SpacesHeader';
 import SpacesList from './SpacesList';
 import SpacesLoading from './SpacesLoading';
@@ -143,8 +144,7 @@ const SpacesContainer: React.FC = () => {
     
     // Se IA está habilitada, não aplicar filtros tradicionais
     if (iaEnabled) {
-      setFilteredSpaces(filtered);
-      return;
+      return; // IA controla os dados, não aplica filtros aqui
     }
     
     // Filtrar por termo de busca
@@ -269,6 +269,14 @@ const SpacesContainer: React.FC = () => {
       
       {/* Filtros tradicionais quando IA está desabilitada */}
       {!iaEnabled && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+          <p className="text-sm text-yellow-800">
+            💡 <strong>Visualizando todas as vagas:</strong> Use os filtros abaixo para refinar sua busca ou ative a IA para recomendações personalizadas.
+          </p>
+        </div>
+      )}
+      
+      {!iaEnabled && (
         <FilterBar 
           onFilterChange={handleFilterChange} 
           initialSearch={searchQuery}
@@ -328,12 +336,27 @@ const SpacesContainer: React.FC = () => {
       
       {/* Status da IA */}
       {showingIA && (
-        <div className="text-center text-sm text-muted-foreground p-4 bg-muted/30 rounded-lg">
-          🤖 Mostrando {iaData.length} vagas ranqueadas por IA • 
-          Preço: R${precoMin}-R${precoMax} • 
-          Distância: {distanciaMin}-{distanciaMax}km • 
-          Raio: {raioKm}km
-          {recursosDesejados.length > 0 && ` • Recursos: ${recursosDesejados.join(', ')}`}
+        <div className="text-center text-sm text-muted-foreground p-4 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <Brain className="h-4 w-4 text-primary" />
+            <span className="font-medium">IA Ranqueamento Ativo</span>
+          </div>
+          <p>
+            Mostrando {iaData.length} vagas otimizadas • 
+            Preço: R${precoMin}-R${precoMax} • 
+            Distância: {distanciaMin}-{distanciaMax}km • 
+            Raio: {raioKm}km
+            {recursosDesejados.length > 0 && ` • Recursos: ${recursosDesejados.join(', ')}`}
+          </p>
+        </div>
+      )}
+      
+      {/* Status dos filtros tradicionais */}
+      {!iaEnabled && filteredSpaces.length !== spaces.length && (
+        <div className="text-center text-sm text-muted-foreground p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <p>
+            📊 Filtros aplicados: Mostrando {filteredSpaces.length} de {spaces.length} vagas disponíveis
+          </p>
         </div>
       )}
     </div>

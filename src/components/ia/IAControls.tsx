@@ -60,9 +60,14 @@ const IAControls: React.FC<IAControlsProps> = ({
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2">
           <Brain className="h-5 w-5 text-primary" />
-          IA: Custo × Proximidade
+          IA: Busca Personalizada
           {isLoading && <Zap className="h-4 w-4 animate-pulse text-yellow-500" />}
         </CardTitle>
+        {!enabled && (
+          <p className="text-sm text-muted-foreground">
+            A IA analisa custo e proximidade para encontrar as melhores vagas para você.
+          </p>
+        )}
       </CardHeader>
       
       <CardContent className="space-y-6">
@@ -109,15 +114,21 @@ const IAControls: React.FC<IAControlsProps> = ({
                   <Label className="text-sm font-medium">Preço</Label>
                   <span className="text-sm text-muted-foreground">R${precoMin} - R${precoMax}</span>
                 </div>
-                <Slider
-                  value={[precoMin, precoMax]}
-                  onValueChange={([min, max]) => onPrecoChange(min, max)}
-                  max={100}
-                  min={5}
-                  step={5}
-                  disabled={isLoading}
-                  className="w-full"
-                />
+                <div className="px-2">
+                  <Slider
+                    value={[precoMin, precoMax]}
+                    onValueChange={([min, max]) => onPrecoChange(min, max)}
+                    max={100}
+                    min={5}
+                    step={5}
+                    disabled={isLoading}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>R$5</span>
+                    <span>R$100</span>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -125,15 +136,21 @@ const IAControls: React.FC<IAControlsProps> = ({
                   <Label className="text-sm font-medium">Distância</Label>
                   <span className="text-sm text-muted-foreground">{distanciaMin}km - {distanciaMax}km</span>
                 </div>
-                <Slider
-                  value={[distanciaMin, distanciaMax]}
-                  onValueChange={([min, max]) => onDistanciaChange(min, max)}
-                  max={20}
-                  min={1}
-                  step={1}
-                  disabled={isLoading}
-                  className="w-full"
-                />
+                <div className="px-2">
+                  <Slider
+                    value={[distanciaMin, distanciaMax]}
+                    onValueChange={([min, max]) => onDistanciaChange(min, max)}
+                    max={20}
+                    min={1}
+                    step={1}
+                    disabled={isLoading}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>1km</span>
+                    <span>20km</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -156,10 +173,14 @@ const IAControls: React.FC<IAControlsProps> = ({
 
             {/* Indicador de Status */}
             {enabled && (
-              <div className="text-xs text-muted-foreground p-3 bg-muted/50 rounded-lg">
-                <p>
-                  🤖 IA ativa: buscando vagas em {raioKm}km • Preço: R${precoMin}-R${precoMax} • Distância: {distanciaMin}-{distanciaMax}km
-                  {recursos.length > 0 && ` • Filtros: ${recursos.join(', ')}`}
+              <div className="text-xs text-muted-foreground p-3 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
+                <div className="flex items-center gap-2">
+                  <Brain className="h-3 w-3 text-primary" />
+                  <span className="font-medium">IA Ativa:</span>
+                </div>
+                <p className="mt-1">
+                  Buscando em {raioKm}km • Preço: R${precoMin}-R${precoMax} • Distância: {distanciaMin}-{distanciaMax}km
+                  {recursos.length > 0 && ` • Recursos: ${recursos.join(', ')}`}
                 </p>
               </div>
             )}

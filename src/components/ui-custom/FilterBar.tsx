@@ -104,14 +104,20 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
           <label className="block text-sm text-gray-300 mb-2 font-medium">
             Preço máximo: <span className="text-primary">R${priceRange}/hora</span>
           </label>
-          <Slider 
-            value={[priceRange]} 
-            min={5}
-            max={100}
-            step={5}
-            onValueChange={(values) => setPriceRange(values[0])}
-            className="py-4"
-          />
+          <div className="px-2">
+            <Slider 
+              value={[priceRange]} 
+              min={5}
+              max={100}
+              step={5}
+              onValueChange={(values) => setPriceRange(values[0])}
+              className="py-4"
+            />
+            <div className="flex justify-between text-xs text-gray-400 mt-1">
+              <span>R$5</span>
+              <span>R$100</span>
+            </div>
+          </div>
         </div>
         
         <div className="flex-1 min-w-[200px]">
@@ -211,13 +217,19 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, initialSearch = '
                 <h3 className="text-sm font-medium mb-2 text-gray-300">
                   Preço máximo: <span className="text-primary">R${priceRange}/hora</span>
                 </h3>
-                <Slider 
-                  value={[priceRange]} 
-                  min={5}
-                  max={100}
-                  step={5}
-                  onValueChange={(values) => setPriceRange(values[0])}
-                />
+                <div className="px-2">
+                  <Slider 
+                    value={[priceRange]} 
+                    min={5}
+                    max={100}
+                    step={5}
+                    onValueChange={(values) => setPriceRange(values[0])}
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>R$5</span>
+                    <span>R$100</span>
+                  </div>
+                </div>
               </div>
               
               <div>
