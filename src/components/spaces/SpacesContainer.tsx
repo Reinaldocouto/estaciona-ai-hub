@@ -32,8 +32,10 @@ const SpacesContainer: React.FC = () => {
 
   // Estados da IA
   const [iaEnabled, setIaEnabled] = useState(false);
-  const [pesoPreco, setPesoPreco] = useState(0.6);
-  const [pesoDistancia, setPesoDistancia] = useState(0.4);
+  const [precoMin, setPrecoMin] = useState(5);
+  const [precoMax, setPrecoMax] = useState(50);
+  const [distanciaMin, setDistanciaMin] = useState(1);
+  const [distanciaMax, setDistanciaMax] = useState(5);
   const [raioKm, setRaioKm] = useState(3);
   const [recursosDesejados, setRecursosDesejados] = useState<string[]>([]);
   const { isLoading: iaLoading, data: iaData, fetchRecommendations, clearRecommendations } = useIARecommendations();
@@ -193,9 +195,13 @@ const SpacesContainer: React.FC = () => {
       lat,
       lng,
       radius_km: raioKm,
-      peso_preco: pesoPreco,
-      peso_dist: pesoDistancia,
-      recursos: recursosDesejados
+      peso_preco: 0.5, // Valor fixo, agora usamos ranges
+      peso_dist: 0.5, // Valor fixo, agora usamos ranges
+      recursos: recursosDesejados,
+      preco_min: precoMin,
+      preco_max: precoMax,
+      distancia_min: distanciaMin,
+      distancia_max: distanciaMax
     });
   };
 
@@ -209,12 +215,16 @@ const SpacesContainer: React.FC = () => {
         lat,
         lng,
         radius_km: raioKm,
-        peso_preco: pesoPreco,
-        peso_dist: pesoDistancia,
-        recursos: recursosDesejados
+        peso_preco: 0.5, // Valor fixo, agora usamos ranges
+        peso_dist: 0.5, // Valor fixo, agora usamos ranges
+        recursos: recursosDesejados,
+        preco_min: precoMin,
+        preco_max: precoMax,
+        distancia_min: distanciaMin,
+        distancia_max: distanciaMax
       });
     }
-  }, [iaEnabled, raioKm, pesoPreco, pesoDistancia, recursosDesejados, fetchRecommendations, searchLat, searchLng]);
+  }, [iaEnabled, raioKm, precoMin, precoMax, distanciaMin, distanciaMax, recursosDesejados, fetchRecommendations, searchLat, searchLng]);
 
   // Determinar quais espaços mostrar (IA ou filtrados)
   const displaySpaces = iaEnabled && iaData.length > 0 ? iaData : filteredSpaces;
@@ -226,10 +236,18 @@ const SpacesContainer: React.FC = () => {
       <IAControls
         enabled={iaEnabled}
         onEnabledChange={handleIAToggle}
-        pesoPreco={pesoPreco}
-        onPesoPrecoChange={setPesoPreco}
-        pesoDistancia={pesoDistancia}
-        onPesoDistanciaChange={setPesoDistancia}
+        precoMin={precoMin}
+        precoMax={precoMax}
+        onPrecoChange={(min, max) => {
+          setPrecoMin(min);
+          setPrecoMax(max);
+        }}
+        distanciaMin={distanciaMin}
+        distanciaMax={distanciaMax}
+        onDistanciaChange={(min, max) => {
+          setDistanciaMin(min);
+          setDistanciaMax(max);
+        }}
         raioKm={raioKm}
         onRaioChange={setRaioKm}
         recursos={recursosDesejados}
@@ -300,8 +318,8 @@ const SpacesContainer: React.FC = () => {
       {showingIA && (
         <div className="text-center text-sm text-muted-foreground p-4 bg-muted/30 rounded-lg">
           🤖 Mostrando {iaData.length} vagas ranqueadas por IA • 
-          Peso preço: {Math.round(pesoPreco * 100)}% • 
-          Peso distância: {Math.round(pesoDistancia * 100)}% • 
+          Preço: R${precoMin}-R${precoMax} • 
+          Distância: {distanciaMin}-{distanciaMax}km • 
           Raio: {raioKm}km
           {recursosDesejados.length > 0 && ` • Recursos: ${recursosDesejados.join(', ')}`}
         </div>

@@ -10,10 +10,12 @@ import { Label } from '@/components/ui/label';
 interface IAControlsProps {
   enabled: boolean;
   onEnabledChange: (enabled: boolean) => void;
-  pesoPreco: number;
-  onPesoPrecoChange: (value: number) => void;
-  pesoDistancia: number;
-  onPesoDistanciaChange: (value: number) => void;
+  precoMin: number;
+  precoMax: number;
+  onPrecoChange: (min: number, max: number) => void;
+  distanciaMin: number;
+  distanciaMax: number;
+  onDistanciaChange: (min: number, max: number) => void;
   raioKm: number;
   onRaioChange: (value: number) => void;
   recursos: string[];
@@ -34,10 +36,12 @@ const recursosDisponiveis = [
 const IAControls: React.FC<IAControlsProps> = ({
   enabled,
   onEnabledChange,
-  pesoPreco,
-  onPesoPrecoChange,
-  pesoDistancia,
-  onPesoDistanciaChange,
+  precoMin,
+  precoMax,
+  onPrecoChange,
+  distanciaMin,
+  distanciaMax,
+  onDistanciaChange,
   raioKm,
   onRaioChange,
   recursos,
@@ -98,19 +102,19 @@ const IAControls: React.FC<IAControlsProps> = ({
               </Select>
             </div>
 
-            {/* Pesos */}
+            {/* Ranges de Preço e Distância */}
             <div className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <Label className="text-sm font-medium">Peso do Preço</Label>
-                  <span className="text-sm text-muted-foreground">{Math.round(pesoPreco * 100)}%</span>
+                  <Label className="text-sm font-medium">Preço</Label>
+                  <span className="text-sm text-muted-foreground">R${precoMin} - R${precoMax}</span>
                 </div>
                 <Slider
-                  value={[pesoPreco]}
-                  onValueChange={([value]) => onPesoPrecoChange(value)}
-                  max={1}
-                  min={0}
-                  step={0.1}
+                  value={[precoMin, precoMax]}
+                  onValueChange={([min, max]) => onPrecoChange(min, max)}
+                  max={100}
+                  min={5}
+                  step={5}
                   disabled={isLoading}
                   className="w-full"
                 />
@@ -118,15 +122,15 @@ const IAControls: React.FC<IAControlsProps> = ({
 
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <Label className="text-sm font-medium">Peso da Distância</Label>
-                  <span className="text-sm text-muted-foreground">{Math.round(pesoDistancia * 100)}%</span>
+                  <Label className="text-sm font-medium">Distância</Label>
+                  <span className="text-sm text-muted-foreground">{distanciaMin}km - {distanciaMax}km</span>
                 </div>
                 <Slider
-                  value={[pesoDistancia]}
-                  onValueChange={([value]) => onPesoDistanciaChange(value)}
-                  max={1}
-                  min={0}
-                  step={0.1}
+                  value={[distanciaMin, distanciaMax]}
+                  onValueChange={([min, max]) => onDistanciaChange(min, max)}
+                  max={20}
+                  min={1}
+                  step={1}
                   disabled={isLoading}
                   className="w-full"
                 />
@@ -154,8 +158,7 @@ const IAControls: React.FC<IAControlsProps> = ({
             {enabled && (
               <div className="text-xs text-muted-foreground p-3 bg-muted/50 rounded-lg">
                 <p>
-                  🤖 IA ativa: buscando vagas em {raioKm}km com prioridade {Math.round(pesoPreco * 100)}% preço 
-                  e {Math.round(pesoDistancia * 100)}% distância
+                  🤖 IA ativa: buscando vagas em {raioKm}km • Preço: R${precoMin}-R${precoMax} • Distância: {distanciaMin}-{distanciaMax}km
                   {recursos.length > 0 && ` • Filtros: ${recursos.join(', ')}`}
                 </p>
               </div>

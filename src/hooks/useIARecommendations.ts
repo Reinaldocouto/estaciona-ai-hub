@@ -18,6 +18,10 @@ export interface IAParams {
   peso_preco?: number;
   peso_dist?: number;
   recursos?: string[];
+  preco_min?: number;
+  preco_max?: number;
+  distancia_min?: number;
+  distancia_max?: number;
 }
 
 export interface IAResponse {
@@ -51,6 +55,22 @@ export const useIARecommendations = () => {
         queryParams.append('recursos', params.recursos.join(','));
       }
 
+      if (params.preco_min !== undefined) {
+        queryParams.append('preco_min', params.preco_min.toString());
+      }
+
+      if (params.preco_max !== undefined) {
+        queryParams.append('preco_max', params.preco_max.toString());
+      }
+
+      if (params.distancia_min !== undefined) {
+        queryParams.append('distancia_min', params.distancia_min.toString());
+      }
+
+      if (params.distancia_max !== undefined) {
+        queryParams.append('distancia_max', params.distancia_max.toString());
+      }
+
       // Chamar a Edge Function
       const { data: response, error: functionError } = await supabase.functions.invoke(
         'ia-recommendations',
@@ -59,6 +79,19 @@ export const useIARecommendations = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          body: {
+            lat: params.lat,
+            lng: params.lng,
+            radius_km: params.radius_km || 3,
+            max_results: params.max_results || 20,
+            peso_preco: params.peso_preco || 0.6,
+            peso_dist: params.peso_dist || 0.4,
+            recursos: params.recursos || [],
+            preco_min: params.preco_min,
+            preco_max: params.preco_max,
+            distancia_min: params.distancia_min,
+            distancia_max: params.distancia_max
+          }
         }
       );
 
