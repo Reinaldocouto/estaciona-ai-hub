@@ -82,9 +82,14 @@ const Navbar = () => {
               )}
               {user ? (
                 <div className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-md">
-                    <User className="w-4 h-4" />
-                    <span className="text-sm">{user.email}</span>
+                  <div className="flex items-center space-x-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg">
+                    <User className="w-4 h-4 text-primary" />
+                    <div className="flex flex-col">
+                      <span className="text-xs text-primary/70 font-medium">Bem-vindo,</span>
+                      <span className="text-sm font-semibold text-primary">
+                        {user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário'}
+                      </span>
+                    </div>
                     {isPremium && <PremiumBadge />}
                   </div>
                   <Button variant="outline" onClick={handleSignOut} size="sm">
@@ -143,9 +148,14 @@ const Navbar = () => {
                 )}
                 {user ? (
                   <>
-                    <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-md">
-                      <User className="w-4 h-4" />
-                      <span className="text-sm">{user.email}</span>
+                    <div className="flex items-center space-x-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg">
+                      <User className="w-4 h-4 text-primary" />
+                      <div className="flex flex-col">
+                        <span className="text-xs text-primary/70 font-medium">Bem-vindo,</span>
+                        <span className="text-sm font-semibold text-primary">
+                          {user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário'}
+                        </span>
+                      </div>
                       {isPremium && <PremiumBadge />}
                     </div>
                     <Button variant="outline" onClick={handleSignOut} className="justify-start">
