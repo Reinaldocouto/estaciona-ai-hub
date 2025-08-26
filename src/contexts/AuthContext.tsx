@@ -12,6 +12,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   checkSubscription: () => Promise<void>;
 }
 
@@ -133,6 +134,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth?action=reset-password`,
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Email de recuperação enviado!",
+        description: "Verifique sua caixa de entrada para redefinir sua senha.",
+      });
+    } catch (error: any) {
+      console.error('Reset password error:', error);
+      toast({
+        title: "Erro ao enviar email de recuperação",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -177,6 +201,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     signIn,
     signOut,
+    resetPassword,
     checkSubscription,
   };
 

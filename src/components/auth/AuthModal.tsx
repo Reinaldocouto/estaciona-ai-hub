@@ -31,22 +31,31 @@ const AuthModal: React.FC<AuthModalProps> = ({
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const { signIn, signUp, resetPassword } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
     
     try {
-      if (mode === 'login') {
+      if (showForgotPassword) {
+        await resetPassword(email);
+        setShowForgotPassword(false);
+        setEmail('');
+      } else if (mode === 'login') {
         await signIn(email, password);
+        onClose();
+        setEmail('');
+        setPassword('');
+        setName('');
       } else {
         await signUp(email, password, name);
+        onClose();
+        setEmail('');
+        setPassword('');
+        setName('');
       }
-      onClose();
-      setEmail('');
-      setPassword('');
-      setName('');
     } catch (error) {
       // Error is handled in the auth context
     } finally {
@@ -59,20 +68,64 @@ const AuthModal: React.FC<AuthModalProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold">
-            {mode === 'login' ? 'Entrar' : 'Cadastrar'}
+            {showForgotPassword ? 'Recuperar senha' : mode === 'login' ? 'Entrar' : 'Cadastrar'}
           </DialogTitle>
           <DialogDescription className="text-center">
-            {mode === 'login' 
+            {showForgotPassword 
+              ? 'Digite seu email para receber as instruções de recuperação de senha.' 
+              : mode === 'login' 
               ? 'Acesse sua conta para gerenciar suas reservas e vagas.' 
               : 'Crie sua conta para começar a usar o Estaciona Aí.'}
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={mode} onValueChange={(value) => setMode(value as 'login' | 'register')}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Entrar</TabsTrigger>
-            <TabsTrigger value="register">Cadastrar</TabsTrigger>
-          </TabsList>
+        {showForgotPassword ? (
+          <form onSubmit={handleSubmit} className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="reset-email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <Input
+                  id="reset-email"
+                  placeholder="seu@email.com"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            <div className="flex space-x-2">
+              <Button 
+                type="button"
+                variant="outline" 
+                className="flex-1"
+                onClick={() => {
+                  setShowForgotPassword(false);
+                  setEmail('');
+                }}
+                disabled={isLoading}
+              >
+                Voltar
+              </Button>
+              <Button 
+                type="submit" 
+                className="flex-1 bg-primary hover:bg-primary-dark"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Enviando...' : 'Enviar'}
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <Tabs value={mode} onValueChange={(value) => setMode(value as 'login' | 'register')}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="login">Entrar</TabsTrigger>
+              <TabsTrigger value="register">Cadastrar</TabsTrigger>
+            </TabsList>
           <TabsContent value="login">
             <form onSubmit={handleSubmit} className="space-y-4 py-4">
               <div className="space-y-2">
@@ -95,9 +148,13 @@ const AuthModal: React.FC<AuthModalProps> = ({
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label htmlFor="password">Senha</Label>
-                  <a href="#" className="text-xs text-primary hover:underline">
+                  <button 
+                    type="button"
+                    className="text-xs text-primary hover:underline"
+                    onClick={() => setShowForgotPassword(true)}
+                  >
                     Esqueceu a senha?
-                  </a>
+                  </button>
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -200,6 +257,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
             </form>
           </TabsContent>
         </Tabs>
+        )}
       </DialogContent>
     </Dialog>
   );
