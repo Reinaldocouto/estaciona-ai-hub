@@ -108,12 +108,19 @@ const SpacesContainer: React.FC = () => {
           });
         });
     } else {
-      // If no specific location, fetch all spaces near São Paulo center
-      fetchSpaces(-23.5505, -46.6333, 15) // Raio maior para São Paulo centro
+      // If no specific location, fetch ALL available spaces (much larger radius)
+      fetchSpaces(-23.5505, -46.6333, 50) // Raio muito maior para mostrar todas as vagas
         .then((fetchedSpaces) => {
+          console.log(`Mostrando todas as ${fetchedSpaces.length} vagas disponíveis`);
           setSpaces(fetchedSpaces);
           setFilteredSpaces(fetchedSpaces);
           setLoading(false);
+          
+          // Toast informando que está mostrando todas as vagas
+          toast({
+            title: `${fetchedSpaces.length} vagas disponíveis`,
+            description: "Mostrando todas as vagas da plataforma. Use a busca para filtrar por localização.",
+          });
         })
         .catch((error) => {
           console.error("Error fetching spaces:", error);
@@ -128,12 +135,17 @@ const SpacesContainer: React.FC = () => {
     }
   }, [searchLat, searchLng, searchQuery, isSmartMatch]); // Added isSmartMatch dependency
 
-  /* --------------------------- Aplicação de filtros --------------------------- */
   // Filtrar espaços com base nos filtros definidos
   useEffect(() => {
     if (spaces.length === 0) return;
     
     let filtered = [...spaces];
+    
+    // Se IA está habilitada, não aplicar filtros tradicionais
+    if (iaEnabled) {
+      setFilteredSpaces(filtered);
+      return;
+    }
     
     // Filtrar por termo de busca
     if (filters.search) {
@@ -165,7 +177,7 @@ const SpacesContainer: React.FC = () => {
     }
     
     setFilteredSpaces(filtered);
-  }, [filters, spaces]);
+  }, [filters, spaces, iaEnabled]);
 
   const handleFilterChange = (newFilters: FilterState) => {
     console.log('Filtros alterados:', newFilters);
