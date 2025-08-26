@@ -1,3 +1,4 @@
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.8';
 
 const corsHeaders = {
@@ -226,6 +227,3 @@ serve(async (req) => {
     });
   }
 });
-
-/* Função serve deve ser importada do Deno */
-declare function serve(handler: (req: Request) => Promise<Response>): void;
