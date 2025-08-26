@@ -134,17 +134,6 @@ const Index = () => {
                 <SmartMatchButton />
               </div>
             </div>
-            
-            {!isPremium && (
-              <div className="mt-8">
-                <Link to="/premium">
-                  <Button className="bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-white font-semibold px-8 py-3 rounded-lg">
-                    <Crown className="mr-2 h-5 w-5" />
-                    Upgrade para Premium - Descontos Exclusivos!
-                  </Button>
-                </Link>
-              </div>
-            )}
           </div>
         </section>
         

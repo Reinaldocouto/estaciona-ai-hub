@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogIn, LogOut } from 'lucide-react';
+import { Menu, X, User, LogIn, LogOut, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/ui-custom/Logo';
 import AuthModal from '@/components/auth/AuthModal';
@@ -72,6 +72,14 @@ const Navbar = () => {
 
             {/* Desktop Auth Buttons */}
             <div className="hidden md:flex items-center space-x-2">
+              {user && !isPremium && (
+                <Link to="/premium">
+                  <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-8 text-yellow-600 border-yellow-300 hover:bg-yellow-50">
+                    <Crown className="w-3 h-3 mr-1" />
+                    Premium
+                  </Button>
+                </Link>
+              )}
               {user ? (
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-md">
@@ -125,6 +133,14 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-2 border-t border-gray-200">
+                {user && !isPremium && (
+                  <Link to="/premium" onClick={closeMenu}>
+                    <Button variant="outline" className="justify-start w-full text-yellow-600 border-yellow-300 hover:bg-yellow-50">
+                      <Crown className="w-4 h-4 mr-2" />
+                      Upgrade Premium
+                    </Button>
+                  </Link>
+                )}
                 {user ? (
                   <>
                     <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-md">
