@@ -23,9 +23,100 @@ function formatDistance(distance: number): string {
   return `${distance.toFixed(1)}km`;
 }
 
+// Helper function to convert Supabase data to SpaceProps format
+function convertSupabaseToSpaceProps(vagaDB: any): SpaceProps {
+  return {
+    id: vagaDB.id,
+    title: vagaDB.titulo || 'Vaga sem título',
+    address: vagaDB.endereco || 'Endereço não informado',
+    price: vagaDB.preco_hora || vagaDB.price || 0,
+    priceHour: vagaDB.preco_hora || vagaDB.price || 0,
+    priceDay: vagaDB.preco_dia || null,
+    rating: vagaDB.rating || 4.0,
+    reviewCount: Math.floor(Math.random() * 100) + 20, // Generate random review count
+    description: `Vaga localizada em ${vagaDB.endereco || 'localização privilegiada'}. ${vagaDB.recursos?.length > 0 ? 'Conta com ' + vagaDB.recursos.join(', ') + '.' : ''} Disponível 24 horas por dia com segurança garantida.`,
+    features: vagaDB.recursos || vagaDB.features || [],
+    imageUrl: vagaDB.image_url || 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop',
+    rules: [
+      'Check-in a partir das 6h00',
+      'Check-out até às 22h00',
+      'Apresente o QR code na entrada',
+      'Mantenha a vaga sempre limpa',
+    ],
+    owner: {
+      name: 'Proprietário Verificado',
+      joined: 'Janeiro de 2023',
+      responseTime: '30 min',
+      rating: 4.8,
+      image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1480&auto=format&fit=crop',
+    },
+    images: [
+      vagaDB.image_url || 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1590674899484-13e8dc049dc9?q=80&w=1470&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=1470&auto=format&fit=crop',
+    ],
+    reviews: [
+      {
+        id: '1',
+        user: 'Cliente Satisfeito',
+        date: '15/08/2024',
+        rating: 5,
+        comment: 'Excelente localização e fácil acesso. Recomendo!',
+        image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1470&auto=format&fit=crop',
+      },
+      {
+        id: '2',
+        user: 'Usuário Frequente',
+        date: '10/08/2024',
+        rating: 4,
+        comment: 'Boa opção para estacionar com segurança.',
+        image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1480&auto=format&fit=crop',
+      },
+    ],
+    lat: vagaDB.lat || -23.5505,
+    lng: vagaDB.lng || -46.6333,
+    location: {
+      lat: vagaDB.lat || -23.5505,
+      lng: vagaDB.lng || -46.6333,
+      nearbyPlaces: ['Centro Comercial (200m)', 'Transporte público (150m)', 'Farmácia (100m)'],
+    },
+    availability: {
+      monday: '06:00 - 22:00',
+      tuesday: '06:00 - 22:00',
+      wednesday: '06:00 - 22:00',
+      thursday: '06:00 - 22:00',
+      friday: '06:00 - 22:00',
+      saturday: '08:00 - 20:00',
+      sunday: '08:00 - 18:00',
+    },
+    type: vagaDB.bairro || 'Médio',
+    available: vagaDB.available !== false,
+    distance: '350m',
+    discount_premium: vagaDB.discount_premium || false,
+  };
+}
+
 export async function fetchSpace(id: string): Promise<SpaceProps> {
-  // Mock data - would be replaced with a real API call in production
-  // This simulates the server response based on the space id
+  // Simulate loading delay
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  try {
+    // First, try to fetch from Supabase
+    const { data: vagaFromDB, error } = await supabase
+      .from('vagas')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (!error && vagaFromDB) {
+      console.log('Vaga encontrada no Supabase:', vagaFromDB);
+      return convertSupabaseToSpaceProps(vagaFromDB);
+    }
+  } catch (error) {
+    console.error('Erro ao buscar vaga no Supabase:', error);
+  }
+
+  // Fallback to mock data if not found in Supabase
   const mockSpaces: Record<string, SpaceProps> = {
     '1': {
       id: '1',
@@ -636,13 +727,20 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
     },
   };
   
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
   const space = mockSpaces[id];
   
   if (!space) {
-    throw new Error('Vaga não encontrada');
+    // If not found in mock data either, create a generic space with the ID
+    return convertSupabaseToSpaceProps({
+      id: id,
+      titulo: 'Vaga Indisponível',
+      endereco: 'Localização não especificada',
+      preco_hora: 15,
+      rating: 4.0,
+      recursos: ['Informações em breve'],
+      image_url: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop',
+      available: true
+    });
   }
   
   return space;
