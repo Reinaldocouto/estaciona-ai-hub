@@ -1015,12 +1015,69 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 10)
     },
   ];
   
+  // Adição automática de muitas vagas mocadas para Mogi das Cruzes e Ferraz de Vasconcelos
+  const generateCluster = (
+    prefix: string,
+    name: string,
+    city: string,
+    baseLat: number,
+    baseLng: number,
+    count: number
+  ): SpaceProps[] => {
+    const types: SpaceProps['type'][] = ['Pequeno', 'Médio', 'SUV'];
+    const imgs = [
+      'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?q=80&w=1470&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1590674899484-13e8dc049dc9?q=80&w=1470&auto=format&fit=crop'
+    ];
+    const feats = [
+      ['Coberto', 'Segurança 24h'],
+      ['Residencial', 'Privativo'],
+      ['WIFI', 'Coberto'],
+      ['Próximo ao comércio']
+    ];
+    return Array.from({ length: count }).map((_, i) => {
+      const jitterLat = (Math.random() - 0.5) * 0.02; // ~2km
+      const jitterLng = (Math.random() - 0.5) * 0.02;
+      const price = 5 + Math.floor(Math.random() * 16); // 5-20
+      return {
+        id: `${prefix}-${i + 1}`,
+        title: `Vaga ${name} #${i + 1}`,
+        address: `${name}, ${city} - SP`,
+        price,
+        rating: +(3.8 + Math.random() * 1.2).toFixed(1),
+        reviewCount: 20 + Math.floor(Math.random() * 180),
+        imageUrl: imgs[i % imgs.length],
+        features: feats[i % feats.length],
+        available: true,
+        lat: +(baseLat + jitterLat),
+        lng: +(baseLng + jitterLng),
+        type: types[i % types.length],
+        distance: '0km'
+      };
+    });
+  };
+
+  const extraSpaces: SpaceProps[] = [
+    // Mogi das Cruzes – Centro
+    ...generateCluster('mogi-centro', 'Centro', 'Mogi das Cruzes', -23.5224, -46.1857, 30),
+    // Mogi das Cruzes – Vila Mogilar
+    ...generateCluster('mogi-mogilar', 'Vila Mogilar', 'Mogi das Cruzes', -23.5334, -46.1864, 20),
+    // Mogi das Cruzes – Parque Centenário
+    ...generateCluster('mogi-parque-centenario', 'Parque Centenário', 'Mogi das Cruzes', -23.5195, -46.1812, 30),
+    // Mogi das Cruzes – Supermercado Alabarce (região)
+    ...generateCluster('mogi-alabarce', 'Alabarce', 'Mogi das Cruzes', -23.5360, -46.1827, 20),
+    // Ferraz de Vasconcelos – Rua Serrana 380 (região)
+    ...generateCluster('ferraz-rua-serrana', 'Rua Serrana', 'Ferraz de Vasconcelos', -23.5407, -46.3692, 25)
+  ];
+  
+  allSpaces.push(...extraSpaces);
+  
   // Simular delay da API
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 400));
   
   // Calcular distância para cada vaga e filtrar por raio
   const spacesWithDistance = allSpaces
-    .filter(space => space.lat && space.lng) // Garantir que tem coordenadas
     .map(space => {
       const distance = calculateDistance(lat, lng, space.lat!, space.lng!);
       return {

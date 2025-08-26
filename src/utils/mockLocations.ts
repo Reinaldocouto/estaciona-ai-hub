@@ -18,6 +18,18 @@ export const mockLocations: MockLocation[] = [
   { address: 'jardins', lat: -23.5629, lng: -46.6731 },
   { address: 'morumbi', lat: -23.6278, lng: -46.6975 },
   { address: 'ibirapuera', lat: -23.5875, lng: -46.6577 },
+  // Novas localizações para seus testes
+  { address: 'Mogi das Cruzes', lat: -23.5224, lng: -46.1857 },
+  { address: 'Centro - Mogi das Cruzes', lat: -23.5224, lng: -46.1857 },
+  { address: 'Vila Mogilar - Mogi das Cruzes', lat: -23.5334, lng: -46.1864 },
+  { address: 'Parque Centenário - Mogi das Cruzes', lat: -23.5195, lng: -46.1812 },
+  { address: 'Supermercado Alabarce - Mogi das Cruzes', lat: -23.5360, lng: -46.1827 },
+  { address: 'mogi', lat: -23.5224, lng: -46.1857 },
+  { address: 'alabarce', lat: -23.5360, lng: -46.1827 },
+  { address: 'parque centenário', lat: -23.5195, lng: -46.1812 },
+  { address: 'Ferraz de Vasconcelos - Rua Serrana', lat: -23.5407, lng: -46.3692 },
+  { address: 'rua serrana', lat: -23.5407, lng: -46.3692 },
+  { address: 'ferraz', lat: -23.5407, lng: -46.3692 },
 ];
 
 export const findLocation = (searchQuery: string) => {
