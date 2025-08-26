@@ -11,6 +11,7 @@ import SpaceDetails from "./pages/SpaceDetails";
 import HowItWorks from "./pages/HowItWorks";
 import RentOutSpot from "./pages/RentOutSpot";
 import Premium from "./pages/Premium";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/rent-out-spot" element={<RentOutSpot />} />
             <Route path="/premium" element={<Premium />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
