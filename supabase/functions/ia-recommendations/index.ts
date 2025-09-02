@@ -107,6 +107,7 @@ serve(async (req) => {
     const distancia_max = parseFloat(url.searchParams.get('distancia_max') || '50');
 
     console.log(`📍 Buscando vagas: lat=${lat}, lng=${lng}, radius=${radius_km}km`);
+    console.log(`🎯 Filtros do usuário: preço R$${preco_min}-R$${preco_max}, distância ${distancia_min}-${distancia_max}km`);
 
     // Buscar vagas candidatas usando Haversine em SQL
     const { data: vagas, error: vagasError } = await supabase

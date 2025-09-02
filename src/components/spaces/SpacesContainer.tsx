@@ -34,10 +34,10 @@ const SpacesContainer: React.FC = () => {
   // Estados da IA
   const [iaEnabled, setIaEnabled] = useState(false);
   const [precoMin, setPrecoMin] = useState(5);
-  const [precoMax, setPrecoMax] = useState(50);
-  const [distanciaMin, setDistanciaMin] = useState(1);
-  const [distanciaMax, setDistanciaMax] = useState(5);
-  const [raioKm, setRaioKm] = useState(3);
+  const [precoMax, setPrecoMax] = useState(100); // Valor mais realista
+  const [distanciaMin, setDistanciaMin] = useState(0); // Começar de 0km
+  const [distanciaMax, setDistanciaMax] = useState(20); // Valor mais amplo
+  const [raioKm, setRaioKm] = useState(5); // Raio maior
   const [recursosDesejados, setRecursosDesejados] = useState<string[]>([]);
   const { isLoading: iaLoading, data: iaData, fetchRecommendations, clearRecommendations } = useIARecommendations();
   
@@ -199,9 +199,12 @@ const SpacesContainer: React.FC = () => {
       return;
     }
 
-    // Tentar usar coordenadas da URL ou default para São Paulo
+    // Tentar usar coordenadas da URL primeiro, senão usar default para São Paulo
     const lat = parseFloat(searchLat || '-23.5505');
     const lng = parseFloat(searchLng || '-46.6333');
+    
+    console.log(`🤖 Ativando IA com localização: lat=${lat}, lng=${lng}`);
+    console.log(`🎯 Filtros: preço R$${precoMin}-R$${precoMax}, distância ${distanciaMin}-${distanciaMax}km, raio ${raioKm}km`);
     
     await fetchRecommendations({
       lat,
@@ -222,6 +225,8 @@ const SpacesContainer: React.FC = () => {
     if (iaEnabled) {
       const lat = parseFloat(searchLat || '-23.5505');
       const lng = parseFloat(searchLng || '-46.6333');
+      
+      console.log(`🔄 Atualizando IA com: lat=${lat}, lng=${lng}, filtros: preço R$${precoMin}-R$${precoMax}, distância ${distanciaMin}-${distanciaMax}km`);
       
       fetchRecommendations({
         lat,

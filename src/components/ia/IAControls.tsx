@@ -103,6 +103,7 @@ const IAControls: React.FC<IAControlsProps> = ({
                   <SelectItem value="3">3 km</SelectItem>
                   <SelectItem value="5">5 km</SelectItem>
                   <SelectItem value="10">10 km</SelectItem>
+                  <SelectItem value="20">20 km</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -117,16 +118,16 @@ const IAControls: React.FC<IAControlsProps> = ({
                 <div className="px-2">
                   <Slider
                     value={[precoMax]}
-                    onValueChange={([max]) => onPrecoChange(5, max)}
-                    max={100}
-                    min={5}
+                    onValueChange={([max]) => onPrecoChange(precoMin, max)}
+                    max={200}
+                    min={precoMin}
                     step={5}
                     disabled={isLoading}
                     className="w-full"
                   />
                   <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>R$5</span>
-                    <span>R$100</span>
+                    <span>R${precoMin}</span>
+                    <span>R$200</span>
                   </div>
                 </div>
               </div>
@@ -139,16 +140,16 @@ const IAControls: React.FC<IAControlsProps> = ({
                 <div className="px-2">
                   <Slider
                     value={[distanciaMax]}
-                    onValueChange={([max]) => onDistanciaChange(1, max)}
-                    max={20}
-                    min={1}
+                    onValueChange={([max]) => onDistanciaChange(distanciaMin, max)}
+                    max={50}
+                    min={distanciaMin}
                     step={1}
                     disabled={isLoading}
                     className="w-full"
                   />
                   <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>1km</span>
-                    <span>20km</span>
+                    <span>{distanciaMin}km</span>
+                    <span>50km</span>
                   </div>
                 </div>
               </div>
