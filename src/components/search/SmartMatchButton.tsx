@@ -38,9 +38,8 @@ const SmartMatchButton: React.FC = () => {
   return (
     <Button
       onClick={handleSmartMatch}
-      disabled={loading || !user}
+      disabled={loading}
       className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-      title={!user ? "Faça login para usar o SmartMatch" : ""}
     >
       {loading ? (
         <>
