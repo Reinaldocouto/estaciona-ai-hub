@@ -99,6 +99,12 @@ serve(async (req) => {
     const peso_dist = parseFloat(url.searchParams.get('peso_dist') || '0.4');
     const recursos_param = url.searchParams.get('recursos') || '';
     const recursos_desejados = recursos_param ? recursos_param.split(',').map(r => r.trim()) : [];
+    
+    // Filtros de preço e distância do usuário
+    const preco_min = parseFloat(url.searchParams.get('preco_min') || '0');
+    const preco_max = parseFloat(url.searchParams.get('preco_max') || '1000');
+    const distancia_min = parseFloat(url.searchParams.get('distancia_min') || '0');
+    const distancia_max = parseFloat(url.searchParams.get('distancia_max') || '50');
 
     console.log(`📍 Buscando vagas: lat=${lat}, lng=${lng}, radius=${radius_km}km`);
 
@@ -125,15 +131,23 @@ serve(async (req) => {
     }
 
     // Filtrar por distância e preparar candidatos
-    const candidates: VagaCandidate[] = vagas
+    const candidatesWithDistance = vagas
       .map(vaga => ({
         ...vaga,
         dist_km: haversineDistance(lat, lng, vaga.lat, vaga.lng)
       }))
-      .filter(vaga => vaga.dist_km <= radius_km)
+      .filter(vaga => 
+        vaga.dist_km <= radius_km && // Filtro do raio de busca
+        vaga.dist_km >= distancia_min && // Filtro mínimo de distância do usuário
+        vaga.dist_km <= distancia_max && // Filtro máximo de distância do usuário
+        vaga.preco_hora >= preco_min && // Filtro mínimo de preço do usuário
+        vaga.preco_hora <= preco_max    // Filtro máximo de preço do usuário
+      );
+
+    const candidates: VagaCandidate[] = candidatesWithDistance
       .map(({ dist_km, ...vaga }) => vaga);
 
-    console.log(`🎯 ${candidates.length} vagas dentro do raio de ${radius_km}km`);
+    console.log(`🎯 ${candidates.length} vagas após filtros (raio: ${radius_km}km, distância: ${distancia_min}-${distancia_max}km, preço: R$${preco_min}-R$${preco_max})`);
 
     if (candidates.length === 0) {
       return new Response(JSON.stringify({ items: [] }), {
