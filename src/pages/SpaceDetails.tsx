@@ -35,7 +35,7 @@ const SpaceDetails = () => {
           <div className="container mx-auto px-4">
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-              <h2 className="text-xl font-medium">Carregando informações da vaga...</h2>
+              <h2 className="text-xl font-medium text-gray-900">Carregando informações da vaga...</h2>
             </div>
           </div>
         </main>
@@ -53,8 +53,8 @@ const SpaceDetails = () => {
           <div className="container mx-auto px-4">
             <div className="flex flex-col items-center justify-center py-12">
               <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-              <h2 className="text-xl font-bold mb-4">Vaga não encontrada</h2>
-              <p className="text-gray-500 mb-6">
+              <h2 className="text-xl font-bold mb-4 text-gray-900">Vaga não encontrada</h2>
+              <p className="text-gray-600 mb-6">
                 Não foi possível encontrar os detalhes desta vaga. Por favor, tente novamente mais tarde.
               </p>
               <Button onClick={() => navigate('/spaces')}>

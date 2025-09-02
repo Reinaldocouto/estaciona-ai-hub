@@ -32,19 +32,19 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
     <Card className="sticky top-24 shadow-lg rounded-xl">
       <CardContent className="p-6">
         <div className="flex justify-between items-center mb-6">
-          <div className="text-2xl font-bold">
+          <div className="text-2xl font-bold text-gray-900">
             R$ {space.priceHour ? space.priceHour.toFixed(2) : space.price.toFixed(2)}
-            <span className="text-gray-500 text-sm font-normal">/hora</span>
+            <span className="text-gray-600 text-sm font-normal">/hora</span>
           </div>
           <div className="flex items-center">
             <Star className="w-5 h-5 text-yellow-500 fill-yellow-500 mr-1" />
-            <span className="font-bold">{space.rating}</span>
+            <span className="font-bold text-gray-900">{space.rating}</span>
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Data</label>
+            <label className="block text-sm font-medium mb-1 text-gray-900">Data</label>
             <Input
               type="date"
               value={selectedDate}
@@ -55,7 +55,7 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Check-in</label>
+              <label className="block text-sm font-medium mb-1 text-gray-900">Check-in</label>
               <Input
                 type="time"
                 value={startTime}
@@ -64,7 +64,7 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Check-out</label>
+              <label className="block text-sm font-medium mb-1 text-gray-900">Check-out</label>
               <Input
                 type="time"
                 value={endTime}
@@ -83,17 +83,17 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
           </Button>
 
           <div className="mt-6 space-y-4">
-            <div className="flex justify-between">
+            <div className="flex justify-between text-gray-900">
               <span>
                 R$ {(space.priceHour || space.price).toFixed(2)} x {(totalPrice / (space.priceHour || space.price)).toFixed(1)} horas
               </span>
               <span>R$ {totalPrice.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between text-gray-900">
               <span>Taxa de serviço</span>
               <span>R$ {(totalPrice * 0.1).toFixed(2)}</span>
             </div>
-            <div className="border-t pt-2 font-semibold flex justify-between">
+            <div className="border-t pt-2 font-semibold flex justify-between text-gray-900">
               <span>Total</span>
               <span>R$ {(totalPrice * 1.1).toFixed(2)}</span>
             </div>
@@ -103,7 +103,7 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
         <div className="mt-6 bg-gray-50 rounded-lg p-4 text-sm">
           <div className="flex">
             <Shield className="w-5 h-5 text-primary mr-2 flex-shrink-0" />
-            <p>Pagamento seguro e garantido com proteção ao consumidor.</p>
+            <p className="text-gray-800">Pagamento seguro e garantido com proteção ao consumidor.</p>
           </div>
         </div>
       </CardContent>
