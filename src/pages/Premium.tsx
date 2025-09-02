@@ -56,27 +56,33 @@ const Premium = () => {
     setIsLoading(true);
     try {
       console.log('Creating checkout session for user:', user.id);
-      
-      const { data, error } = await supabase.functions.invoke('create-checkout');
-      
+
+      // Ensure Authorization header is forwarded explicitly
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+      });
+
       if (error) {
         console.error('Checkout error:', error);
         throw new Error(error.message || 'Erro ao processar pagamento');
       }
-      
+
       if (!data?.url) {
         throw new Error('URL de pagamento não recebida');
       }
-      
+
       console.log('Redirecting to checkout:', data.url);
-      // Redirect to Stripe checkout
-      window.location.href = data.url;
+      // Open Stripe checkout in a new tab (more reliable across environments)
+      window.open(data.url, '_blank');
     } catch (error: any) {
       console.error('Payment error:', error);
       toast({
-        title: "Erro ao processar pagamento",
-        description: error.message || "Tente novamente em alguns instantes.",
-        variant: "destructive",
+        title: 'Erro ao processar pagamento',
+        description: error.message || 'Tente novamente em alguns instantes.',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
