@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+        VITE_GMAPS_KEY: ${VITE_GMAPS_KEY}
+        VITE_ML_RANK_URL: ${VITE_ML_RANK_URL:-http://localhost:8000}
+    ports:
+      - "80:80"
+    depends_on:
+      ml-service:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - estaciona-ai-net
+
+  ml-service:
+    build:
+      context: ./ml-ranking-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - estaciona-ai-net
+
+networks:
+  estaciona-ai-net:
+    driver: bridge
+
+# Volumes podem ser adicionados futuramente se necessário
+# volumes:
+#   ml-data:

@@ -80,7 +80,7 @@ async def root():
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy"}
+    return {"status": "healthy", "service": "ml-ranking-service"}
 
 @app.post("/rank", response_model=RankResponse)
 async def rank_vagas(request: RankRequest):

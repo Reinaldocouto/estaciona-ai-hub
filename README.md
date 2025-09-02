@@ -210,6 +210,129 @@ VITE_GMAPS_KEY=your_google_maps_api_key_here
 npm run dev
 ```
 
+## 🐳 Containerização e Deploy
+
+### Docker - Execução Local
+
+Este projeto está totalmente dockerizado com suporte a multi-stage builds e orquestração via Docker Compose.
+
+#### Pré-requisitos
+- Docker 20.10+
+- Docker Compose 2.0+
+
+#### Configuração Rápida
+
+1. **Clone e configure variáveis:**
+```bash
+git clone https://github.com/Reinaldocouto/estaciona-ai-hub.git
+cd estaciona-ai-hub
+cp .env.example .env
+# Edite .env com suas chaves da API
+```
+
+2. **Executar apenas o Frontend:**
+```bash
+docker build -t estaciona-frontend \
+  --build-arg VITE_SUPABASE_URL=$VITE_SUPABASE_URL \
+  --build-arg VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY \
+  --build-arg VITE_GMAPS_KEY=$VITE_GMAPS_KEY \
+  --build-arg VITE_ML_RANK_URL=$VITE_ML_RANK_URL \
+  .
+
+docker run -p 80:80 estaciona-frontend
+```
+
+3. **Executar Frontend + Microserviço IA (Recomendado):**
+```bash
+docker compose up --build
+```
+
+**Acesso:**
+- Frontend: http://localhost
+- ML Service: http://localhost:8000
+- Health Check: http://localhost:8000/health
+
+#### Arquitetura dos Contêineres
+
+**Frontend (React/Vite + Nginx):**
+- Multi-stage build: `node:18-alpine` → `nginx:alpine`
+- Build args para injeção de variáveis VITE_*
+- Nginx com fallback SPA e cache otimizado
+- Health check em `/health`
+
+**ML Service (FastAPI + Python):**
+- Base: `python:3.10-slim`
+- Usuário não-root para segurança
+- Health check automático
+- Dependências científicas (scikit-learn)
+
+### ☸️ Kubernetes (Opcional)
+
+Para ambientes de produção, o projeto inclui manifests Kubernetes completos em `k8s/deployment.yaml`.
+
+#### Deploy no Kubernetes
+
+1. **Build e push das imagens:**
+```bash
+# Frontend
+docker build -t ghcr.io/reinaldocouto/estaciona-frontend:latest .
+docker push ghcr.io/reinaldocouto/estaciona-frontend:latest
+
+# ML Service
+docker build -t ghcr.io/reinaldocouto/estaciona-ml:latest ./ml-ranking-service
+docker push ghcr.io/reinaldocouto/estaciona-ml:latest
+```
+
+2. **Aplicar manifests:**
+```bash
+kubectl apply -f k8s/deployment.yaml
+```
+
+#### Fluxo de Deploy K8s
+
+1. **Build** → Imagens Docker são construídas com CI/CD
+2. **Push** → Imagens enviadas para registry (ghcr.io, DockerHub)
+3. **Deploy** → `kubectl apply` atualiza cluster
+4. **Ingress** → Nginx Ingress expõe serviços externamente
+5. **Monitoring** → Health checks garantem disponibilidade
+
+**Recursos K8s inclusos:**
+- Deployments com 2 réplicas para HA
+- Services ClusterIP para comunicação interna
+- Ingress para roteamento externo
+- Health checks (liveness/readiness)
+- Resource limits para otimização
+
+### 🚀 Demonstração
+
+**Health checks funcionando:**
+```bash
+$ curl http://localhost/health
+healthy
+
+$ curl http://localhost:8000/health
+{"status":"healthy","service":"ml-ranking-service"}
+```
+
+**Frontend acessível em http://localhost** com todas as funcionalidades:
+- Busca de vagas com geolocalização
+- Integração com microserviço ML
+- Mapas interativos do Google Maps
+- Sistema de autenticação Supabase
+
+### 📋 Checklist FIAP
+
+✅ **Dockerfile funcional** - Frontend e ML Service  
+✅ **Documentação completa** - Como executar contêineres  
+✅ **Docker Compose** - Orquestração local  
+✅ **Demonstração funcionando** - URLs de acesso e health checks  
+✅ **Kubernetes manifests** - Deployment.yaml + explicação de fluxo  
+✅ **Segurança** - Usuário não-root, secrets externalizados  
+
+**Documentação completa:** Ver [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md) para instruções detalhadas.
+
+**Nota:** Supabase (auth, database), Stripe (pagamentos) e Google Maps permanecem como serviços externos gerenciados, demonstrando uma arquitetura híbrida moderna.
+
 ## 🧪 Testes e Qualidade
 
 ### Estratégia de Testes
