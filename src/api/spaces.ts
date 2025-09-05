@@ -1,5 +1,6 @@
 import { SpaceProps } from '@/components/ui-custom/SpaceCard';
 import { supabase } from '@/integrations/supabase/client';
+import { parkingImages, getRandomParkingImages } from '@/assets/parking';
 
 // Função para calcular distância entre dois pontos usando a fórmula de Haversine
 function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -51,9 +52,8 @@ function convertSupabaseToSpaceProps(vagaDB: any): SpaceProps {
       image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1480&auto=format&fit=crop',
     },
     images: [
-      vagaDB.image_url || 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1590674899484-13e8dc049dc9?q=80&w=1470&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=1470&auto=format&fit=crop',
+      vagaDB.image_url || parkingImages[0],
+      ...getRandomParkingImages(4).filter(img => img !== (vagaDB.image_url || parkingImages[0])),
     ],
     reviews: [
       {
@@ -144,9 +144,11 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
         image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1480&auto=format&fit=crop',
       },
       images: [
-        'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1590674899484-13e8dc049dc9?q=80&w=1470&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=1470&auto=format&fit=crop',
+        parkingImages[0],
+        parkingImages[1],
+        parkingImages[2],
+        parkingImages[3],
+        parkingImages[4],
       ],
       reviews: [
         {
@@ -199,9 +201,11 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
       features: ['Privativo', 'Coberto', 'Segurança'],
       imageUrl: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=1470&auto=format&fit=crop',
       images: [
-        'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=1470&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?q=80&w=1470&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1565464027194-8cfe58927857?q=80&w=1470&auto=format&fit=crop',
+        parkingImages[5],
+        parkingImages[6],
+        parkingImages[7],
+        parkingImages[8],
+        parkingImages[9],
       ],
       lat: -23.5651,
       lng: -46.6911,
@@ -254,8 +258,11 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
       features: ['24h', 'Segurança', 'Coberto'],
       imageUrl: 'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?q=80&w=1470&auto=format&fit=crop',
       images: [
-        'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?q=80&w=1470&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1621610086071-19e66c96b07c?q=80&w=1470&auto=format&fit=crop',
+        parkingImages[10],
+        parkingImages[11],
+        parkingImages[12],
+        parkingImages[13],
+        parkingImages[14],
       ],
       lat: -23.5469,
       lng: -46.6389,
@@ -276,8 +283,11 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
       features: ['Coberto', 'Privativo', 'Lavagem'],
       imageUrl: 'https://images.unsplash.com/photo-1590674899484-13e8dc049dc9?q=80&w=1470&auto=format&fit=crop',
       images: [
-        'https://images.unsplash.com/photo-1590674899484-13e8dc049dc9?q=80&w=1470&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?q=80&w=1470&auto=format&fit=crop',
+        parkingImages[15],
+        parkingImages[0],
+        parkingImages[1],
+        parkingImages[2],
+        parkingImages[3],
       ],
       lat: -23.5557,
       lng: -46.6859,
@@ -298,8 +308,11 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
       features: ['Shopping', 'Coberto', 'Segurança 24h'],
       imageUrl: 'https://images.unsplash.com/photo-1573348722427-f453d96540be?q=80&w=1476&auto=format&fit=crop',
       images: [
-        'https://images.unsplash.com/photo-1573348722427-f453d96540be?q=80&w=1476&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1597047084993-bf337e09ede0?q=80&w=1470&auto=format&fit=crop',
+        parkingImages[4],
+        parkingImages[5],
+        parkingImages[6],
+        parkingImages[7],
+        parkingImages[8],
       ],
       lat: -23.6081,
       lng: -46.6676,
@@ -807,7 +820,14 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 10)
         price: 10,
         rating: 4.5,
         reviewCount: 87,
-        imageUrl: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=1470&auto=format&fit=crop',
+        imageUrl: parkingImages[1],
+        images: [
+          parkingImages[1],
+          parkingImages[2],
+          parkingImages[3],
+          parkingImages[4],
+          parkingImages[5],
+        ],
         features: ['Privativo', 'Coberto'],
         available: true,
         lat: -23.5651,
@@ -827,16 +847,14 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 10)
       count: number
     ): SpaceProps[] => {
       const types: SpaceProps['type'][] = ['Pequeno', 'Médio', 'SUV'];
-      const imgs = [
-        'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?q=80&w=1470&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1590674899484-13e8dc049dc9?q=80&w=1470&auto=format&fit=crop'
-      ];
+      const imgs = getRandomParkingImages(5);
       const feats = [
         ['Coberto', 'Segurança 24h'],
         ['Residencial', 'Privativo'],
         ['WIFI', 'Coberto'],
-        ['Próximo ao comércio']
+        ['Próximo ao comércio'],
+        ['Carregador EV', 'Monitoramento'],
+        ['Iluminado', 'Acesso fácil']
       ];
       return Array.from({ length: count }).map((_, i) => {
         const jitterLat = (Math.random() - 0.5) * 0.02; // ~2km
@@ -849,7 +867,8 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 10)
           price,
           rating: +(3.8 + Math.random() * 1.2).toFixed(1),
           reviewCount: 20 + Math.floor(Math.random() * 180),
-          imageUrl: imgs[i % imgs.length],
+          imageUrl: imgs[0],
+          images: imgs,
           features: feats[i % feats.length],
           available: true,
           lat: +(baseLat + jitterLat).toFixed(6),
