@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { SpaceProps } from '@/components/ui-custom/SpaceCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -24,14 +24,28 @@ const SpaceGallery: React.FC<SpaceGalleryProps> = ({ space }) => {
   const getImagesPerView = () => {
     if (typeof window !== 'undefined') {
       if (window.innerWidth >= 1024) return 3; // lg screens
-      if (window.innerWidth >= 768) return 2;  // md screens
+      if (window.innerWidth >= 768) return 2; // md screens
       return 1; // sm screens
     }
     return 3;
   };
 
-  const imagesPerView = getImagesPerView();
-  const totalSlides = Math.ceil(images.length / imagesPerView);
+  const [imagesPerView, setImagesPerView] = useState<number>(getImagesPerView());
+
+  // Update slides per view on window resize to keep carousel in sync
+  useEffect(() => {
+    const handleResize = () => setImagesPerView(getImagesPerView());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const totalSlides = Math.max(1, Math.ceil(images.length / imagesPerView));
+
+  // Clamp current index when layout changes
+  useEffect(() => {
+    const maxIndex = Math.max(0, totalSlides - 1);
+    if (currentIndex > maxIndex) setCurrentIndex(maxIndex);
+  }, [totalSlides, currentIndex]);
   
   const canScrollPrev = currentIndex > 0;
   const canScrollNext = currentIndex < totalSlides - 1;
@@ -83,6 +97,9 @@ const SpaceGallery: React.FC<SpaceGalleryProps> = ({ space }) => {
                         src={image}
                         alt={`${space.title} - imagem ${actualIndex + 1}`}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 rounded-lg"
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
                       />
                       {/* Image counter overlay */}
                       <div className="absolute top-3 left-3 bg-black/70 text-white px-2 py-1 rounded-md text-sm font-medium">
@@ -101,7 +118,7 @@ const SpaceGallery: React.FC<SpaceGalleryProps> = ({ space }) => {
             <Button
               variant="outline"
               size="icon"
-              className={`absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-50 shadow-lg z-20 transition-opacity ${
+              className={`absolute left-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-50 shadow-lg z-30 transition-opacity ${
                 !canScrollPrev ? 'opacity-40 cursor-not-allowed' : 'opacity-90 hover:opacity-100'
               }`}
               onClick={scrollPrev}
@@ -112,7 +129,7 @@ const SpaceGallery: React.FC<SpaceGalleryProps> = ({ space }) => {
             <Button
               variant="outline"
               size="icon"
-              className={`absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-50 shadow-lg z-20 transition-opacity ${
+              className={`absolute right-2 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-50 shadow-lg z-30 transition-opacity ${
                 !canScrollNext ? 'opacity-40 cursor-not-allowed' : 'opacity-90 hover:opacity-100'
               }`}
               onClick={scrollNext}
