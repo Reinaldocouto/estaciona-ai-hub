@@ -26,16 +26,12 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: '#FF0057', // FIAP Magenta
-					dark: '#C60045',    // FIAP Magenta dark
-					light: '#FF3B80',   // FIAP Magenta light
-					foreground: '#FFFFFF' // White text on primary
+					DEFAULT: 'hsl(var(--primary))',
+					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
-					DEFAULT: '#1A1A1A', // Cinza carvão
-					light: '#333333',   // Slightly lighter gray
-					dark: '#0D0D0D',    // Grafite profundo
-					foreground: '#FFFFFF' // White text on secondary
+					DEFAULT: 'hsl(var(--secondary))',
+					foreground: 'hsl(var(--secondary-foreground))'
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
@@ -46,8 +42,8 @@ export default {
 					foreground: 'hsl(var(--muted-foreground))'
 				},
 				accent: {
-					DEFAULT: '#00E5FF', // FIAP Cyan
-					foreground: '#000000' // Black text on accent
+					DEFAULT: 'hsl(var(--accent))',
+					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',

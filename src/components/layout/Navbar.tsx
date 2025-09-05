@@ -48,7 +48,7 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-30 w-full bg-white bg-opacity-90 backdrop-blur-md shadow-sm">
+      <header className="sticky top-0 z-30 w-full bg-background/90 backdrop-blur-md shadow-sm border-b border-border">
         <div className="container max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Logo />
@@ -62,7 +62,7 @@ const Navbar = () => {
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive(link.path)
                       ? 'text-primary'
-                      : 'text-secondary hover:text-primary'
+                      : 'text-foreground hover:text-primary'
                   }`}
                 >
                   {link.name}
@@ -74,7 +74,7 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-2">
               {user && !isPremium && (
                 <Link to="/premium">
-                  <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-8 text-yellow-600 border-yellow-300 hover:bg-yellow-50">
+                  <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-8 text-accent-foreground border-accent hover:bg-accent/10">
                     <Crown className="w-3 h-3 mr-1" />
                     Premium
                   </Button>
@@ -101,7 +101,7 @@ const Navbar = () => {
                   <Button variant="outline" onClick={openLoginModal} size="sm" className="flex items-center gap-1">
                     <LogIn className="w-4 h-4" /> Entrar
                   </Button>
-                  <Button variant="default" onClick={openRegisterModal} size="sm" className="bg-primary hover:bg-primary-dark flex items-center gap-1">
+                  <Button variant="default" onClick={openRegisterModal} size="sm" className="bg-primary hover:bg-primary/90 flex items-center gap-1">
                     <User className="w-4 h-4" /> Cadastrar
                   </Button>
                 </>
@@ -111,7 +111,7 @@ const Navbar = () => {
             {/* Mobile Menu Button */}
             <button
               onClick={toggleMenu}
-              className="md:hidden p-2 rounded-md text-secondary hover:text-primary"
+              className="md:hidden p-2 rounded-md text-foreground hover:text-primary"
               aria-label="Menu"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -121,7 +121,7 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white">
+          <div className="md:hidden bg-background border-t border-border">
             <nav className="px-4 pt-2 pb-4 space-y-2">
               {navLinks.map((link) => (
                 <Link
@@ -130,17 +130,17 @@ const Navbar = () => {
                   onClick={closeMenu}
                   className={`block px-3 py-2 rounded-md text-sm font-medium ${
                     isActive(link.path)
-                      ? 'bg-primary text-white'
-                      : 'text-secondary hover:bg-gray-100'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground hover:bg-muted'
                   }`}
                 >
                   {link.name}
                 </Link>
               ))}
-              <div className="flex flex-col space-y-2 pt-2 border-t border-gray-200">
+              <div className="flex flex-col space-y-2 pt-2 border-t border-border">
                 {user && !isPremium && (
                   <Link to="/premium" onClick={closeMenu}>
-                    <Button variant="outline" className="justify-start w-full text-yellow-600 border-yellow-300 hover:bg-yellow-50">
+                    <Button variant="outline" className="justify-start w-full text-accent-foreground border-accent hover:bg-accent/10">
                       <Crown className="w-4 h-4 mr-2" />
                       Upgrade Premium
                     </Button>
