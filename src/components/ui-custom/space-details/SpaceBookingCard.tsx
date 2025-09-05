@@ -70,10 +70,11 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
       const finalPrice = totalPrice * 1.1; // Incluindo taxa de serviço
       const advanceAmount = finalPrice * 0.4; // 40% de adiantamento
 
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      const { data, error } = await supabase.functions.invoke('create-payment', {
         body: {
-          amount: Math.round(advanceAmount * 100), // Convert to cents
-          description: `Adiantamento para reserva - ${space.title}`,
+          amount: Math.round(advanceAmount * 100), // em centavos
+          currency: 'brl',
+          description: `Adiantamento de 40% - ${space.title}`,
           metadata: {
             type: 'advance_payment',
             space_id: space.id,
