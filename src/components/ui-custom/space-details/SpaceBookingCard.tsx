@@ -14,7 +14,7 @@ interface SpaceBookingCardProps {
 }
 
 const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
-  const { user } = useAuth();
+  const { user, isPremium } = useAuth();
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split('T')[0]
@@ -53,6 +53,56 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
       return;
     }
 
+    // Se não for premium, redirecionar para pagamento do adiantamento
+    if (!isPremium) {
+      handleAdvancePayment();
+      return;
+    }
+
+    // Se for premium, fazer reserva direta
+    await createReservation();
+  };
+
+  const handleAdvancePayment = async () => {
+    setIsBooking(true);
+    
+    try {
+      const finalPrice = totalPrice * 1.1; // Incluindo taxa de serviço
+      const advanceAmount = finalPrice * 0.4; // 40% de adiantamento
+
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          amount: Math.round(advanceAmount * 100), // Convert to cents
+          description: `Adiantamento para reserva - ${space.title}`,
+          metadata: {
+            type: 'advance_payment',
+            space_id: space.id,
+            selected_date: selectedDate,
+            start_time: startTime,
+            end_time: endTime,
+            total_price: finalPrice
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Erro ao processar pagamento:', error);
+      toast({
+        title: "Erro no pagamento",
+        description: "Não foi possível processar o pagamento. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsBooking(false);
+    }
+  };
+
+  const createReservation = async () => {
     setIsBooking(true);
 
     try {
@@ -147,8 +197,10 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Processando...
               </>
-            ) : (
+            ) : isPremium ? (
               'Reservar agora'
+            ) : (
+              `Pagar adiantamento R$ ${((totalPrice * 1.1) * 0.4).toFixed(2)}`
             )}
           </Button>
           <Button variant="outline" className="w-full">
@@ -171,6 +223,17 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
               <span>Total</span>
               <span>R$ {(totalPrice * 1.1).toFixed(2)}</span>
             </div>
+            {!isPremium && (
+              <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                <div className="flex justify-between text-orange-800 text-sm">
+                  <span>Adiantamento (40%)</span>
+                  <span className="font-semibold">R$ {((totalPrice * 1.1) * 0.4).toFixed(2)}</span>
+                </div>
+                <p className="text-xs text-orange-600 mt-1">
+                  Usuários premium não pagam adiantamento
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
