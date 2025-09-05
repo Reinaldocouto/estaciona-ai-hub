@@ -15,18 +15,33 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    // Verificar todas as variáveis de ambiente
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    
-    console.log("Environment variables check:");
-    console.log("- SUPABASE_URL:", supabaseUrl ? "✓ Present" : "✗ Missing");
-    console.log("- SUPABASE_ANON_KEY:", supabaseAnonKey ? "✓ Present" : "✗ Missing");
-    console.log("- SUPABASE_SERVICE_KEY:", supabaseServiceKey ? "✓ Present" : "✗ Missing");
-    console.log("- STRIPE_SECRET_KEY:", stripeKey ? `✓ Present (starts with: ${stripeKey.substring(0, 7)}...)` : "✗ Missing");
+    try {
+      // Verificar todas as variáveis de ambiente
+      const supabaseUrl = Deno.env.get("SUPABASE_URL");
+      const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+      const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+      // Tentar várias chaves possíveis para o Stripe (evita erros de nome incorreto)
+      const stripeKeyPrimary = Deno.env.get("STRIPE_SECRET_KEY");
+      const stripeKeyAlt1 = Deno.env.get("STRIPE_SECRET");
+      const stripeKeyAlt2 = Deno.env.get("STRIPE_API_KEY");
+      const stripeKey = stripeKeyPrimary || stripeKeyAlt1 || stripeKeyAlt2 || "";
+      const stripeSource = stripeKeyPrimary
+        ? "STRIPE_SECRET_KEY"
+        : stripeKeyAlt1
+        ? "STRIPE_SECRET"
+        : stripeKeyAlt2
+        ? "STRIPE_API_KEY"
+        : null;
+      
+      console.log("Environment variables check:");
+      console.log("- SUPABASE_URL:", supabaseUrl ? "✓ Present" : "✗ Missing");
+      console.log("- SUPABASE_ANON_KEY:", supabaseAnonKey ? "✓ Present" : "✗ Missing");
+      console.log("- SUPABASE_SERVICE_KEY:", supabaseServiceKey ? "✓ Present" : "✗ Missing");
+      console.log(`- STRIPE key sources: STRIPE_SECRET_KEY=${!!stripeKeyPrimary}, STRIPE_SECRET=${!!stripeKeyAlt1}, STRIPE_API_KEY=${!!stripeKeyAlt2}`);
+      if (stripeKey) {
+        console.log(`- Stripe key found via ${stripeSource} (starts with: ${stripeKey.substring(0, 7)}...)`);
+      }
 
     if (!stripeKey) {
       console.error("STRIPE_SECRET_KEY não encontrada!");
