@@ -4,19 +4,25 @@ import { SpaceProps } from '@/components/ui-custom/SpaceCard';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Star, MessageCircle, Shield } from 'lucide-react';
+import { Star, MessageCircle, Shield, Loader2 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 interface SpaceBookingCardProps {
   space: SpaceProps;
 }
 
 const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split('T')[0]
   );
   const [startTime, setStartTime] = useState<string>('09:00');
   const [endTime, setEndTime] = useState<string>('10:00');
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [isBooking, setIsBooking] = useState<boolean>(false);
 
   useEffect(() => {
     // Calcular o preço total com base na duração
@@ -27,6 +33,63 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
     const hourlyPrice = space.priceHour || space.price;
     setTotalPrice(hourlyPrice * durationHours);
   }, [startTime, endTime, space.priceHour, space.price]);
+
+  const handleReservation = async () => {
+    if (!user) {
+      toast({
+        title: "Login necessário",
+        description: "Você precisa estar logado para fazer uma reserva.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (endTime <= startTime) {
+      toast({
+        title: "Horário inválido",
+        description: "O horário de saída deve ser posterior ao horário de entrada.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsBooking(true);
+
+    try {
+      const startDateTime = new Date(`${selectedDate}T${startTime}:00`);
+      const endDateTime = new Date(`${selectedDate}T${endTime}:00`);
+      const finalPrice = totalPrice * 1.1; // Incluindo taxa de serviço
+
+      const { error } = await supabase
+        .from('reservas')
+        .insert({
+          user_id: user.id,
+          vaga_id: space.id,
+          start_time: startDateTime.toISOString(),
+          end_time: endDateTime.toISOString(),
+          total_price: finalPrice,
+          status: 'active'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Reserva confirmada!",
+        description: `Sua reserva foi criada para ${selectedDate} das ${startTime} às ${endTime}.`,
+        variant: "default",
+      });
+
+    } catch (error) {
+      console.error('Erro ao fazer reserva:', error);
+      toast({
+        title: "Erro na reserva",
+        description: "Não foi possível criar sua reserva. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsBooking(false);
+    }
+  };
 
   return (
     <Card className="sticky top-24 shadow-lg rounded-xl">
@@ -74,8 +137,19 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
             </div>
           </div>
 
-          <Button className="w-full bg-primary hover:bg-primary-dark">
-            Reservar agora
+          <Button 
+            className="w-full bg-primary hover:bg-primary-dark" 
+            onClick={handleReservation}
+            disabled={isBooking}
+          >
+            {isBooking ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Processando...
+              </>
+            ) : (
+              'Reservar agora'
+            )}
           </Button>
           <Button variant="outline" className="w-full">
             <MessageCircle className="w-4 h-4 mr-2" />
