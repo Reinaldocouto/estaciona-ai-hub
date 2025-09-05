@@ -200,7 +200,7 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
             ) : isPremium ? (
               'Reservar agora'
             ) : (
-              `Pagar adiantamento R$ ${((totalPrice * 1.1) * 0.4).toFixed(2)}`
+              'Reservar Vaga'
             )}
           </Button>
           <Button variant="outline" className="w-full">
