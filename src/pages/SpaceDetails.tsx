@@ -17,7 +17,7 @@ import {
 const SpaceDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<string>('info');
+  const [activeTab, setActiveTab] = useState<string>('details');
 
   const { data: space, isLoading, error } = useQuery({
     queryKey: ['space', id],
