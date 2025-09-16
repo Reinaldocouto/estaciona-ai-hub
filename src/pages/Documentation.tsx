@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Container } from '@/components/ui/container';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,11 +16,13 @@ import {
   Shield,
   BarChart3,
   Rocket,
-  Database
+  Database,
+  X
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 const Documentation: React.FC = () => {
+  const navigate = useNavigate();
   const [openSections, setOpenSections] = useState<Record<number, boolean>>({
     1: true // Primeira seção aberta por padrão
   });
@@ -230,6 +233,18 @@ const Documentation: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary via-primary/90 to-primary/80">
+      {/* Close Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          onClick={() => navigate('/')}
+          variant="ghost"
+          size="icon"
+          className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border border-white/20 rounded-full"
+        >
+          <X className="h-6 w-6" />
+        </Button>
+      </div>
+
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <Container className="py-16 text-center text-white">
