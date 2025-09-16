@@ -17,7 +17,10 @@ import {
   BarChart3,
   Rocket,
   Database,
-  X
+  X,
+  Brain,
+  Bot,
+  Sparkles
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
@@ -227,6 +230,63 @@ const Documentation: React.FC = () => {
           "Analytics de uso",
           "Audit trail completo"
         ]
+      }
+    },
+    {
+      id: 9,
+      title: "Sistema de Inteligência Artificial",
+      icon: Brain,
+      content: {
+        smartmatch: {
+          title: "SmartMatch - Busca Inteligente",
+          description: "Sistema de ranqueamento baseado em IA que otimiza a busca por vagas usando algoritmos de custo × proximidade",
+          features: [
+            "Ranking inteligente por score custo × proximidade",
+            "Aplicação automática de badges (melhor preço, perto de você, recursos completos)",
+            "Percentis de preço por região usando Materialized Views",
+            "Fallback automático em caso de falha do ML Service",
+            "Performance < 600ms com timeout inteligente"
+          ],
+          algorithm: "Score = 0.5 * (peso_preço * price_norm) + 0.5 * (peso_dist * dist_norm)"
+        },
+        chatbot: {
+          title: "Gepeto-IA - Assistente Virtual",
+          description: "Chat inteligente para ajudar proprietários a anunciar suas vagas com informações personalizadas",
+          capabilities: [
+            "Orientação sobre cadastro de vagas",
+            "Informações sobre rentabilidade (até R$800/mês via PIX)",
+            "Detalhes sobre segurança (R$50.000 seguro)",
+            "Processo de verificação CPF/CNPJ",
+            "Pagamento D+1 automático",
+            "Suporte em tempo real"
+          ]
+        },
+        aiArchitecture: {
+          title: "Arquitetura do Sistema de IA",
+          components: [
+            "Frontend React/TS com hooks customizados",
+            "Supabase Edge Function (Deno/TS) como middleware", 
+            "Microserviço FastAPI + scikit-learn para ML",
+            "PostgreSQL com Materialized Views para cache",
+            "Sistema de fallback resiliente"
+          ],
+          flow: "Frontend → Edge Function → ML Service → PostgreSQL → Response"
+        },
+        performance: {
+          title: "Performance e Otimizações",
+          metrics: [
+            { metric: "Latência com ML", value: "300-600ms", color: "text-green-600" },
+            { metric: "Fallback local", value: "< 150ms", color: "text-blue-600" },
+            { metric: "Timeout automático", value: "1200ms", color: "text-purple-600" },
+            { metric: "Precisão de recomendações", value: "+73%", color: "text-orange-600" }
+          ],
+          optimizations: [
+            "Cache de percentis de preço refresh 1x/dia",
+            "Clustering de markers no mapa",
+            "Lazy loading de componentes IA",
+            "Debounce em controles de parâmetros"
+          ]
+        }
       }
     }
   ];
@@ -632,6 +692,108 @@ const Documentation: React.FC = () => {
                                 <span className="text-gray-700">{item}</span>
                               </div>
                             ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {section.id === 9 && (
+                      <div className="space-y-8">
+                        {/* SmartMatch */}
+                        <div>
+                          <div className="flex items-center gap-3 mb-4">
+                            <Sparkles className="h-6 w-6 text-purple-600" />
+                            <h3 className="text-xl font-semibold text-primary">{section.content.smartmatch.title}</h3>
+                          </div>
+                          <p className="text-gray-700 mb-4">{section.content.smartmatch.description}</p>
+                          <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                            <h4 className="font-semibold text-gray-900 mb-2">Algoritmo Base:</h4>
+                            <code className="text-sm text-gray-700 bg-white px-3 py-1 rounded">
+                              {section.content.smartmatch.algorithm}
+                            </code>
+                          </div>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {section.content.smartmatch.features.map((feature, idx) => (
+                              <div key={idx} className="flex items-start gap-3">
+                                <Brain className="h-4 w-4 text-purple-600 mt-1 flex-shrink-0" />
+                                <span className="text-gray-700 text-sm">{feature}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Chat IA */}
+                        <div className="border-t pt-8">
+                          <div className="flex items-center gap-3 mb-4">
+                            <Bot className="h-6 w-6 text-blue-600" />
+                            <h3 className="text-xl font-semibold text-primary">{section.content.chatbot.title}</h3>
+                          </div>
+                          <p className="text-gray-700 mb-4">{section.content.chatbot.description}</p>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {section.content.chatbot.capabilities.map((capability, idx) => (
+                              <div key={idx} className="flex items-start gap-3">
+                                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                  <div className="w-2 h-2 rounded-full bg-blue-600"></div>
+                                </div>
+                                <span className="text-gray-700 text-sm">{capability}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Arquitetura IA */}
+                        <div className="border-t pt-8">
+                          <div className="flex items-center gap-3 mb-4">
+                            <Database className="h-6 w-6 text-green-600" />
+                            <h3 className="text-xl font-semibold text-primary">{section.content.aiArchitecture.title}</h3>
+                          </div>
+                          <div className="bg-green-50 rounded-lg p-4 mb-4">
+                            <h4 className="font-semibold text-green-900 mb-2">Fluxo de Dados:</h4>
+                            <p className="text-green-800 text-sm">{section.content.aiArchitecture.flow}</p>
+                          </div>
+                          <div className="space-y-2">
+                            {section.content.aiArchitecture.components.map((component, idx) => (
+                              <div key={idx} className="flex items-start gap-3">
+                                <Code className="h-4 w-4 text-green-600 mt-1" />
+                                <span className="text-gray-700">{component}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Performance IA */}
+                        <div className="border-t pt-8">
+                          <div className="flex items-center gap-3 mb-6">
+                            <BarChart3 className="h-6 w-6 text-orange-600" />
+                            <h3 className="text-xl font-semibold text-primary">{section.content.performance.title}</h3>
+                          </div>
+                          
+                          <div className="grid md:grid-cols-2 gap-8">
+                            <div>
+                              <h4 className="text-lg font-semibold text-gray-900 mb-4">Métricas de Performance</h4>
+                              <div className="space-y-4">
+                                {section.content.performance.metrics.map((metric, idx) => (
+                                  <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <span className="text-gray-700">{metric.metric}</span>
+                                    <Badge className={`${metric.color} bg-transparent border`}>
+                                      {metric.value}
+                                    </Badge>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h4 className="text-lg font-semibold text-gray-900 mb-4">Otimizações</h4>
+                              <div className="space-y-2">
+                                {section.content.performance.optimizations.map((opt, idx) => (
+                                  <div key={idx} className="flex items-start gap-3">
+                                    <Zap className="h-4 w-4 text-orange-600 mt-1" />
+                                    <span className="text-gray-700 text-sm">{opt}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
