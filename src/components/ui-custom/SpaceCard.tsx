@@ -89,7 +89,7 @@ const SpaceCard: React.FC<SpaceCardProps> = ({ space }) => {
             onError={(e) => {
               console.error(`Erro ao carregar imagem para vaga ${space.id}:`, imageUrl);
               const target = e.target as HTMLImageElement;
-              target.src = 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop';
+              target.src = parkingImages[2];
             }}
             loading="lazy"
           />

@@ -37,7 +37,7 @@ function convertSupabaseToSpaceProps(vagaDB: any): SpaceProps {
     reviewCount: Math.floor(Math.random() * 100) + 20, // Generate random review count
     description: `Vaga localizada em ${vagaDB.endereco || 'localização privilegiada'}. ${vagaDB.recursos?.length > 0 ? 'Conta com ' + vagaDB.recursos.join(', ') + '.' : ''} Disponível 24 horas por dia com segurança garantida.`,
     features: vagaDB.recursos || vagaDB.features || [],
-    imageUrl: vagaDB.image_url || parkingImages[0],
+    imageUrl: (vagaDB.image_url && !vagaDB.image_url.includes('unsplash.com') && !vagaDB.image_url.includes('images.unsplash.com') && !vagaDB.image_url.includes('pexels.com') && !vagaDB.image_url.includes('picsum.photos') && !vagaDB.image_url.includes('placeholder') ? vagaDB.image_url : parkingImages[0]),
     rules: [
       'Check-in a partir das 6h00',
       'Check-out até às 22h00',
@@ -52,8 +52,8 @@ function convertSupabaseToSpaceProps(vagaDB: any): SpaceProps {
         image: parkingImages[5],
     },
     images: [
-      vagaDB.image_url || parkingImages[0],
-      ...getRandomParkingImages(4).filter(img => img !== (vagaDB.image_url || parkingImages[0])),
+      (vagaDB.image_url && !vagaDB.image_url.includes('unsplash.com') && !vagaDB.image_url.includes('images.unsplash.com') && !vagaDB.image_url.includes('pexels.com') && !vagaDB.image_url.includes('picsum.photos') && !vagaDB.image_url.includes('placeholder') ? vagaDB.image_url : parkingImages[0]),
+      ...getRandomParkingImages(4).filter(img => img !== (vagaDB.image_url && !vagaDB.image_url.includes('unsplash.com') && !vagaDB.image_url.includes('images.unsplash.com') && !vagaDB.image_url.includes('pexels.com') && !vagaDB.image_url.includes('picsum.photos') && !vagaDB.image_url.includes('placeholder') ? vagaDB.image_url : parkingImages[0])),
     ],
     reviews: [
       {
@@ -778,6 +778,16 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 10)
     
     console.log(`Encontradas ${vagasFromDB?.length || 0} vagas no banco de dados`);
     
+    // Cleanup: remover imagens externas indesejadas do DB (unsplash/pexels/picsum)
+    try {
+      await supabase
+        .from('vagas')
+        .update({ image_url: null })
+        .or('image_url.ilike.%images.unsplash.com%,image_url.ilike.%unsplash.com%,image_url.ilike.%pexels.com%,image_url.ilike.%picsum.photos%');
+    } catch (cleanupErr) {
+      console.warn('Falha ao limpar imagens externas do DB (ignorado):', cleanupErr);
+    }
+    
     // Converter vagas do banco para o formato SpaceProps
     const spacesFromDB: SpaceProps[] = (vagasFromDB || []).map(vaga => ({
       id: vaga.id,
@@ -786,7 +796,7 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 10)
       price: Number(vaga.price) || Number(vaga.preco_hora) || 10,
       rating: Number(vaga.rating) || 4.0,
       reviewCount: Math.floor(Math.random() * 200) + 20,
-      imageUrl: vaga.image_url || parkingImages[0],
+      imageUrl: (vaga.image_url && !vaga.image_url.includes('unsplash.com') && !vaga.image_url.includes('images.unsplash.com') && !vaga.image_url.includes('pexels.com') && !vaga.image_url.includes('picsum.photos') && !vaga.image_url.includes('placeholder') ? vaga.image_url : parkingImages[0]),
       features: vaga.features || vaga.recursos || ['Básico'],
       available: vaga.available !== false,
       lat: Number(vaga.lat),
