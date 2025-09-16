@@ -14,6 +14,7 @@ import {
   TabContent,
   CTASection
 } from '@/components/how-it-works';
+import ChatWidgetHowItWorks from '@/components/how-it-works/ChatWidgetHowItWorks';
 
 // Dados para os passos do Locatário
 const locatarioSteps = [
@@ -131,6 +132,9 @@ const HowItWorks = () => {
       </Box>
       
       <Footer />
+      
+      {/* Chat Widget for How It Works help */}
+      <ChatWidgetHowItWorks />
     </>
   );
 };
