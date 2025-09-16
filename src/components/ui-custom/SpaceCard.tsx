@@ -7,6 +7,7 @@ import { Star, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import PremiumDiscountBadge from './PremiumDiscountBadge';
+import { parkingImages } from '@/assets/parking';
 
 export interface SpaceProps {
   id: string;
@@ -68,7 +69,7 @@ const SpaceCard: React.FC<SpaceCardProps> = ({ space }) => {
   const { isPremium } = useAuth();
   
   // Set default image if not provided - usando uma imagem de estacionamento mais genérica
-  const imageUrl = space.imageUrl || 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop';
+  const imageUrl = space.imageUrl || parkingImages[0];
   
   // Calculate discounted price
   const discountedPrice = space.discount_premium && isPremium 

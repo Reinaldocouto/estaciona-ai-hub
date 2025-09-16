@@ -9,6 +9,7 @@ import Footer from '@/components/layout/Footer';
 import SearchBar from '@/components/search/SearchBar';
 import SmartMatchButton from '@/components/search/SmartMatchButton';
 import { useAuth } from '@/contexts/AuthContext';
+import { parkingImages } from '@/assets/parking';
 
 const Index = () => {
   const { isPremium } = useAuth();
@@ -22,7 +23,7 @@ const Index = () => {
       price: 15,
       rating: 4.8,
       reviewCount: 125,
-      imageUrl: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?q=80&w=1470&auto=format&fit=crop',
+      imageUrl: parkingImages[0],
       features: ['Coberto', 'Segurança 24h', 'Carregador EV'],
       available: true,
       discount_premium: true,
@@ -34,7 +35,7 @@ const Index = () => {
       price: 10,
       rating: 4.5,
       reviewCount: 87,
-      imageUrl: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=1470&auto=format&fit=crop',
+      imageUrl: parkingImages[1],
       features: ['Privativo', 'Coberto'],
       available: true,
       discount_premium: false,
@@ -46,7 +47,7 @@ const Index = () => {
       price: 12,
       rating: 4.2,
       reviewCount: 63,
-      imageUrl: 'https://images.unsplash.com/photo-1470224114660-3f6686c562eb?q=80&w=1470&auto=format&fit=crop',
+      imageUrl: parkingImages[2],
       features: ['24h', 'Segurança'],
       available: true,
       discount_premium: false,
@@ -58,7 +59,7 @@ const Index = () => {
       price: 25,
       rating: 4.9,
       reviewCount: 36,
-      imageUrl: 'https://images.unsplash.com/photo-1621819783320-147734de70f8?q=80&w=1472&auto=format&fit=crop',
+      imageUrl: parkingImages[3],
       features: ['Premium', 'Segurança', 'Câmeras'],
       available: true,
       discount_premium: true,
@@ -70,7 +71,7 @@ const Index = () => {
       price: 14,
       rating: 4.5,
       reviewCount: 167,
-      imageUrl: 'https://images.unsplash.com/photo-1545179605-1c19deb492d2?q=80&w=1470&auto=format&fit=crop',
+      imageUrl: parkingImages[4],
       features: ['Shopping', 'Segurança', 'Coberto'],
       available: true,
       discount_premium: false,
@@ -82,7 +83,7 @@ const Index = () => {
       price: 12,
       rating: 4.6,
       reviewCount: 225,
-      imageUrl: 'https://images.unsplash.com/photo-1588266458641-1c30f0a654e0?q=80&w=1476&auto=format&fit=crop',
+      imageUrl: parkingImages[5],
       features: ['Parque', 'Lazer', 'Segurança'],
       available: true,
       discount_premium: true,

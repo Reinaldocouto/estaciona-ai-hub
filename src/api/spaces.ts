@@ -49,7 +49,7 @@ function convertSupabaseToSpaceProps(vagaDB: any): SpaceProps {
       joined: 'Janeiro de 2023',
       responseTime: '30 min',
       rating: 4.8,
-      image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1480&auto=format&fit=crop',
+        image: parkingImages[5],
     },
     images: [
       vagaDB.image_url || parkingImages[0],
@@ -62,7 +62,7 @@ function convertSupabaseToSpaceProps(vagaDB: any): SpaceProps {
         date: '15/08/2024',
         rating: 5,
         comment: 'Excelente localização e fácil acesso. Recomendo!',
-        image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1470&auto=format&fit=crop',
+          image: parkingImages[6],
       },
       {
         id: '2',
@@ -70,7 +70,7 @@ function convertSupabaseToSpaceProps(vagaDB: any): SpaceProps {
         date: '10/08/2024',
         rating: 4,
         comment: 'Boa opção para estacionar com segurança.',
-        image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1480&auto=format&fit=crop',
+          image: parkingImages[7],
       },
     ],
     lat: vagaDB.lat || -23.5505,
@@ -141,7 +141,7 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
         joined: 'Março de 2022',
         responseTime: '15 min',
         rating: 4.9,
-        image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1480&auto=format&fit=crop',
+        image: parkingImages[8],
       },
       images: [
         parkingImages[0],
@@ -157,7 +157,7 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
           date: '12/04/2023',
           rating: 5,
           comment: 'Ótima localização e muito fácil de acessar. Estacionamento seguro e limpo.',
-          image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1470&auto=format&fit=crop',
+          image: parkingImages[9],
         },
         {
           id: '2',
@@ -165,7 +165,7 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
           date: '29/03/2023',
           rating: 4,
           comment: 'Bom espaço e segurança, porém o acesso poderia ser mais rápido.',
-          image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1480&auto=format&fit=crop',
+          image: parkingImages[10],
         },
       ],
       lat: -23.5629,
@@ -221,7 +221,7 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
           date: '01/03/2023',
           rating: 5,
           comment: 'Excelente localização, fácil acesso.',
-          image: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=1374&auto=format&fit=crop',
+          image: parkingImages[11],
         },
       ],
       owner: {
@@ -229,7 +229,7 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
         joined: 'Janeiro de 2023',
         responseTime: '30 min',
         rating: 4.7,
-        image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1374&auto=format&fit=crop',
+        image: parkingImages[12],
       },
       rules: ['Check-in flexível', 'Aviso prévio de 1h para reservas'],
       availability: {
