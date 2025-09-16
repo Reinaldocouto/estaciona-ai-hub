@@ -25,7 +25,7 @@ const DocumentationIcon: React.FC = () => {
         variant="ghost"
         size="icon"
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 h-12 w-12 rounded-full bg-primary/90 text-primary-foreground shadow-lg hover:bg-primary hover:scale-105 transition-all duration-200"
+        className="fixed bottom-6 left-6 z-50 h-12 w-12 rounded-full bg-primary/90 text-primary-foreground shadow-lg hover:bg-primary hover:scale-105 transition-all duration-200"
         aria-label="Abrir documentação"
       >
         <FileText className="h-5 w-5" />
