@@ -94,16 +94,16 @@ const HowItWorks = () => {
                 onValueChange={setActiveTab}
                 className="w-full"
               >
-                <TabsList className="grid w-full grid-cols-2 mb-8 bg-card border border-primary/20 rounded-2xl p-2 max-w-2xl mx-auto">
+                <TabsList className="grid w-full grid-cols-2 mb-8 bg-card border border-primary/20 rounded-2xl p-1 max-w-2xl mx-auto">
                   <TabsTrigger 
                     value="locatario" 
-                    className="text-muted-foreground data-[state=active]:text-primary data-[state=active]:bg-primary/10 data-[state=active]:border data-[state=active]:border-primary/20 rounded-xl transition-all duration-300 py-3 font-medium"
+                    className="flex-1 text-center text-muted-foreground data-[state=active]:text-primary data-[state=active]:bg-primary/10 data-[state=active]:border data-[state=active]:border-primary/20 rounded-xl transition-all duration-300 py-3 px-4 font-medium m-0.5"
                   >
                     Sou Motorista (Locatário)
                   </TabsTrigger>
                   <TabsTrigger 
                     value="locador"
-                    className="text-muted-foreground data-[state=active]:text-accent data-[state=active]:bg-accent/10 data-[state=active]:border data-[state=active]:border-accent/20 rounded-xl transition-all duration-300 py-3 font-medium"
+                    className="flex-1 text-center text-muted-foreground data-[state=active]:text-accent data-[state=active]:bg-accent/10 data-[state=active]:border data-[state=active]:border-accent/20 rounded-xl transition-all duration-300 py-3 px-4 font-medium m-0.5"
                   >
                     Sou Proprietário (Locador)
                   </TabsTrigger>
