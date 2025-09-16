@@ -23,7 +23,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
       <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       <Input
         type="text"
-        placeholder="Digite um endereço ou local (ex: Paulista, Centro)"
+        placeholder="Digite o local"
         className="pl-10 pr-24 py-6 h-14 rounded-lg"
         value={value}
         onChange={(e) => onChange(e.target.value)}
