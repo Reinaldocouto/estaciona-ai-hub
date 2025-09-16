@@ -69,7 +69,7 @@ const HowItWorks = () => {
       
       <Box 
         as="main"
-        className="font-roboto min-h-screen"
+        className="font-roboto min-h-screen bg-background"
       >
         <Container className="py-12 md:py-16">
           <HeroSection 
@@ -79,27 +79,44 @@ const HowItWorks = () => {
           
           <QuickSummaryGrid />
           
-          <section className="py-12">
-            <div className="w-full">
+          <section className="py-16 relative">
+            {/* Background geometric elements */}
+            <div className="absolute inset-0 overflow-hidden opacity-5">
+              <div className="absolute top-1/4 left-1/3 w-4 h-4 bg-primary rounded-full" />
+              <div className="absolute bottom-1/3 right-1/4 w-2 h-2 bg-accent rounded-full" />
+              <div className="absolute top-1/2 right-1/2 w-1 h-1 bg-primary rounded-full" />
+            </div>
+
+            <div className="w-full relative z-10">
               <Tabs 
                 defaultValue="locatario" 
                 value={activeTab} 
                 onValueChange={setActiveTab}
                 className="w-full"
               >
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="locatario">Sou Motorista (Locatário)</TabsTrigger>
-                  <TabsTrigger value="locador">Sou Proprietário (Locador)</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-8 bg-card border border-primary/20 rounded-2xl p-2 max-w-2xl mx-auto">
+                  <TabsTrigger 
+                    value="locatario" 
+                    className="text-muted-foreground data-[state=active]:text-primary data-[state=active]:bg-primary/10 data-[state=active]:border data-[state=active]:border-primary/20 rounded-xl transition-all duration-300 py-3 font-medium"
+                  >
+                    Sou Motorista (Locatário)
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="locador"
+                    className="text-muted-foreground data-[state=active]:text-accent data-[state=active]:bg-accent/10 data-[state=active]:border data-[state=active]:border-accent/20 rounded-xl transition-all duration-300 py-3 font-medium"
+                  >
+                    Sou Proprietário (Locador)
+                  </TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="locatario" className="mt-6">
+                <TabsContent value="locatario" className="mt-8">
                   <TabContent 
                     persona="locatario"
                     steps={locatarioSteps}
                   />
                 </TabsContent>
                 
-                <TabsContent value="locador" className="mt-6">
+                <TabsContent value="locador" className="mt-8">
                   <TabContent 
                     persona="locador"
                     steps={locadorSteps}
