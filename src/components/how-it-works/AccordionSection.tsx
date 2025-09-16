@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { ChevronDown } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 interface AccordionSectionProps {
@@ -14,9 +13,8 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ persona }) => {
         <>
           <Accordion type="single" collapsible className="w-full space-y-4">
             <AccordionItem value="taxas" className="bg-card/50 border border-primary/10 rounded-2xl px-6 py-2 hover:border-primary/20 transition-all duration-300">
-              <AccordionTrigger className="text-lg font-medium text-foreground hover:text-primary transition-colors duration-300 [&[data-state=open]>svg]:rotate-180">
+              <AccordionTrigger className="text-lg font-medium text-foreground hover:text-primary transition-colors duration-300 justify-center [&[data-state=open]>svg]:rotate-180">
                 Saiba mais sobre taxas
-                <ChevronDown className="h-5 w-5 text-primary/60 transition-transform duration-300" />
               </AccordionTrigger>
               <AccordionContent className="pt-4 pb-2">
                 <ul className="space-y-3 text-muted-foreground">
@@ -43,9 +41,8 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ persona }) => {
 
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="direitos" className="bg-card/50 border border-accent/10 rounded-2xl px-6 py-2 hover:border-accent/20 transition-all duration-300">
-              <AccordionTrigger className="text-lg font-medium text-foreground hover:text-accent transition-colors duration-300 [&[data-state=open]>svg]:rotate-180">
+              <AccordionTrigger className="text-lg font-medium text-foreground hover:text-accent transition-colors duration-300 justify-center [&[data-state=open]>svg]:rotate-180">
                 Direitos e Responsabilidades
-                <ChevronDown className="h-5 w-5 text-accent/60 transition-transform duration-300" />
               </AccordionTrigger>
               <AccordionContent className="pt-4 pb-2">
                 <h5 className="font-bold text-foreground mb-4 text-base">Seus direitos:</h5>
@@ -91,9 +88,8 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ persona }) => {
         <>
           <Accordion type="single" collapsible className="w-full space-y-4">
             <AccordionItem value="pagamentos" className="bg-card/50 border border-primary/10 rounded-2xl px-6 py-2 hover:border-primary/20 transition-all duration-300">
-              <AccordionTrigger className="text-lg font-medium text-foreground hover:text-primary transition-colors duration-300 [&[data-state=open]>svg]:rotate-180">
+              <AccordionTrigger className="text-lg font-medium text-foreground hover:text-primary transition-colors duration-300 justify-center [&[data-state=open]>svg]:rotate-180">
                 Detalhes de pagamentos
-                <ChevronDown className="h-5 w-5 text-primary/60 transition-transform duration-300" />
               </AccordionTrigger>
               <AccordionContent className="pt-4 pb-2">
                 <ul className="space-y-3 text-muted-foreground">
@@ -120,9 +116,8 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ persona }) => {
 
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="responsabilidades" className="bg-card/50 border border-accent/10 rounded-2xl px-6 py-2 hover:border-accent/20 transition-all duration-300">
-              <AccordionTrigger className="text-lg font-medium text-foreground hover:text-accent transition-colors duration-300 [&[data-state=open]>svg]:rotate-180">
+              <AccordionTrigger className="text-lg font-medium text-foreground hover:text-accent transition-colors duration-300 justify-center [&[data-state=open]>svg]:rotate-180">
                 Direitos e Responsabilidades
-                <ChevronDown className="h-5 w-5 text-accent/60 transition-transform duration-300" />
               </AccordionTrigger>
               <AccordionContent className="pt-4 pb-2">
                 <h5 className="font-bold text-foreground mb-4 text-base">Seus direitos:</h5>
