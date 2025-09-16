@@ -112,7 +112,7 @@ const Index = () => {
           <div className="absolute inset-0 z-0">
             <img
               src="https://images.unsplash.com/photo-1597007030739-6d2e7172ee0e?q=80&w=1470&auto=format&fit=crop"
-              alt="Estacionamento"
+              alt=""
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black bg-opacity-50" />
