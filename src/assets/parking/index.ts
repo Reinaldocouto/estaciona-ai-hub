@@ -15,6 +15,13 @@ import garageEmpty4 from './garage-empty-4.jpg';
 import garageWithCar4 from './garage-with-car-4.jpg';
 import garageEvCharger4 from './garage-ev-charger-4.jpg';
 import coveredParking4 from './covered-parking-4.jpg';
+// New generated parking images
+import modernGarage1 from './modern-garage-1.jpg';
+import undergroundGarage1 from './underground-garage-1.jpg';
+import outdoorCovered1 from './outdoor-covered-1.jpg';
+import premiumEvGarage1 from './premium-ev-garage-1.jpg';
+import shoppingGarage1 from './shopping-garage-1.jpg';
+import compactUrban1 from './compact-urban-1.jpg';
 
 // Export array of all parking images
 export const parkingImages = [
@@ -34,6 +41,13 @@ export const parkingImages = [
   garageWithCar4,
   garageEvCharger4,
   coveredParking4,
+  // Add new generated images for more variety
+  modernGarage1,
+  undergroundGarage1,
+  outdoorCovered1,
+  premiumEvGarage1,
+  shoppingGarage1,
+  compactUrban1,
 ];
 
 // Function to get random images from the parking images array
