@@ -5,12 +5,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import DocumentationIcon from "./components/documentation/DocumentationIcon";
 import Index from "./pages/Index";
 import Spaces from "./pages/Spaces";
 import SpaceDetails from "./pages/SpaceDetails";
 import HowItWorks from "./pages/HowItWorks";
 import RentOutSpot from "./pages/RentOutSpot";
 import Premium from "./pages/Premium";
+import Documentation from "./pages/Documentation";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
@@ -30,10 +32,12 @@ const App = () => (
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/rent-out-spot" element={<RentOutSpot />} />
             <Route path="/premium" element={<Premium />} />
+            <Route path="/documentation" element={<Documentation />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <DocumentationIcon />
         </TooltipProvider>
       </AuthProvider>
     </BrowserRouter>
