@@ -330,20 +330,20 @@ const Documentation: React.FC = () => {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 text-center">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <div className="bg-black rounded-lg p-6">
                 <Globe className="h-8 w-8 text-white mx-auto mb-3" />
-                <h3 className="font-semibold mb-2">Solução Inovadora</h3>
-                <p className="text-sm opacity-80">Tecnologia e IA</p>
+                <h3 className="font-semibold mb-2 text-white">Solução Inovadora</h3>
+                <p className="text-sm text-white/80">Tecnologia e IA</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <div className="bg-black rounded-lg p-6">
                 <Users className="h-8 w-8 text-white mx-auto mb-3" />
-                <h3 className="font-semibold mb-2">Impacto Social</h3>
-                <p className="text-sm opacity-80">Mobilidade Urbana</p>
+                <h3 className="font-semibold mb-2 text-white">Impacto Social</h3>
+                <p className="text-sm text-white/80">Mobilidade Urbana</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <div className="bg-black rounded-lg p-6">
                 <Zap className="h-8 w-8 text-white mx-auto mb-3" />
-                <h3 className="font-semibold mb-2">Performance</h3>
-                <p className="text-sm opacity-80">Otimização Inteligente</p>
+                <h3 className="font-semibold mb-2 text-white">Performance</h3>
+                <p className="text-sm text-white/80">Otimização Inteligente</p>
               </div>
             </div>
           </div>
