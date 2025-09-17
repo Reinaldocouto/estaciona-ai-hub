@@ -20,7 +20,8 @@ import {
   X,
   Brain,
   Bot,
-  Sparkles
+  Sparkles,
+  GitBranch
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
@@ -288,6 +289,43 @@ const Documentation: React.FC = () => {
           ]
         }
       }
+    },
+    {
+      id: 10,
+      title: "Workflow e Fluxo de Dados",
+      icon: GitBranch,
+      content: {
+        overview: "Demonstração completa do fluxo de dados e processos do sistema Estaciona Aí",
+        userFlows: {
+          title: "Fluxos Principais do Sistema",
+          flows: [
+            {
+              name: "Busca de Vagas",
+              steps: "Usuário → Busca → SmartMatch IA → Ranking → Exibição → Seleção"
+            },
+            {
+              name: "Reserva de Vaga",
+              steps: "Seleção → Detalhes → Reserva → Pagamento → Confirmação"
+            },
+            {
+              name: "Cadastro de Vaga",
+              steps: "Proprietário → Formulário → Upload Fotos → Validação → Publicação"
+            }
+          ]
+        },
+        systemComponents: [
+          "Frontend React/TypeScript",
+          "Supabase Auth & Database",
+          "SmartMatch IA Engine",
+          "Google Maps Integration", 
+          "Stripe Payment Gateway",
+          "ML Ranking Service"
+        ],
+        dataFlow: {
+          title: "Arquitetura de Dados",
+          description: "Fluxo completo de dados desde a requisição do usuário até a resposta final"
+        }
+      }
     }
   ];
 
@@ -516,37 +554,6 @@ const Documentation: React.FC = () => {
                       </div>
                     )}
 
-                    {section.id === 5 && (
-                      <div className="grid md:grid-cols-2 gap-8">
-                        <div>
-                          <h3 className="text-lg font-semibold text-primary mb-4">KPIs de Performance</h3>
-                          <div className="space-y-4">
-                            {section.content.kpis.map((kpi, idx) => (
-                              <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <span className="text-gray-700">{kpi.metric}</span>
-                                <Badge className={`${kpi.color} bg-transparent border`}>
-                                  {kpi.value}
-                                </Badge>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-semibold text-primary mb-4">Impacto Social</h3>
-                          <div className="space-y-2">
-                            {section.content.impact.map((item, idx) => (
-                              <div key={idx} className="flex items-center gap-3">
-                                <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                                  <div className="w-2 h-2 rounded-full bg-green-600"></div>
-                                </div>
-                                <span className="text-gray-700">{item}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
                     {section.id === 3 && (
                       <div className="grid md:grid-cols-2 gap-8">
                         <div>
@@ -605,6 +612,37 @@ const Documentation: React.FC = () => {
                               <div key={idx} className="flex items-start gap-3">
                                 <Zap className="h-4 w-4 text-purple-600 mt-1" />
                                 <span className="text-sm text-gray-700">{item}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {section.id === 5 && (
+                      <div className="grid md:grid-cols-2 gap-8">
+                        <div>
+                          <h3 className="text-lg font-semibold text-primary mb-4">KPIs de Performance</h3>
+                          <div className="space-y-4">
+                            {section.content.kpis.map((kpi, idx) => (
+                              <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <span className="text-gray-700">{kpi.metric}</span>
+                                <Badge className={`${kpi.color} bg-transparent border`}>
+                                  {kpi.value}
+                                </Badge>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-primary mb-4">Impacto Social</h3>
+                          <div className="space-y-2">
+                            {section.content.impact.map((item, idx) => (
+                              <div key={idx} className="flex items-center gap-3">
+                                <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+                                  <div className="w-2 h-2 rounded-full bg-green-600"></div>
+                                </div>
+                                <span className="text-gray-700">{item}</span>
                               </div>
                             ))}
                           </div>
@@ -792,6 +830,121 @@ const Documentation: React.FC = () => {
                                     <span className="text-gray-700 text-sm">{opt}</span>
                                   </div>
                                 ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {section.id === 10 && (
+                      <div className="space-y-8">
+                        {/* Overview */}
+                        <div>
+                          <h3 className="text-xl font-semibold text-primary mb-4">Visão Geral do Workflow</h3>
+                          <p className="text-gray-700 mb-6">{section.content.overview}</p>
+                        </div>
+
+                        {/* Fluxos Principais */}
+                        <div>
+                          <h3 className="text-lg font-semibold text-primary mb-4">{section.content.userFlows.title}</h3>
+                          <div className="grid md:grid-cols-1 gap-4 mb-6">
+                            {section.content.userFlows.flows.map((flow, idx) => (
+                              <div key={idx} className="bg-gray-50 rounded-lg p-4">
+                                <h4 className="font-semibold text-gray-900 mb-2">{flow.name}</h4>
+                                <p className="text-sm text-gray-700 font-mono bg-white px-3 py-2 rounded">
+                                  {flow.steps}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Organograma do Sistema */}
+                        <div>
+                          <h3 className="text-lg font-semibold text-primary mb-4">{section.content.dataFlow.title}</h3>
+                          <p className="text-gray-700 mb-6">{section.content.dataFlow.description}</p>
+                          
+                          <div className="bg-gray-50 rounded-lg p-6">
+                            <div className="grid md:grid-cols-3 gap-6">
+                              <div className="bg-white p-4 rounded-lg">
+                                <h4 className="font-semibold text-blue-600 mb-3">🔍 Fluxo de Busca</h4>
+                                <div className="text-sm space-y-2">
+                                  <p>1. Usuário insere busca</p>
+                                  <p>2. Geolocalização + Filtros</p>
+                                  <p>3. Supabase Edge Function</p>
+                                  <p>4. SmartMatch IA ou SQL básico</p>
+                                  <p>5. Ranking de vagas</p>
+                                  <p>6. Exibição no mapa</p>
+                                </div>
+                              </div>
+                              <div className="bg-white p-4 rounded-lg">
+                                <h4 className="font-semibold text-green-600 mb-3">💳 Fluxo de Reserva</h4>
+                                <div className="text-sm space-y-2">
+                                  <p>1. Seleção da vaga</p>
+                                  <p>2. Verificação de autenticação</p>
+                                  <p>3. Componente de reserva</p>
+                                  <p>4. Pagamento via Stripe</p>
+                                  <p>5. Confirmação + Notificações</p>
+                                </div>
+                              </div>
+                              <div className="bg-white p-4 rounded-lg">
+                                <h4 className="font-semibold text-purple-600 mb-3">📝 Fluxo de Cadastro</h4>
+                                <div className="text-sm space-y-2">
+                                  <p>1. Formulário proprietário</p>
+                                  <p>2. Upload de fotos</p>
+                                  <p>3. Endereço + Maps</p>
+                                  <p>4. Validação Zod</p>
+                                  <p>5. Salvar no banco</p>
+                                  <p>6. Notificação sucesso</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Componentes do Sistema */}
+                        <div>
+                          <h3 className="text-lg font-semibold text-primary mb-4">Componentes Principais</h3>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {section.content.systemComponents.map((component, idx) => (
+                              <div key={idx} className="flex items-start gap-3">
+                                <GitBranch className="h-4 w-4 text-blue-600 mt-1" />
+                                <span className="text-gray-700">{component}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Fluxo Detalhado */}
+                        <div className="border-t pt-8">
+                          <h3 className="text-lg font-semibold text-primary mb-4">Fluxo Detalhado de Busca com IA</h3>
+                          <div className="bg-blue-50 rounded-lg p-6">
+                            <h4 className="font-semibold text-blue-900 mb-4">Sequência de Busca com IA</h4>
+                            <div className="space-y-3 text-sm">
+                              <div className="flex items-center gap-3">
+                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">1</span>
+                                <span>Usuário → Frontend: Busca por "Shopping Center"</span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">2</span>
+                                <span>Frontend → Supabase: POST /ia-recommendations</span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">3</span>
+                                <span>Supabase → ML Service: Ranking com parâmetros</span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">4</span>
+                                <span>ML Service: Calcula score custo×proximidade</span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">5</span>
+                                <span>Retorno: Vagas ranqueadas + badges</span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">6</span>
+                                <span>Frontend: Renderiza no Google Maps</span>
                               </div>
                             </div>
                           </div>
