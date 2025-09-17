@@ -320,11 +320,11 @@ const Documentation: React.FC = () => {
               <div className="w-24 h-1 bg-white/50 mx-auto"></div>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-8 mb-12">
-              <h2 className="text-2xl font-semibold mb-4">
+            <div className="bg-black rounded-lg p-8 mb-12">
+              <h2 className="text-2xl font-semibold mb-4 text-white">
                 Documentação Técnica e Acadêmica
               </h2>
-              <p className="text-lg opacity-90">
+              <p className="text-lg text-white/90">
                 Projeto Integrador FIAP 2025
               </p>
             </div>
