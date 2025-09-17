@@ -419,7 +419,7 @@ const Documentation: React.FC = () => {
               <Collapsible key={section.id} open={isOpen} onOpenChange={() => toggleSection(section.id)}>
                 <CollapsibleTrigger asChild>
                   <Button
-                    className="w-full h-16 text-left justify-between bg-primary hover:bg-primary/90 text-white"
+                    className="w-full h-16 text-left justify-between bg-black hover:bg-black/80 text-white"
                     variant="default"
                   >
                     <div className="flex items-center gap-4">
