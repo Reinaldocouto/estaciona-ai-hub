@@ -82,14 +82,26 @@ const SpacesContainer: React.FC = () => {
           setViewMode('map');
           
           // Show results toast with correct count and grammar (skip for SmartMatch)
-          // Apply the same filtering logic to get accurate count for toast
-          let availableSpaces = fetchedSpaces.filter(space => 
-            space.available === true && 
-            !space.title?.toLowerCase().includes('indisponível')
+          // Apply the same filtering logic used on the list to keep numbers consistent
+          let filteredForToast = [...fetchedSpaces];
+
+          // 1) Search filter based on the query in URL
+          const searchLower = (searchQuery || '').toLowerCase().trim();
+          if (searchLower) {
+            filteredForToast = filteredForToast.filter((space) =>
+              space.title.toLowerCase().includes(searchLower) ||
+              space.address.toLowerCase().includes(searchLower) ||
+              (space.features && space.features.some((f) => f.toLowerCase().includes(searchLower)))
+            );
+          }
+
+          // 2) Availability filter (same as list)
+          filteredForToast = filteredForToast.filter(
+            (space) => space.available === true && !space.title?.toLowerCase().includes('indisponível')
           );
           
           if (!isSmartMatch) {
-            const count = availableSpaces.length;
+            const count = filteredForToast.length;
             if (count > 0) {
               toast({
                 title: `${count} vaga${count !== 1 ? 's' : ''} encontrada${count !== 1 ? 's' : ''}`,
@@ -123,9 +135,12 @@ const SpacesContainer: React.FC = () => {
           setFilteredSpaces(fetchedSpaces);
           setLoading(false);
           
-          // Toast informando que está mostrando todas as vagas
+          // Toast informando que está mostrando todas as vagas (aplica mesmos filtros de disponibilidade)
+          const filteredForToast = fetchedSpaces.filter(
+            (space) => space.available === true && !space.title?.toLowerCase().includes('indisponível')
+          );
           toast({
-            title: `${fetchedSpaces.length} vagas disponíveis`,
+            title: `${filteredForToast.length} vagas disponíveis`,
             description: "Mostrando todas as vagas da plataforma. Use a busca para filtrar por localização.",
           });
         })
