@@ -290,8 +290,17 @@ const SpacesContainer: React.FC = () => {
   }, [iaEnabled, raioKm, precoMin, precoMax, distanciaMin, distanciaMax, recursosDesejados, fetchRecommendations, searchLat, searchLng]);
 
   // Determinar quais espaços mostrar (IA ou filtrados)
-  const displaySpaces = iaEnabled && iaData.length > 0 ? iaData : filteredSpaces;
   const showingIA = iaEnabled && iaData.length > 0;
+  
+  // Converter dados da IA para formato de espaços para o mapa
+  const iaSpacesForMap = showingIA 
+    ? iaData.map(vaga => {
+        const originalSpace = spaces.find(s => s.id === vaga.vaga_id);
+        return originalSpace || null;
+      }).filter(Boolean) as SpaceProps[]
+    : [];
+  
+  const displaySpaces = showingIA ? iaSpacesForMap : filteredSpaces;
 
   return (
     <div className="container mx-auto px-4 pt-6 space-y-6">
@@ -343,7 +352,7 @@ const SpacesContainer: React.FC = () => {
       
       {/* Header com contador e toggle de visualização */}
       <SpacesHeader 
-        spacesCount={showingIA ? iaData.length : filteredSpaces.length} 
+        spacesCount={displaySpaces.length} 
         viewMode={viewMode} 
         toggleViewMode={toggleViewMode} 
         showLocationText={!!searchLat && !!searchLng}
@@ -383,7 +392,7 @@ const SpacesContainer: React.FC = () => {
         // Mapa
         <div className="h-[calc(100vh-220px)]">
           <Map
-            spaces={filteredSpaces}
+            spaces={displaySpaces}
             className="h-full"
             onSelect={handleSpaceSelect}
             center={mapCenter}
