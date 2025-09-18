@@ -845,106 +845,125 @@ const Documentation: React.FC = () => {
                           <p className="text-gray-700 mb-6">{section.content.overview}</p>
                         </div>
 
-                        {/* Fluxos Principais */}
+                        {/* Arquitetura de Dados */}
                         <div>
-                          <h3 className="text-lg font-semibold text-primary mb-4">{section.content.userFlows.title}</h3>
-                          <div className="grid md:grid-cols-1 gap-4 mb-6">
-                            {section.content.userFlows.flows.map((flow, idx) => (
-                              <div key={idx} className="bg-gray-50 rounded-lg p-4">
-                                <h4 className="font-semibold text-gray-900 mb-2">{flow.name}</h4>
-                                <p className="text-sm text-gray-700 font-mono bg-white px-3 py-2 rounded">
-                                  {flow.steps}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Organograma do Sistema */}
-                        <div>
-                          <h3 className="text-lg font-semibold text-primary mb-4">{section.content.dataFlow.title}</h3>
-                          <p className="text-gray-700 mb-6">{section.content.dataFlow.description}</p>
+                          <h3 className="text-xl font-semibold text-pink-600 mb-4">Arquitetura de Dados</h3>
+                          <p className="text-gray-700 mb-6">Fluxo completo de dados desde a requisição do usuário até a resposta final</p>
                           
-                          <div className="bg-gray-50 rounded-lg p-6">
-                            <div className="grid md:grid-cols-3 gap-6">
-                              <div className="bg-white p-4 rounded-lg">
-                                <h4 className="font-semibold text-blue-600 mb-3">🔍 Fluxo de Busca</h4>
-                                <div className="text-sm space-y-2">
-                                  <p>1. Usuário insere busca</p>
-                                  <p>2. Geolocalização + Filtros</p>
-                                  <p>3. Supabase Edge Function</p>
-                                  <p>4. SmartMatch IA ou SQL básico</p>
-                                  <p>5. Ranking de vagas</p>
-                                  <p>6. Exibição no mapa</p>
-                                </div>
+                          <div className="grid md:grid-cols-3 gap-6 mb-8">
+                            <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+                              <h4 className="font-semibold text-blue-700 mb-3 flex items-center gap-2">
+                                🔍 <span>Fluxo de Busca</span>
+                              </h4>
+                              <div className="text-sm text-blue-700 space-y-2">
+                                <p>• Usuário insere busca</p>
+                                <p>• Geolocalização + Filtros</p>
+                                <p>• Supabase Edge Function</p>
+                                <p>• SmartMatch IA ou SQL básico</p>
+                                <p>• Ranking de vagas</p>
+                                <p>• Exibição no mapa</p>
                               </div>
-                              <div className="bg-white p-4 rounded-lg">
-                                <h4 className="font-semibold text-green-600 mb-3">💳 Fluxo de Reserva</h4>
-                                <div className="text-sm space-y-2">
-                                  <p>1. Seleção da vaga</p>
-                                  <p>2. Verificação de autenticação</p>
-                                  <p>3. Componente de reserva</p>
-                                  <p>4. Pagamento via Stripe</p>
-                                  <p>5. Confirmação + Notificações</p>
-                                </div>
+                            </div>
+                            
+                            <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                              <h4 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
+                                🏢 <span>Fluxo de Reserva</span>
+                              </h4>
+                              <div className="text-sm text-green-700 space-y-2">
+                                <p>• Seleção da vaga</p>
+                                <p>• Verificação de autenticação</p>
+                                <p>• Componente de reserva</p>
+                                <p>• Pagamento via Stripe</p>
+                                <p>• Confirmação + Notificações</p>
+                                <p>• Atualização do status</p>
                               </div>
-                              <div className="bg-white p-4 rounded-lg">
-                                <h4 className="font-semibold text-purple-600 mb-3">📝 Fluxo de Cadastro</h4>
-                                <div className="text-sm space-y-2">
-                                  <p>1. Formulário proprietário</p>
-                                  <p>2. Upload de fotos</p>
-                                  <p>3. Endereço + Maps</p>
-                                  <p>4. Validação Zod</p>
-                                  <p>5. Salvar no banco</p>
-                                  <p>6. Notificação sucesso</p>
-                                </div>
+                            </div>
+                            
+                            <div className="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg">
+                              <h4 className="font-semibold text-purple-700 mb-3 flex items-center gap-2">
+                                🚀 <span>Fluxo de Cadastro</span>
+                              </h4>
+                              <div className="text-sm text-purple-700 space-y-2">
+                                <p>• Formulário proprietário</p>
+                                <p>• Upload de fotos</p>
+                                <p>• Endereço + Maps</p>
+                                <p>• Validação Zod</p>
+                                <p>• Salvar no banco</p>
+                                <p>• Notificação sucesso</p>
                               </div>
                             </div>
                           </div>
                         </div>
 
-                        {/* Componentes do Sistema */}
+                        {/* Componentes Principais */}
                         <div>
-                          <h3 className="text-lg font-semibold text-primary mb-4">Componentes Principais</h3>
+                          <h3 className="text-xl font-semibold text-pink-600 mb-6">Componentes Principais</h3>
                           <div className="grid md:grid-cols-2 gap-4">
                             {section.content.systemComponents.map((component, idx) => (
-                              <div key={idx} className="flex items-start gap-3">
-                                <GitBranch className="h-4 w-4 text-blue-600 mt-1" />
-                                <span className="text-gray-700">{component}</span>
+                              <div key={idx} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                                <GitBranch className="h-5 w-5 text-blue-600 mt-0.5" />
+                                <span className="text-gray-700 font-medium">{component}</span>
                               </div>
                             ))}
                           </div>
                         </div>
 
-                        {/* Fluxo Detalhado */}
+                        {/* Fluxo Detalhado de Busca com IA */}
                         <div className="border-t pt-8">
-                          <h3 className="text-lg font-semibold text-primary mb-4">Fluxo Detalhado de Busca com IA</h3>
+                          <h3 className="text-xl font-semibold text-pink-600 mb-6">Fluxo Detalhado de Busca com IA</h3>
+                          
                           <div className="bg-blue-50 rounded-lg p-6">
-                            <h4 className="font-semibold text-blue-900 mb-4">Sequência de Busca com IA</h4>
-                            <div className="space-y-3 text-sm">
-                              <div className="flex items-center gap-3">
-                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">1</span>
-                                <span>Usuário → Frontend: Busca por "Shopping Center"</span>
+                            <h4 className="font-semibold text-blue-900 mb-6 text-lg">Sequência de Busca com IA</h4>
+                            <div className="grid md:grid-cols-3 gap-6">
+                              <div className="space-y-4">
+                                <div className="flex items-start gap-3">
+                                  <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</span>
+                                  <div>
+                                    <p className="font-semibold text-blue-900">Requisição do Usuário</p>
+                                    <p className="text-sm text-blue-700">Frontend captura busca + localização</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                  <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</span>
+                                  <div>
+                                    <p className="font-semibold text-blue-900">Processamento Frontend</p>
+                                    <p className="text-sm text-blue-700">Validação + preparação de parâmetros</p>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-3">
-                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">2</span>
-                                <span>Frontend → Supabase: POST /ia-recommendations</span>
+                              
+                              <div className="space-y-4">
+                                <div className="flex items-start gap-3">
+                                  <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</span>
+                                  <div>
+                                    <p className="font-semibold text-blue-900">Edge Function</p>
+                                    <p className="text-sm text-blue-700">Middleware Supabase para ML Service</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                  <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">4</span>
+                                  <div>
+                                    <p className="font-semibold text-blue-900">IA Ranking</p>
+                                    <p className="text-sm text-blue-700">Algoritmo custo × proximidade</p>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-3">
-                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">3</span>
-                                <span>Supabase → ML Service: Ranking com parâmetros</span>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">4</span>
-                                <span>ML Service: Calcula score custo×proximidade</span>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">5</span>
-                                <span>Retorno: Vagas ranqueadas + badges</span>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs">6</span>
-                                <span>Frontend: Renderiza no Google Maps</span>
+                              
+                              <div className="space-y-4">
+                                <div className="flex items-start gap-3">
+                                  <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">5</span>
+                                  <div>
+                                    <p className="font-semibold text-blue-900">Resposta Processada</p>
+                                    <p className="text-sm text-blue-700">Vagas ranqueadas + badges</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                  <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">6</span>
+                                  <div>
+                                    <p className="font-semibold text-blue-900">Renderização Final</p>
+                                    <p className="text-sm text-blue-700">Google Maps + interface do usuário</p>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
