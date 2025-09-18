@@ -22,6 +22,7 @@ import outdoorCovered1 from './outdoor-covered-1.jpg';
 import premiumEvGarage1 from './premium-ev-garage-1.jpg';
 import shoppingGarage1 from './shopping-garage-1.jpg';
 import compactUrban1 from './compact-urban-1.jpg';
+import coveredGarageShopping1 from './covered-garage-shopping-1.jpg';
 
 // Export array of all parking images
 export const parkingImages = [
@@ -48,6 +49,7 @@ export const parkingImages = [
   premiumEvGarage1,
   shoppingGarage1,
   compactUrban1,
+  coveredGarageShopping1,
 ];
 
 // Function to get random images from the parking images array
