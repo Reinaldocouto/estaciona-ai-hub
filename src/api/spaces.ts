@@ -743,17 +743,7 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
   const space = mockSpaces[id];
   
   if (!space) {
-    // If not found in mock data either, create a generic space with the ID
-    return convertSupabaseToSpaceProps({
-      id: id,
-      titulo: 'Vaga Indisponível',
-      endereco: 'Localização não especificada',
-      preco_hora: 15,
-      rating: 4.0,
-      recursos: ['Informações em breve'],
-      image_url: parkingImages[0],
-      available: true
-    });
+    throw new Error(`Vaga ${id} não encontrada`);
   }
   
   return space;
@@ -766,10 +756,14 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 10)
   let allSpaces: SpaceProps[] = [];
   
   try {
-    // Buscar vagas do Supabase
+    // Buscar vagas do Supabase - APENAS VAGAS DISPONÍVEIS
     const { data: vagasFromDB, error } = await supabase
       .from('vagas')
-      .select('*');
+      .select('*')
+      .eq('available', true)
+      .not('lat', 'is', null)
+      .not('lng', 'is', null)
+      .not('preco_hora', 'is', null);
     
     if (error) {
       console.error('Erro ao buscar vagas do Supabase:', error);
@@ -798,7 +792,7 @@ export async function fetchSpaces(lat: number, lng: number, radius: number = 10)
       reviewCount: Math.floor(Math.random() * 200) + 20,
       imageUrl: (vaga.image_url && !vaga.image_url.includes('unsplash.com') && !vaga.image_url.includes('images.unsplash.com') && !vaga.image_url.includes('pexels.com') && !vaga.image_url.includes('picsum.photos') && !vaga.image_url.includes('placeholder') ? vaga.image_url : parkingImages[0]),
       features: vaga.features || vaga.recursos || ['Básico'],
-      available: vaga.available !== false,
+      available: vaga.available === true,
       lat: Number(vaga.lat),
       lng: Number(vaga.lng),
       type: 'Médio' as const,

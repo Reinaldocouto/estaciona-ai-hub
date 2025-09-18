@@ -171,9 +171,12 @@ const SpacesContainer: React.FC = () => {
       );
     }
     
-    // Filtrar por disponibilidade
+    // Filtrar por disponibilidade - GARANTIR APENAS VAGAS DISPONÍVEIS
     if (filters.availability) {
-      filtered = filtered.filter(space => space.available !== false);
+      filtered = filtered.filter(space => 
+        space.available === true && 
+        !space.title?.toLowerCase().includes('indisponível')
+      );
     }
     
     setFilteredSpaces(filtered);

@@ -15,6 +15,10 @@ interface VagaCandidate {
   cidade: string;
   rating: number;
   recursos: string[];
+  titulo?: string;
+  endereco?: string;
+  image_url?: string;
+  available: boolean;
 }
 
 interface RankRequest {
@@ -109,14 +113,14 @@ serve(async (req) => {
     console.log(`📍 Buscando vagas: lat=${lat}, lng=${lng}, radius=${radius_km}km`);
     console.log(`🎯 Filtros do usuário: preço R$${preco_min}-R$${preco_max}, distância ${distancia_min}-${distancia_max}km`);
 
-    // Buscar vagas candidatas usando Haversine em SQL
+    // Buscar vagas candidatas - APENAS DISPONÍVEIS
     const { data: vagas, error: vagasError } = await supabase
       .from('vagas')
-      .select('id, lat, lng, preco_hora, bairro, cidade, rating, recursos')
+      .select('id, lat, lng, preco_hora, bairro, cidade, rating, recursos, titulo, endereco, image_url, available')
       .not('lat', 'is', null)
       .not('lng', 'is', null)
       .not('preco_hora', 'is', null)
-      .eq('available', true)
+      .eq('available', true) // GARANTIR APENAS VAGAS DISPONÍVEIS
       .limit(200);
 
     if (vagasError) {
