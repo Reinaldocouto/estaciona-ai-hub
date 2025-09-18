@@ -197,71 +197,71 @@ const Premium = () => {
               {/* Premium Benefits Showcase */}
               <div className="grid md:grid-cols-2 gap-8 mb-12">
                 {/* Main Benefits */}
-                <Card className="bg-gradient-to-br from-yellow-50 to-primary/5 border-yellow-200">
+                <Card className="bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 shadow-xl">
                   <CardHeader>
-                    <CardTitle className="flex items-center text-xl">
-                      <Gift className="h-6 w-6 text-yellow-500 mr-2" />
+                    <CardTitle className="flex items-center text-xl text-white">
+                      <Gift className="h-6 w-6 text-yellow-400 mr-2" />
                       Seus Benefícios Exclusivos
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-yellow-100">
-                      <Star className="h-6 w-6 text-yellow-500 flex-shrink-0 mt-1" />
+                    <div className="flex items-start space-x-3 p-4 bg-slate-800/80 rounded-lg border border-slate-600">
+                      <Star className="h-6 w-6 text-yellow-400 flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-green-700">Descontos Exclusivos</h4>
-                        <p className="text-sm text-muted-foreground">10% de desconto + 20% extra após 3 reservas no mês</p>
+                        <h4 className="font-semibold text-white">Descontos Exclusivos</h4>
+                        <p className="text-sm text-slate-300">10% de desconto + 20% extra após 3 reservas no mês</p>
                       </div>
                     </div>
-                    <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-blue-100">
-                      <Zap className="h-6 w-6 text-blue-500 flex-shrink-0 mt-1" />
+                    <div className="flex items-start space-x-3 p-4 bg-slate-800/80 rounded-lg border border-slate-600">
+                      <Zap className="h-6 w-6 text-blue-400 flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-green-700">Prioridade Absoluta</h4>
-                        <p className="text-sm text-muted-foreground">Suas vagas aparecem primeiro nos resultados</p>
+                        <h4 className="font-semibold text-white">Prioridade Absoluta</h4>
+                        <p className="text-sm text-slate-300">Suas vagas aparecem primeiro nos resultados</p>
                       </div>
                     </div>
-                    <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-green-100">
-                      <MapPin className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
+                    <div className="flex items-start space-x-3 p-4 bg-slate-800/80 rounded-lg border border-slate-600">
+                      <MapPin className="h-6 w-6 text-green-400 flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-green-700">Vagas VIP Exclusivas</h4>
-                        <p className="text-sm text-muted-foreground">Acesso a localizações premium especiais</p>
+                        <h4 className="font-semibold text-white">Vagas VIP Exclusivas</h4>
+                        <p className="text-sm text-slate-300">Acesso a localizações premium especiais</p>
                       </div>
                     </div>
-                    <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-purple-100">
-                      <Clock className="h-6 w-6 text-purple-500 flex-shrink-0 mt-1" />
+                    <div className="flex items-start space-x-3 p-4 bg-slate-800/80 rounded-lg border border-slate-600">
+                      <Clock className="h-6 w-6 text-purple-400 flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-green-700">Cancelamento Flexível</h4>
-                        <p className="text-sm text-muted-foreground">Cancele até 1 hora antes sem multas</p>
+                        <h4 className="font-semibold text-white">Cancelamento Flexível</h4>
+                        <p className="text-sm text-slate-300">Cancele até 1 hora antes sem multas</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 {/* Call to Action */}
-                <Card className="bg-gradient-to-br from-primary/5 to-blue-50 border-primary/20">
+                <Card className="bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 shadow-xl">
                   <CardHeader>
-                    <CardTitle className="flex items-center text-xl">
-                      <Crown className="h-6 w-6 text-primary mr-2" />
+                    <CardTitle className="flex items-center text-xl text-white">
+                      <Crown className="h-6 w-6 text-yellow-400 mr-2" />
                       Comece Agora Mesmo!
                     </CardTitle>
-                    <CardDescription className="text-base">
+                    <CardDescription className="text-base text-slate-300">
                       Sua assinatura premium já está ativa e pronta para usar
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="bg-white p-4 rounded-lg border border-primary/10">
-                      <h4 className="font-semibold text-primary mb-2">🎯 Próximos Passos:</h4>
+                    <div className="bg-slate-800/80 p-4 rounded-lg border border-slate-600">
+                      <h4 className="font-semibold text-yellow-400 mb-2">🎯 Próximos Passos:</h4>
                       <ul className="space-y-2 text-sm">
                         <li className="flex items-center">
-                          <Check className="h-4 w-4 text-green-500 mr-2" />
-                          Encontre vagas premium na sua região
+                          <Check className="h-4 w-4 text-green-400 mr-2" />
+                          <span className="text-slate-300">Encontre vagas premium na sua região</span>
                         </li>
                         <li className="flex items-center">
-                          <Check className="h-4 w-4 text-green-500 mr-2" />
-                          Aproveite os descontos exclusivos
+                          <Check className="h-4 w-4 text-green-400 mr-2" />
+                          <span className="text-slate-300">Aproveite os descontos exclusivos</span>
                         </li>
                         <li className="flex items-center">
-                          <Check className="h-4 w-4 text-green-500 mr-2" />
-                          Experimente o ranking prioritário
+                          <Check className="h-4 w-4 text-green-400 mr-2" />
+                          <span className="text-slate-300">Experimente o ranking prioritário</span>
                         </li>
                       </ul>
                     </div>
@@ -288,11 +288,11 @@ const Premium = () => {
               </div>
 
               {/* Welcome Footer */}
-              <div className="text-center bg-gradient-to-r from-yellow-50 to-primary/5 p-8 rounded-xl border border-yellow-200">
-                <h3 className="text-2xl font-bold text-primary mb-4">
+              <div className="text-center bg-gradient-to-r from-slate-900 to-slate-800 p-8 rounded-xl border border-slate-600">
+                <h3 className="text-2xl font-bold text-yellow-400 mb-4">
                   Obrigado por escolher o Estaciona Aí Premium! 🚗✨
                 </h3>
-                <p className="text-muted-foreground max-w-2xl mx-auto">
+                <p className="text-slate-300 max-w-2xl mx-auto">
                   Você agora faz parte de um grupo seleto de usuários que aproveitam o melhor 
                   da nossa plataforma. Tenha uma experiência premium em cada estacionamento!
                 </p>
@@ -300,27 +300,27 @@ const Premium = () => {
             </div>
           ) : isPremium ? (
             // Premium Active State
-            <Card className="max-w-2xl mx-auto bg-gradient-to-r from-yellow-50 to-primary/10 border-yellow-200">
+            <Card className="max-w-2xl mx-auto bg-gradient-to-r from-slate-900 to-slate-800 border-slate-600 shadow-xl">
               <CardHeader className="text-center">
                 <div className="flex items-center justify-center mb-2">
-                  <Crown className="h-8 w-8 text-yellow-500 mr-2" />
-                  <Badge className="bg-yellow-500 text-white px-4 py-2">
+                  <Crown className="h-8 w-8 text-yellow-400 mr-2" />
+                  <Badge className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2">
                     PREMIUM ATIVO
                   </Badge>
                 </div>
-                <CardTitle className="text-2xl">Você é Premium!</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl text-white">Você é Premium!</CardTitle>
+                <CardDescription className="text-slate-300">
                   {premiumUntil && `Válido até ${new Date(premiumUntil).toLocaleDateString('pt-BR')}`}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
                   {benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-start space-x-3 p-3 bg-white rounded-lg">
+                    <div key={index} className="flex items-start space-x-3 p-4 bg-slate-800/80 rounded-lg border border-slate-600">
                       {benefit.icon}
                       <div>
-                        <h4 className="font-medium text-sm">{benefit.title}</h4>
-                        <p className="text-xs text-gray-600">{benefit.description}</p>
+                        <h4 className="font-medium text-sm text-white">{benefit.title}</h4>
+                        <p className="text-xs text-slate-300">{benefit.description}</p>
                       </div>
                     </div>
                   ))}

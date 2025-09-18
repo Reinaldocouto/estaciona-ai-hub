@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, LogIn, LogOut, Crown, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import Logo from '@/components/ui-custom/Logo';
 import AuthModal from '@/components/auth/AuthModal';
 import PremiumBadge from '@/components/ui-custom/PremiumBadge';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAvatarUpload } from '@/hooks/useAvatarUpload';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,6 +16,8 @@ const Navbar = () => {
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const location = useLocation();
   const { user, isPremium, signOut } = useAuth();
+  const { uploadAvatar, isUploading } = useAvatarUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
@@ -36,6 +39,19 @@ const Navbar = () => {
   const handleSignOut = () => {
     signOut();
     closeMenu();
+  };
+
+  const handleAvatarClick = () => {
+    if (isPremium) {
+      fileInputRef.current?.click();
+    }
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await uploadAvatar(file);
+    }
   };
 
   const navLinks = [
@@ -86,7 +102,7 @@ const Navbar = () => {
                   {isPremium ? (
                     // Premium User Interface
                     <div className="flex items-center space-x-3 px-4 py-2 bg-gradient-to-r from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border border-yellow-400/30 rounded-xl backdrop-blur-sm">
-                      <div className="relative group cursor-pointer">
+                      <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
                         <Avatar className="w-10 h-10 ring-2 ring-yellow-400/50">
                           <AvatarImage src={user.user_metadata?.avatar_url} alt="Avatar" />
                           <AvatarFallback className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-semibold">
@@ -96,6 +112,11 @@ const Navbar = () => {
                         <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                           <Camera className="w-4 h-4 text-white" />
                         </div>
+                        {isUploading && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/70 rounded-full">
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          </div>
+                        )}
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xs text-yellow-700 font-medium">Bem-vindo,</span>
@@ -176,7 +197,7 @@ const Navbar = () => {
                     {isPremium ? (
                       // Premium User Interface - Mobile
                       <div className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border border-yellow-400/30 rounded-xl backdrop-blur-sm">
-                        <div className="relative group cursor-pointer">
+                        <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
                           <Avatar className="w-12 h-12 ring-2 ring-yellow-400/50">
                             <AvatarImage src={user.user_metadata?.avatar_url} alt="Avatar" />
                             <AvatarFallback className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-semibold text-lg">
@@ -186,6 +207,11 @@ const Navbar = () => {
                           <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                             <Camera className="w-5 h-5 text-white" />
                           </div>
+                          {isUploading && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/70 rounded-full">
+                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                          )}
                         </div>
                         <div className="flex flex-col flex-1">
                           <span className="text-xs text-yellow-700 font-medium">Bem-vindo,</span>
@@ -232,6 +258,15 @@ const Navbar = () => {
         onClose={closeAuthModal} 
         mode={authModalMode} 
         setMode={setAuthModalMode} 
+      />
+      
+      {/* Hidden file input for avatar upload */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
       />
     </>
   );
