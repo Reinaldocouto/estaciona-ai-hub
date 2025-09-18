@@ -2,11 +2,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useGoogleMaps } from '@/hooks/useGoogleMaps';
 import { findLocation } from '@/utils/mockLocations';
 
 export const useLocationSearch = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { getGeocodeForAddress, isLoaded } = useGoogleMaps();
   const [isSearching, setIsSearching] = useState(false);
 
   const performSearch = async (searchTerm: string) => {
@@ -31,11 +33,29 @@ export const useLocationSearch = () => {
       // Small delay to prevent multiple rapid calls
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      const location = findLocation(searchTerm);
+      let location = null;
+      
+      // First try Google Maps geocoding if available
+      if (isLoaded) {
+        console.log('Tentando busca via Google Maps Geocoding...');
+        location = await getGeocodeForAddress(searchTerm);
+        
+        if (location) {
+          console.log(`Coordenadas encontradas via Geocoding: lat=${location.lat}, lng=${location.lng}`);
+        }
+      }
+      
+      // Fallback to mock locations if geocoding didn't work
+      if (!location) {
+        console.log('Tentando busca via localizações mock...');
+        location = findLocation(searchTerm);
+        
+        if (location) {
+          console.log(`Coordenadas encontradas via mock: lat=${location.lat}, lng=${location.lng}`);
+        }
+      }
       
       if (location) {
-        console.log(`Coordenadas encontradas: lat=${location.lat}, lng=${location.lng}`);
-        
         // Navigate directly without showing success toast here
         // The SpacesContainer will show the results toast
         navigate(`/spaces?lat=${location.lat}&lng=${location.lng}&q=${encodeURIComponent(searchTerm)}`);
@@ -45,7 +65,7 @@ export const useLocationSearch = () => {
         console.log('Nenhuma localização encontrada para:', searchTerm);
         toast({
           title: "Endereço não encontrado",
-          description: "Tente com: Paulista, Pinheiros, Centro, Jardins, Morumbi ou Ibirapuera",
+          description: "Verifique se o endereço está correto e tente novamente",
           variant: "destructive",
         });
         return false;
