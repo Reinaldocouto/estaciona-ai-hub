@@ -21,6 +21,8 @@ interface IAControlsProps {
   recursos: string[];
   onRecursosChange: (recursos: string[]) => void;
   isLoading?: boolean;
+  canUseIA?: boolean;
+  iaDisabledReason?: string;
 }
 
 const recursosDisponiveis = [
@@ -46,7 +48,9 @@ const IAControls: React.FC<IAControlsProps> = ({
   onRaioChange,
   recursos,
   onRecursosChange,
-  isLoading = false
+  isLoading = false,
+  canUseIA = true,
+  iaDisabledReason = ""
 }) => {
   const handleRecursoToggle = (recurso: string) => {
     const newRecursos = recursos.includes(recurso)
@@ -63,7 +67,12 @@ const IAControls: React.FC<IAControlsProps> = ({
           IA: Busca Personalizada
           {isLoading && <Zap className="h-4 w-4 animate-pulse text-yellow-500" />}
         </CardTitle>
-        {!enabled && (
+        {!enabled && !canUseIA && (
+          <p className="text-sm text-destructive">
+            {iaDisabledReason}
+          </p>
+        )}
+        {!enabled && canUseIA && (
           <p className="text-sm text-muted-foreground">
             A IA analisa custo e proximidade para encontrar as melhores vagas para você.
           </p>
@@ -80,7 +89,7 @@ const IAControls: React.FC<IAControlsProps> = ({
             id="ia-toggle"
             checked={enabled}
             onCheckedChange={onEnabledChange}
-            disabled={isLoading}
+            disabled={isLoading || !canUseIA}
           />
         </div>
 

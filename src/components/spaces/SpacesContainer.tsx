@@ -13,14 +13,17 @@ import { fetchSpaces } from '@/api/spaces';
 import { useToast } from '@/hooks/use-toast';
 import { useIARecommendations } from '@/hooks/useIARecommendations';
 import { FilterState } from '@/components/ui-custom/FilterBar';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SpacesContainer: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [loading, setLoading] = useState(false);
   const [spaces, setSpaces] = useState<SpaceProps[]>([]);
   const [filteredSpaces, setFilteredSpaces] = useState<SpaceProps[]>([]);
   const [searchParams] = useSearchParams();
+  const [hasUserLocation, setHasUserLocation] = useState(false);
   
   // Check if SmartMatch was activated
   const isSmartMatch = searchParams.get('smartmatch') === 'true';
@@ -48,6 +51,13 @@ const SpacesContainer: React.FC = () => {
   const mapCenter = searchLat && searchLng 
     ? { lat: parseFloat(searchLat), lng: parseFloat(searchLng) } 
     : undefined;
+
+  // Check if user has location available (either from URL or manually set)
+  useEffect(() => {
+    if (searchLat && searchLng) {
+      setHasUserLocation(true);
+    }
+  }, [searchLat, searchLng]);
 
   // Handle search params for spaces
   useEffect(() => {
@@ -216,6 +226,26 @@ const SpacesContainer: React.FC = () => {
 
   // Handler para toggle da IA
   const handleIAToggle = async (enabled: boolean) => {
+    // Verificar se o usuário está logado
+    if (enabled && !user) {
+      toast({
+        title: "Login necessário",
+        description: "Você precisa estar logado para usar a busca por IA",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Verificar se há localização disponível
+    if (enabled && !hasUserLocation) {
+      toast({
+        title: "Localização necessária",
+        description: "A busca por IA precisa da sua localização. Use o SmartMatch para ativar automaticamente.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIaEnabled(enabled);
     
     if (!enabled) {
@@ -294,6 +324,14 @@ const SpacesContainer: React.FC = () => {
         recursos={recursosDesejados}
         onRecursosChange={setRecursosDesejados}
         isLoading={iaLoading}
+        canUseIA={user !== null && hasUserLocation}
+        iaDisabledReason={
+          !user 
+            ? "Faça login para usar a busca por IA" 
+            : !hasUserLocation 
+            ? "Use o SmartMatch para ativar a localização e acessar a IA"
+            : ""
+        }
       />
       
       {/* Filtros tradicionais quando IA está desabilitada */}
