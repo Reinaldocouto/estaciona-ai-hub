@@ -31,7 +31,7 @@ const SpacesContainer: React.FC = () => {
     search: '',
     priceRange: 100,
     features: [],
-    availability: true,
+    availability: false, // Não aplicar filtro automático
   });
 
   // Estados da IA
@@ -92,23 +92,8 @@ const SpacesContainer: React.FC = () => {
           setViewMode('map');
           
           // Show results toast with correct count and grammar (skip for SmartMatch)
-          // Apply the same filtering logic used on the list to keep numbers consistent
-          let filteredForToast = [...fetchedSpaces];
-
-          // 1) Search filter based on the query in URL
-          const searchLower = (searchQuery || '').toLowerCase().trim();
-          if (searchLower) {
-            filteredForToast = filteredForToast.filter((space) =>
-              space.title.toLowerCase().includes(searchLower) ||
-              space.address.toLowerCase().includes(searchLower) ||
-              (space.features && space.features.some((f) => f.toLowerCase().includes(searchLower)))
-            );
-          }
-
-          // 2) Availability filter (same as list)
-          filteredForToast = filteredForToast.filter(
-            (space) => space.available === true && !space.title?.toLowerCase().includes('indisponível')
-          );
+          // Não aplicar filtros automáticos no toast - mostrar total de vagas encontradas
+          const filteredForToast = [...fetchedSpaces];
           
           if (!isSmartMatch) {
             const count = filteredForToast.length;
@@ -145,10 +130,8 @@ const SpacesContainer: React.FC = () => {
           setFilteredSpaces(fetchedSpaces);
           setLoading(false);
           
-          // Toast informando que está mostrando todas as vagas (aplica mesmos filtros de disponibilidade)
-          const filteredForToast = fetchedSpaces.filter(
-            (space) => space.available === true && !space.title?.toLowerCase().includes('indisponível')
-          );
+          // Toast informando que está mostrando todas as vagas (sem filtros automáticos)
+          const filteredForToast = fetchedSpaces;
           toast({
             title: `${filteredForToast.length} vagas disponíveis`,
             description: "Mostrando todas as vagas da plataforma. Use a busca para filtrar por localização.",
@@ -178,6 +161,18 @@ const SpacesContainer: React.FC = () => {
       return; // IA controla os dados, não aplica filtros aqui
     }
     
+    // Verificar se há filtros ativos
+    const hasActiveFilters = filters.search || 
+                           filters.priceRange < 100 || 
+                           filters.features.length > 0 || 
+                           filters.availability;
+    
+    // Se não há filtros ativos, mostrar todas as vagas
+    if (!hasActiveFilters) {
+      setFilteredSpaces(filtered);
+      return;
+    }
+    
     // Filtrar por termo de busca
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
@@ -189,8 +184,10 @@ const SpacesContainer: React.FC = () => {
       );
     }
     
-    // Filtrar por preço
-    filtered = filtered.filter(space => space.price <= filters.priceRange);
+    // Filtrar por preço (apenas se menor que 100)
+    if (filters.priceRange < 100) {
+      filtered = filtered.filter(space => space.price <= filters.priceRange);
+    }
     
     // Filtrar por características
     if (filters.features.length > 0) {
@@ -202,7 +199,7 @@ const SpacesContainer: React.FC = () => {
       );
     }
     
-    // Filtrar por disponibilidade - GARANTIR APENAS VAGAS DISPONÍVEIS
+    // Filtrar por disponibilidade (apenas se explicitamente ativado)
     if (filters.availability) {
       filtered = filtered.filter(space => 
         space.available === true && 
@@ -418,13 +415,15 @@ const SpacesContainer: React.FC = () => {
         </div>
       )}
       
-      {/* Status dos filtros tradicionais */}
+      {/* Status dos filtros tradicionais - apenas quando há filtros ativos */}
       {!iaEnabled && filteredSpaces.length !== spaces.length && (
-        <div className="text-center text-sm text-muted-foreground p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <p>
-            📊 Filtros aplicados: Mostrando {filteredSpaces.length} de {spaces.length} vagas disponíveis
-          </p>
-        </div>
+        (filters.search || filters.priceRange < 100 || filters.features.length > 0 || filters.availability) && (
+          <div className="text-center text-sm text-muted-foreground p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <p>
+              📊 Filtros aplicados: Mostrando {filteredSpaces.length} de {spaces.length} vagas
+            </p>
+          </div>
+        )
       )}
     </div>
   );
