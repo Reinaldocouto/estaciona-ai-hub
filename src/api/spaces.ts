@@ -97,18 +97,23 @@ function convertSupabaseToSpaceProps(vagaDB: any): SpaceProps {
 }
 
 export async function fetchSpace(id: string): Promise<SpaceProps> {
-  console.log('Fetching space with ID:', id);
+  console.log('🔍 Fetching space with ID:', id);
+  console.log('🔍 ID type:', typeof id);
+  console.log('🔍 ID length:', id.length);
   
   // Simulate loading delay
   await new Promise(resolve => setTimeout(resolve, 800));
   
   try {
+    console.log('🔍 Attempting to fetch from Supabase...');
     // First, try to fetch from Supabase
     const { data: vagaFromDB, error } = await supabase
       .from('vagas')
       .select('*')
       .eq('id', id)
       .maybeSingle();
+
+    console.log('🔍 Supabase query result:', { data: vagaFromDB, error });
 
     if (!error && vagaFromDB) {
       console.log('✅ Vaga encontrada no Supabase:', vagaFromDB);
@@ -117,7 +122,7 @@ export async function fetchSpace(id: string): Promise<SpaceProps> {
       console.log('❌ Vaga não encontrada no Supabase para ID:', id, 'Error:', error);
     }
   } catch (error) {
-    console.error('Erro ao buscar vaga no Supabase:', error);
+    console.error('❌ Erro ao buscar vaga no Supabase:', error);
   }
 
   console.log('📦 Fallback para dados mock para ID:', id);

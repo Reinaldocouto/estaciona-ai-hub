@@ -207,7 +207,6 @@ const SpacesContainer: React.FC = () => {
   }, [filters, spaces, iaEnabled]);
 
   const handleFilterChange = (newFilters: FilterState) => {
-    console.log('Filtros alterados:', newFilters);
     setFilters(newFilters);
   };
 

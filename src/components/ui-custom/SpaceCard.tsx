@@ -161,7 +161,12 @@ const SpaceCard: React.FC<SpaceCardProps> = ({ space }) => {
       </CardContent>
       <CardFooter className="flex justify-between items-center p-4 pt-0">
         <Button asChild className="w-full">
-          <Link to={`/spaces/${space.id}`}>Ver detalhes</Link>
+          <Link 
+            to={`/spaces/${space.id}`}
+            onClick={() => console.log('🔗 Navigating to space ID:', space.id)}
+          >
+            Ver detalhes
+          </Link>
         </Button>
       </CardFooter>
     </Card>

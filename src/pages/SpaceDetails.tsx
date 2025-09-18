@@ -21,16 +21,30 @@ const SpaceDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  
+  console.log('🔍 SpaceDetails - ID from params:', id);
+  console.log('🔍 SpaceDetails - ID type:', typeof id);
+  
   const [activeTab, setActiveTab] = useState<string>('details');
   const [paymentStatus, setPaymentStatus] = useState<'success' | 'cancelled' | null>(null);
   const [processingPayment, setProcessingPayment] = useState(false);
 
   const { data: space, isLoading, error } = useQuery({
     queryKey: ['space', id],
-    queryFn: () => fetchSpace(id as string),
+    queryFn: () => {
+      console.log('🔍 useQuery - Calling fetchSpace with ID:', id);
+      return fetchSpace(id as string);
+    },
     enabled: !!id,
     retry: 1,
   });
+
+  // Log error if exists
+  useEffect(() => {
+    if (error) {
+      console.error('🔍 useQuery - Error fetching space:', error);
+    }
+  }, [error]);
 
   // Handle payment return
   useEffect(() => {
