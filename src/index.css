@@ -152,3 +152,17 @@ html {
   scrollbar-width: thin;
   scrollbar-color: hsl(var(--primary)) hsl(var(--background));
 }
+
+/* Google Maps InfoWindow: remove internal scrollbars and allow full content */
+.gm-style .gm-style-iw,
+.gm-style .gm-style-iw-d,
+.gm-style-iw,
+.gm-style-iw-c {
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+.gm-style .gm-style-iw-d::-webkit-scrollbar {
+  display: none !important;
+}
+

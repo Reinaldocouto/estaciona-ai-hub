@@ -27,14 +27,14 @@ const MapInfoWindow: React.FC<MapInfoWindowProps> = ({
       onCloseClick={onClose}
       options={{
         pixelOffset: new google.maps.Size(0, -10),
-        maxWidth: 350,
+        maxWidth: 420,
         disableAutoPan: false,
       }}
     >
-      <div className="w-80 bg-white rounded-lg shadow-lg overflow-hidden" style={{ maxWidth: 'none', width: '320px' }}>
+      <div className="w-[360px] bg-white rounded-lg shadow-lg overflow-hidden" style={{ maxWidth: 'none' }}>
         {/* Image */}
         {space.images && space.images.length > 0 && (
-          <div className="w-full h-32">
+          <div className="w-full h-36">
             <img 
               src={space.images[0]} 
               alt={space.title}
