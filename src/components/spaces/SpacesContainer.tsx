@@ -337,8 +337,7 @@ const SpacesContainer: React.FC = () => {
       
       {!iaEnabled && (
         <FilterBar 
-          onFilterChange={handleFilterChange} 
-          initialSearch={searchQuery}
+          onFilterChange={handleFilterChange}
         />
       )}
       
