@@ -100,27 +100,27 @@ const Navbar = () => {
               {user ? (
                 <div className="flex items-center space-x-3">
                   {isPremium ? (
-                    // Premium User Interface
-                    <div className="flex items-center space-x-3 px-4 py-2 bg-gradient-to-r from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border border-yellow-400/30 rounded-xl backdrop-blur-sm">
+                    // Premium User Interface - Elegant Black & Gold Theme
+                    <div className="flex items-center space-x-3 px-4 py-2 bg-gradient-to-r from-gray-900 via-gray-800 to-black border border-yellow-500/40 rounded-xl backdrop-blur-sm shadow-lg shadow-yellow-500/20">
                       <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
-                        <Avatar className="w-10 h-10 ring-2 ring-yellow-400/50">
+                        <Avatar className="w-10 h-10 ring-2 ring-yellow-400/70 shadow-lg">
                           <AvatarImage src={user.user_metadata?.avatar_url} alt="Avatar" />
-                          <AvatarFallback className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-semibold">
+                          <AvatarFallback className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-black font-bold">
                             {(user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Camera className="w-4 h-4 text-white" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Camera className="w-4 h-4 text-yellow-400" />
                         </div>
                         {isUploading && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/70 rounded-full">
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/80 rounded-full">
+                            <div className="w-4 h-4 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
                           </div>
                         )}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-xs text-yellow-700 font-medium">Bem-vindo,</span>
-                        <span className="text-sm font-bold text-yellow-800">
+                        <span className="text-xs text-yellow-400/90 font-medium">Bem-vindo,</span>
+                        <span className="text-sm font-bold text-white">
                           {user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário'}
                         </span>
                       </div>
@@ -195,27 +195,27 @@ const Navbar = () => {
                 {user ? (
                   <>
                     {isPremium ? (
-                      // Premium User Interface - Mobile
-                      <div className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border border-yellow-400/30 rounded-xl backdrop-blur-sm">
+                      // Premium User Interface - Mobile - Elegant Black & Gold Theme
+                      <div className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-gray-900 via-gray-800 to-black border border-yellow-500/40 rounded-xl backdrop-blur-sm shadow-lg shadow-yellow-500/20">
                         <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
-                          <Avatar className="w-12 h-12 ring-2 ring-yellow-400/50">
+                          <Avatar className="w-12 h-12 ring-2 ring-yellow-400/70 shadow-lg">
                             <AvatarImage src={user.user_metadata?.avatar_url} alt="Avatar" />
-                            <AvatarFallback className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-semibold text-lg">
+                            <AvatarFallback className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-black font-bold text-lg">
                               {(user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Camera className="w-5 h-5 text-white" />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Camera className="w-5 h-5 text-yellow-400" />
                           </div>
                           {isUploading && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/70 rounded-full">
-                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/80 rounded-full">
+                              <div className="w-5 h-5 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
                             </div>
                           )}
                         </div>
                         <div className="flex flex-col flex-1">
-                          <span className="text-xs text-yellow-700 font-medium">Bem-vindo,</span>
-                          <span className="text-sm font-bold text-yellow-800">
+                          <span className="text-xs text-yellow-400/90 font-medium">Bem-vindo,</span>
+                          <span className="text-sm font-bold text-white">
                             {user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário'}
                           </span>
                         </div>
