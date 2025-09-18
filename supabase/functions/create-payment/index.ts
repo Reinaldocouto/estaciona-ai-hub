@@ -88,7 +88,6 @@ serve(async (req) => {
       ],
       metadata: {
         user_id: user.id,
-        auth_token: token,
         ...metadata,
       },
       success_url: `${origin}/spaces/${metadata?.space_id || ''}?payment=success&session_id={CHECKOUT_SESSION_ID}`,

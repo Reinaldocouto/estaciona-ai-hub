@@ -36,20 +36,20 @@ serve(async (req) => {
       throw new Error('Payment not completed')
     }
 
+    // Extract required metadata
     const metadata = session.metadata
     if (!metadata) {
       throw new Error('No metadata found in session')
     }
 
-    // Get user from auth token
-    const authToken = metadata.auth_token
-    const { data: { user }, error: authError } = await supabase.auth.getUser(authToken)
-    
-    if (authError || !user) {
-      throw new Error('Invalid auth token')
+    // Validate and extract user_id from metadata (no auth token needed)
+    const isUuid = (v: unknown) => typeof v === 'string' && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(v)
+    const userId = metadata.user_id
+    if (!isUuid(userId)) {
+      throw new Error('Invalid or missing user_id in metadata')
     }
 
-    console.log('Creating reservation for user:', user.id)
+    console.log('Creating reservation for user:', userId)
 
     // Create the reservation
     const startDateTime = new Date(`${metadata.selected_date}T${metadata.start_time}:00`)
@@ -65,7 +65,7 @@ serve(async (req) => {
     const { data: reservation, error: reservationError } = await supabase
       .from('reservas')
       .insert({
-        user_id: user.id,
+        user_id: userId,
         vaga_id: vagaId,
         start_time: startDateTime.toISOString(),
         end_time: endDateTime.toISOString(),
