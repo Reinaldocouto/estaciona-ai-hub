@@ -157,14 +157,6 @@ const SpaceGallery: React.FC<SpaceGalleryProps> = ({ space }) => {
             ))}
           </div>
         )}
-
-        {/* View all photos button */}
-        <Button
-          variant="outline"
-          className="absolute bottom-4 right-4 bg-white/95 hover:bg-white shadow-lg z-10 text-sm font-medium"
-        >
-          Ver todas as fotos ({images.length})
-        </Button>
       </div>
     </div>
   );
