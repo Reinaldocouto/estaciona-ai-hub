@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Brain } from 'lucide-react';
 import SpacesHeader from './SpacesHeader';
 import SpacesList from './SpacesList';
@@ -18,6 +18,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const SpacesContainer: React.FC = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [loading, setLoading] = useState(false);
   const [spaces, setSpaces] = useState<SpaceProps[]>([]);
@@ -213,7 +214,7 @@ const SpacesContainer: React.FC = () => {
   const toggleViewMode = () => setViewMode((m) => (m === 'list' ? 'map' : 'list'));
 
   const handleSpaceSelect = (id: string) => {
-    window.location.href = `/spaces/${id}`;
+    navigate(`/spaces/${id}`);
   };
 
   // Handler para toggle da IA
