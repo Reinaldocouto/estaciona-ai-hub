@@ -82,8 +82,14 @@ const SpacesContainer: React.FC = () => {
           setViewMode('map');
           
           // Show results toast with correct count and grammar (skip for SmartMatch)
+          // Apply the same filtering logic to get accurate count for toast
+          let availableSpaces = fetchedSpaces.filter(space => 
+            space.available === true && 
+            !space.title?.toLowerCase().includes('indisponível')
+          );
+          
           if (!isSmartMatch) {
-            const count = fetchedSpaces.length;
+            const count = availableSpaces.length;
             if (count > 0) {
               toast({
                 title: `${count} vaga${count !== 1 ? 's' : ''} encontrada${count !== 1 ? 's' : ''}`,
