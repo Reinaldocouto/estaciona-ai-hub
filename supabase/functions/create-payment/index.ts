@@ -88,13 +88,14 @@ serve(async (req) => {
       ],
       metadata: {
         user_id: user.id,
+        auth_token: token,
         ...metadata,
       },
-      success_url: `${origin}/spaces/${metadata?.space_id || ''}?payment=success`,
-      cancel_url: `${origin}/spaces/${metadata?.space_id || ''}?payment=canceled`,
+      success_url: `${origin}/spaces/${metadata?.space_id || ''}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/spaces/${metadata?.space_id || ''}?payment=cancelled`,
     });
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    return new Response(JSON.stringify({ url: session.url, sessionId: session.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });

@@ -1,12 +1,15 @@
 
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { fetchSpace } from '@/api/spaces';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 import { 
   SpaceGallery,
   SpaceHeader,
@@ -17,7 +20,10 @@ import {
 const SpaceDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<string>('details');
+  const [paymentStatus, setPaymentStatus] = useState<'success' | 'cancelled' | null>(null);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   const { data: space, isLoading, error } = useQuery({
     queryKey: ['space', id],
@@ -25,6 +31,65 @@ const SpaceDetails = () => {
     enabled: !!id,
     retry: 1,
   });
+
+  // Handle payment return
+  useEffect(() => {
+    const payment = searchParams.get('payment');
+    const sessionId = searchParams.get('session_id');
+
+    if (payment === 'success' && sessionId) {
+      setPaymentStatus('success');
+      setProcessingPayment(true);
+      
+      // Process the payment success directly
+      const processPayment = async () => {
+        try {
+          const { data, error } = await supabase.functions.invoke('process-payment-success', {
+            body: { sessionId }
+          });
+          
+          setProcessingPayment(false);
+          if (error) {
+            console.error('Error processing payment:', error);
+            toast({
+              title: "Erro no processamento",
+              description: "Houve um erro ao processar seu pagamento. Entre em contato conosco.",
+              variant: "destructive",
+            });
+          } else if (data?.success) {
+            toast({
+              title: "🎉 Reserva Confirmada!",
+              description: data.message || "Sua reserva foi confirmada com sucesso!",
+              variant: "default",
+            });
+            // Clear URL parameters after processing
+            navigate(`/spaces/${id}`, { replace: true });
+          }
+        } catch (err) {
+          setProcessingPayment(false);
+          console.error('Error:', err);
+          toast({
+            title: "Erro no processamento",
+            description: "Houve um erro ao processar seu pagamento. Entre em contato conosco.",
+            variant: "destructive",
+          });
+        }
+      };
+      
+      processPayment();
+    } else if (payment === 'cancelled') {
+      setPaymentStatus('cancelled');
+      toast({
+        title: "Pagamento cancelado",
+        description: "O pagamento foi cancelado. Você pode tentar novamente quando quiser.",
+        variant: "destructive",
+      });
+      // Clear URL parameters after showing message
+      setTimeout(() => {
+        navigate(`/spaces/${id}`, { replace: true });
+      }, 3000);
+    }
+  }, [searchParams, id, navigate]);
 
   // Loading state
   if (isLoading) {
@@ -68,12 +133,52 @@ const SpaceDetails = () => {
     );
   }
 
+  // Payment status notification
+  const renderPaymentNotification = () => {
+    if (!paymentStatus) return null;
+
+    return (
+      <div className="container mx-auto px-4 py-4">
+        <Card className={`border ${paymentStatus === 'success' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}>
+          <CardContent className="p-4 flex items-center gap-3">
+            {paymentStatus === 'success' ? (
+              <>
+                <CheckCircle className="h-6 w-6 text-green-600" />
+                {processingPayment ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-green-600" />
+                    <p className="text-green-800 font-medium">Processando sua reserva...</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-green-800 font-medium">Pagamento confirmado!</p>
+                    <p className="text-green-600 text-sm">Sua reserva está sendo processada e você receberá uma confirmação em breve.</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <XCircle className="h-6 w-6 text-red-600" />
+                <div>
+                  <p className="text-red-800 font-medium">Pagamento cancelado</p>
+                  <p className="text-red-600 text-sm">O pagamento foi cancelado. Você pode tentar reservar novamente.</p>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
+
   return (
     <>
       <Navbar />
       
       <main className="min-h-screen bg-gray-50 pb-12">
         <SpaceGallery space={space} />
+        
+        {renderPaymentNotification()}
 
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -81,7 +81,7 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
             selected_date: selectedDate,
             start_time: startTime,
             end_time: endTime,
-            total_price: finalPrice
+            total_price: finalPrice.toString()
           }
         }
       });
@@ -89,7 +89,8 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
       if (error) throw error;
 
       if (data?.url) {
-        window.open(data.url, '_blank');
+        // Redirect to payment page in the same window
+        window.location.href = data.url;
       }
     } catch (error) {
       console.error('Erro ao processar pagamento:', error);
