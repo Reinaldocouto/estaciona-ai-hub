@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogIn, LogOut, Crown } from 'lucide-react';
+import { Menu, X, User, LogIn, LogOut, Crown, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Logo from '@/components/ui-custom/Logo';
 import AuthModal from '@/components/auth/AuthModal';
 import PremiumBadge from '@/components/ui-custom/PremiumBadge';
@@ -81,17 +82,41 @@ const Navbar = () => {
                 </Link>
               )}
               {user ? (
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg">
-                    <User className="w-4 h-4 text-primary" />
-                    <div className="flex flex-col">
-                      <span className="text-xs text-primary/70 font-medium">Bem-vindo,</span>
-                      <span className="text-sm font-semibold text-primary">
-                        {user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário'}
-                      </span>
+                <div className="flex items-center space-x-3">
+                  {isPremium ? (
+                    // Premium User Interface
+                    <div className="flex items-center space-x-3 px-4 py-2 bg-gradient-to-r from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border border-yellow-400/30 rounded-xl backdrop-blur-sm">
+                      <div className="relative group cursor-pointer">
+                        <Avatar className="w-10 h-10 ring-2 ring-yellow-400/50">
+                          <AvatarImage src={user.user_metadata?.avatar_url} alt="Avatar" />
+                          <AvatarFallback className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-semibold">
+                            {(user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Camera className="w-4 h-4 text-white" />
+                        </div>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-yellow-700 font-medium">Bem-vindo,</span>
+                        <span className="text-sm font-bold text-yellow-800">
+                          {user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário'}
+                        </span>
+                      </div>
+                      <PremiumBadge className="ml-1" />
                     </div>
-                    {isPremium && <PremiumBadge />}
-                  </div>
+                  ) : (
+                    // Regular User Interface
+                    <div className="flex items-center space-x-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg">
+                      <User className="w-4 h-4 text-primary" />
+                      <div className="flex flex-col">
+                        <span className="text-xs text-primary/70 font-medium">Bem-vindo,</span>
+                        <span className="text-sm font-semibold text-primary">
+                          {user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                   <Button variant="outline" onClick={handleSignOut} size="sm">
                     <LogOut className="w-4 h-4 mr-1" /> Sair
                   </Button>
@@ -148,16 +173,40 @@ const Navbar = () => {
                 )}
                 {user ? (
                   <>
-                    <div className="flex items-center space-x-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg">
-                      <User className="w-4 h-4 text-primary" />
-                      <div className="flex flex-col">
-                        <span className="text-xs text-primary/70 font-medium">Bem-vindo,</span>
-                        <span className="text-sm font-semibold text-primary">
-                          {user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário'}
-                        </span>
+                    {isPremium ? (
+                      // Premium User Interface - Mobile
+                      <div className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-yellow-400/20 via-yellow-500/20 to-yellow-600/20 border border-yellow-400/30 rounded-xl backdrop-blur-sm">
+                        <div className="relative group cursor-pointer">
+                          <Avatar className="w-12 h-12 ring-2 ring-yellow-400/50">
+                            <AvatarImage src={user.user_metadata?.avatar_url} alt="Avatar" />
+                            <AvatarFallback className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-semibold text-lg">
+                              {(user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Camera className="w-5 h-5 text-white" />
+                          </div>
+                        </div>
+                        <div className="flex flex-col flex-1">
+                          <span className="text-xs text-yellow-700 font-medium">Bem-vindo,</span>
+                          <span className="text-sm font-bold text-yellow-800">
+                            {user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário'}
+                          </span>
+                        </div>
+                        <PremiumBadge />
                       </div>
-                      {isPremium && <PremiumBadge />}
-                    </div>
+                    ) : (
+                      // Regular User Interface - Mobile
+                      <div className="flex items-center space-x-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg">
+                        <User className="w-4 h-4 text-primary" />
+                        <div className="flex flex-col">
+                          <span className="text-xs text-primary/70 font-medium">Bem-vindo,</span>
+                          <span className="text-sm font-semibold text-primary">
+                            {user.user_metadata?.name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'Usuário'}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                     <Button variant="outline" onClick={handleSignOut} className="justify-start">
                       <LogOut className="w-4 h-4 mr-2" /> Sair
                     </Button>
