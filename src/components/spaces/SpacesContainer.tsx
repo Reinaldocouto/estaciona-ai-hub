@@ -14,11 +14,13 @@ import { useToast } from '@/hooks/use-toast';
 import { useIARecommendations } from '@/hooks/useIARecommendations';
 import { FilterState } from '@/components/ui-custom/FilterBar';
 import { useAuth } from '@/contexts/AuthContext';
+import { useGeolocation } from '@/hooks/useGeolocation';
 
 const SpacesContainer: React.FC = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { getCurrentLocation, loading: geoLoading } = useGeolocation();
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [loading, setLoading] = useState(false);
   const [spaces, setSpaces] = useState<SpaceProps[]>([]);
@@ -228,16 +230,6 @@ const SpacesContainer: React.FC = () => {
       return;
     }
 
-    // Verificar se há localização disponível
-    if (enabled && !hasUserLocation) {
-      toast({
-        title: "Localização necessária",
-        description: "A busca por IA precisa da sua localização. Use o SmartMatch para ativar automaticamente.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIaEnabled(enabled);
     
     if (!enabled) {
@@ -245,9 +237,35 @@ const SpacesContainer: React.FC = () => {
       return;
     }
 
-    // Tentar usar coordenadas da URL primeiro, senão usar default para São Paulo
-    const lat = parseFloat(searchLat || '-23.5505');
-    const lng = parseFloat(searchLng || '-46.6333');
+    let lat: number, lng: number;
+
+    // Tentar usar coordenadas da URL primeiro
+    if (searchLat && searchLng) {
+      lat = parseFloat(searchLat);
+      lng = parseFloat(searchLng);
+    } else {
+      // Se não há coordenadas na URL, solicitar localização do usuário
+      toast({
+        title: "Obtendo localização",
+        description: "Solicitando acesso à sua localização para ativar a IA...",
+      });
+      
+      const location = await getCurrentLocation();
+      
+      if (!location) {
+        toast({
+          title: "Localização necessária",
+          description: "A busca por IA precisa da sua localização. Permita o acesso à localização ou use o SmartMatch.",
+          variant: "destructive",
+        });
+        setIaEnabled(false);
+        return;
+      }
+      
+      lat = location.lat;
+      lng = location.lng;
+      setHasUserLocation(true);
+    }
     
     console.log(`🤖 Ativando IA com localização: lat=${lat}, lng=${lng}`);
     console.log(`🎯 Filtros: preço R$${precoMin}-R$${precoMax}, distância ${distanciaMin}-${distanciaMax}km, raio ${raioKm}km`);
@@ -324,15 +342,9 @@ const SpacesContainer: React.FC = () => {
         onRaioChange={setRaioKm}
         recursos={recursosDesejados}
         onRecursosChange={setRecursosDesejados}
-        isLoading={iaLoading}
-        canUseIA={user !== null && hasUserLocation}
-        iaDisabledReason={
-          !user 
-            ? "Faça login para usar a busca por IA" 
-            : !hasUserLocation 
-            ? "Use o SmartMatch para ativar a localização e acessar a IA"
-            : ""
-        }
+        isLoading={iaLoading || geoLoading}
+        canUseIA={user !== null}
+        iaDisabledReason={!user ? "Faça login para usar a busca por IA" : ""}
       />
       
       {/* Filtros tradicionais quando IA está desabilitada */}
