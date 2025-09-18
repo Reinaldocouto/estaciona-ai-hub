@@ -23,12 +23,12 @@ const SearchInput: React.FC<SearchInputProps> = ({
       <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       <Input
         type="text"
-        placeholder="Digite o local"
+        placeholder="Ex: Shopping Tatuapé, Paulista, Itaquera..."
         className="pl-10 pr-24 py-6 h-14 rounded-lg"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         ref={inputRef}
-        aria-label="Buscar por endereço"
+        aria-label="Buscar por shopping, bairro ou endereço"
         disabled={disabled}
       />
       

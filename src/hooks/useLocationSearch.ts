@@ -14,8 +14,8 @@ export const useLocationSearch = () => {
   const performSearch = async (searchTerm: string) => {
     if (!searchTerm.trim()) {
       toast({
-        title: "Digite um endereço",
-        description: "Por favor, informe um endereço ou local para buscar",
+        title: "Digite um local",
+        description: "Ex: Shopping Tatuapé, Paulista, Itaquera...",
         variant: "destructive",
       });
       return false;
@@ -34,6 +34,7 @@ export const useLocationSearch = () => {
       await new Promise(resolve => setTimeout(resolve, 100));
       
       let location = null;
+      let searchMethod = '';
       
       // First try Google Maps geocoding if available
       if (isLoaded) {
@@ -42,16 +43,18 @@ export const useLocationSearch = () => {
         
         if (location) {
           console.log(`Coordenadas encontradas via Geocoding: lat=${location.lat}, lng=${location.lng}`);
+          searchMethod = 'geocoding';
         }
       }
       
       // Fallback to mock locations if geocoding didn't work
       if (!location) {
-        console.log('Tentando busca via localizações mock...');
+        console.log('Tentando busca via localizações de referência...');
         location = findLocation(searchTerm);
         
         if (location) {
-          console.log(`Coordenadas encontradas via mock: lat=${location.lat}, lng=${location.lng}`);
+          console.log(`Coordenadas encontradas via referência: lat=${location.lat}, lng=${location.lng}`);
+          searchMethod = 'reference';
         }
       }
       
@@ -64,8 +67,8 @@ export const useLocationSearch = () => {
       } else {
         console.log('Nenhuma localização encontrada para:', searchTerm);
         toast({
-          title: "Endereço não encontrado",
-          description: "Verifique se o endereço está correto e tente novamente",
+          title: "Local não encontrado",
+          description: "Tente: Shopping Tatuapé, Paulista, Itaquera ou um endereço completo",
           variant: "destructive",
         });
         return false;
