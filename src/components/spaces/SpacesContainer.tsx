@@ -63,13 +63,8 @@ const SpacesContainer: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     
-    // Update search filter with the query from URL if available
-    if (searchQuery && filters.search !== searchQuery) {
-      setFilters(prev => ({
-        ...prev,
-        search: searchQuery
-      }));
-    }
+    // Não aplicar filtros automaticamente a partir de parâmetros da URL
+    // 'q' serve apenas como rótulo da busca (toast/header), filtros são aplicados somente pelo usuário.
     
     if (searchLat && searchLng) {
       console.log(`Buscando vagas próximas a: ${searchLat}, ${searchLng} com termo: ${searchQuery}`);
