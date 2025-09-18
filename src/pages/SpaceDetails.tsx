@@ -63,14 +63,7 @@ const SpaceDetails = () => {
           });
           
           setProcessingPayment(false);
-          if (error) {
-            console.error('Error processing payment:', error);
-            toast({
-              title: "Erro no processamento",
-              description: "Houve um erro ao processar seu pagamento. Entre em contato conosco.",
-              variant: "destructive",
-            });
-          } else if (data?.success) {
+          if (data?.success) {
             toast({
               title: "🎉 Reserva Confirmada!",
               description: data.message || "Sua reserva foi confirmada com sucesso!",
@@ -78,6 +71,13 @@ const SpaceDetails = () => {
             });
             // Clear URL parameters after processing
             navigate(`/spaces/${id}`, { replace: true });
+          } else if (error || data?.success === false) {
+            console.error('Error processing payment:', error || data);
+            toast({
+              title: "Erro no processamento",
+              description: "Houve um erro ao processar seu pagamento. Entre em contato conosco.",
+              variant: "destructive",
+            });
           }
         } catch (err) {
           setProcessingPayment(false);

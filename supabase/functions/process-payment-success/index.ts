@@ -42,21 +42,28 @@ serve(async (req) => {
       throw new Error('No metadata found in session')
     }
 
+    // Helper: validate UUID
+    const isUuid = (v: unknown) =>
+      typeof v === 'string' &&
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(v);
+
     // Validate and extract user_id from metadata (no auth token needed)
-    const isUuid = (v: unknown) => typeof v === 'string' && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(v)
-    const userId = metadata.user_id
+    const userId = metadata.user_id;
     if (!isUuid(userId)) {
-      throw new Error('Invalid or missing user_id in metadata')
+      throw new Error('Invalid or missing user_id in metadata');
     }
 
     console.log('Creating reservation for user:', userId)
 
-    // Create the reservation
+    // Build start/end timestamps (expecting YYYY-MM-DD and HH:mm)
     const startDateTime = new Date(`${metadata.selected_date}T${metadata.start_time}:00`)
     const endDateTime = new Date(`${metadata.selected_date}T${metadata.end_time}:00`)
 
+    if (isNaN(startDateTime.getTime()) || isNaN(endDateTime.getTime())) {
+      throw new Error('Invalid date/time in metadata');
+    }
+
     // Validate vaga_id (UUID). If invalid (e.g., mock ids like "1"), store as null to avoid DB error
-    const isUuid = (v: unknown) => typeof v === 'string' && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(v)
     const vagaId = isUuid(metadata.space_id) ? metadata.space_id : null
     if (!vagaId) {
       console.warn('Non-UUID space_id detected, saving vaga_id as null:', metadata.space_id)
