@@ -55,11 +55,18 @@ serve(async (req) => {
     const startDateTime = new Date(`${metadata.selected_date}T${metadata.start_time}:00`)
     const endDateTime = new Date(`${metadata.selected_date}T${metadata.end_time}:00`)
 
+    // Validate vaga_id (UUID). If invalid (e.g., mock ids like "1"), store as null to avoid DB error
+    const isUuid = (v: unknown) => typeof v === 'string' && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(v)
+    const vagaId = isUuid(metadata.space_id) ? metadata.space_id : null
+    if (!vagaId) {
+      console.warn('Non-UUID space_id detected, saving vaga_id as null:', metadata.space_id)
+    }
+
     const { data: reservation, error: reservationError } = await supabase
       .from('reservas')
       .insert({
         user_id: user.id,
-        vaga_id: metadata.space_id,
+        vaga_id: vagaId,
         start_time: startDateTime.toISOString(),
         end_time: endDateTime.toISOString(),
         total_price: parseFloat(metadata.total_price),

@@ -70,6 +70,10 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
       const finalPrice = totalPrice * 1.1; // Incluindo taxa de serviço
       const advanceAmount = finalPrice * 0.4; // 40% de adiantamento
 
+      // Garantir que enviamos o token de autenticação no invoke
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: {
           amount: Math.round(advanceAmount * 100), // em centavos
@@ -83,21 +87,26 @@ const SpaceBookingCard: React.FC<SpaceBookingCardProps> = ({ space }) => {
             end_time: endTime,
             total_price: finalPrice.toString()
           }
-        }
+        },
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
       });
+
+      console.log('create-payment response:', { data, error });
 
       if (error) throw error;
 
       if (data?.url) {
         // Redirect to payment page in the same window
         window.location.href = data.url;
+      } else {
+        throw new Error('URL de checkout não retornada');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao processar pagamento:', error);
       toast({
-        title: "Erro no pagamento",
-        description: "Não foi possível processar o pagamento. Tente novamente.",
-        variant: "destructive",
+        title: 'Erro no pagamento',
+        description: error?.message || 'Não foi possível processar o pagamento. Tente novamente.',
+        variant: 'destructive',
       });
     } finally {
       setIsBooking(false);
